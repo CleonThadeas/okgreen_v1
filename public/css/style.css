@@ -196,7 +196,6 @@ body {
   background-color: #d4edda;
   transition: background-color 0.3s ease;
 }
-<<<<<<< HEAD
 
 
 .custom-body {
@@ -334,28 +333,3 @@ body {
     margin-top: 1.5rem;
     color: #bbf7d0; /* Tailwind: text-green-200 */
 }
-
-.faq-scroll-container {
-    max-height: 400px; /* Bisa disesuaikan */
-    overflow-y: auto;
-    padding-right: 0.5rem;
-    scrollbar-width: thin;
-    scrollbar-color: #9ED29E #f0f0f0;
-}
-
-
-.faq-scroll-container::-webkit-scrollbar {
-  width: 6px;
-}
-
-.faq-scroll-container::-webkit-scrollbar-track {
-  background: #f0f0f0;
-  border-radius: 5px;
-}
-
-.faq-scroll-container::-webkit-scrollbar-thumb {
-  background-color: #9ED29E;
-  border-radius: 5px;
-}
-=======
->>>>>>> 7e0e9ec (tampilan Landing page header,hero, tentang kami, faq)
