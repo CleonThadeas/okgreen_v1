@@ -196,3 +196,140 @@ body {
   background-color: #d4edda;
   transition: background-color 0.3s ease;
 }
+
+
+.custom-body {
+    background-color: white;
+    color: #1f2937; /* Tailwind: text-gray-800 */
+    font-family: sans-serif;
+}
+
+.section-header {
+    text-align: center;
+    padding: 2.5rem 0;
+}
+
+.section-title {
+    font-size: 1.875rem;
+    font-weight: 600;
+}
+
+/* SERVICE GRID */
+.service-grid {
+    max-width: 80rem;
+    margin: 0 auto 5rem auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 0 2rem;
+}
+
+.service-card {
+     border: 1px solid #ccc;
+    background-color: #ecfdf5; /* hijau muda */
+    padding: 2rem; /* Gedein padding */
+    border-radius: 0.75rem;
+    text-align: center;
+    transition: box-shadow 0.3s ease;
+    min-height: 260px; /* Tambahan biar tinggi konsisten */
+}
+
+.service-card:hover {
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+}
+
+.service-icon {
+    font-size: 2.25rem; /* Gedein ikon */
+    margin-bottom: 1rem;
+}
+
+.service-title {
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.service-desc {
+    font-size: 1rem;
+    color: #4b5563;
+}
+
+.section-subtitle {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.section-subdesc {
+    color: #4b5563;
+}
+
+.types-grid {
+    max-width: 80rem;
+    margin: 0 auto 5rem auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem; /* tidak terlalu renggang */
+    padding: 0 1.5rem;
+}
+
+.type-card {
+    border: 1px solid #ccc;
+    background-color: #ecfdf5; /* hijau muda */
+    padding: 1rem;
+    border-radius: 0.20rem;
+    text-align: center;
+    transition: box-shadow 0.3s ease;
+    min-height: 100px;
+}
+
+.type-card:hover {
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.08);
+}
+
+.type-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+}
+
+.type-name {
+    font-weight: 700;
+    font-size: 1.125rem;
+}
+
+
+.footer {
+    background-color: #065f46; /* Tailwind: bg-green-800 */
+    color: white;
+    font-size: 0.875rem;
+    padding: 2.5rem 0;
+}
+
+.footer-grid {
+    max-width: 72rem;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+    padding: 0 1rem;
+}
+
+.footer-brand {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.footer-heading {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.email-link {
+    text-decoration: underline;
+    color: white;
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: #bbf7d0; /* Tailwind: text-green-200 */
+}
