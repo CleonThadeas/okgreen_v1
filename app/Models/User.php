@@ -2,55 +2,32 @@
 
 namespace App\Models;
 
-<<<<<<< HEAD
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
-    protected $primaryKey = 'id'; // default Laravel
+    protected $primaryKey = 'id'; 
     public $incrementing = true;
     protected $keyType = 'int';
-
-=======
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-
-class User extends Authenticatable
-{
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
      */
->>>>>>> 9e2416b (tampilan Landing page header,hero, tentang kami, faq)
     protected $fillable = [
         'name',
         'email',
         'password',
-<<<<<<< HEAD
         'phone_number',
         'address',
         'date_of_birth',
         'gender',
-    ];
-
-    protected $hidden = [
-        'password', 'remember_token',
-    ];
-
-
-}
-=======
     ];
 
     /**
@@ -64,7 +41,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
      * @return array<string, string>
      */
@@ -76,4 +53,3 @@ class User extends Authenticatable
         ];
     }
 }
->>>>>>> 9e2416b (tampilan Landing page header,hero, tentang kami, faq)

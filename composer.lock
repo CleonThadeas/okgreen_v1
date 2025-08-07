@@ -4,6 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
+<<<<<<< HEAD
     "content-hash": "19fd5cf9aefc4f8ea157939fcfa613e9",
     "packages": [
         {
@@ -61,6 +62,11 @@
             "time": "2024-10-01T13:55:55+00:00"
         },
         {
+=======
+    "content-hash": "88970a0117c062eed55fa8728fc43833",
+    "packages": [
+        {
+>>>>>>> 7e0e9ec (tampilan Landing page header,hero, tentang kami, faq)
             "name": "brick/math",
             "version": "0.13.1",
             "source": {
@@ -190,6 +196,7 @@
             "time": "2024-02-09T16:56:22+00:00"
         },
         {
+<<<<<<< HEAD
             "name": "dasprid/enum",
             "version": "1.0.6",
             "source": {
@@ -240,6 +247,8 @@
             "time": "2024-08-09T14:30:48+00:00"
         },
         {
+=======
+>>>>>>> 7e0e9ec (tampilan Landing page header,hero, tentang kami, faq)
             "name": "dflydev/dot-access-data",
             "version": "v3.0.3",
             "source": {
@@ -1159,6 +1168,7 @@
             "time": "2025-02-03T10:55:03+00:00"
         },
         {
+<<<<<<< HEAD
             "name": "laravel/fortify",
             "version": "v1.28.0",
             "source": {
@@ -1235,6 +1245,19 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/laravel/framework/zipball/6ab00c913ef6ec6fad0bd506f7452c0bb9e792c3",
                 "reference": "6ab00c913ef6ec6fad0bd506f7452c0bb9e792c3",
+=======
+            "name": "laravel/framework",
+            "version": "v12.21.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/framework.git",
+                "reference": "ac8c4e73bf1b5387b709f7736d41427e6af1c93b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/ac8c4e73bf1b5387b709f7736d41427e6af1c93b",
+                "reference": "ac8c4e73bf1b5387b709f7736d41427e6af1c93b",
+>>>>>>> 7e0e9ec (tampilan Landing page header,hero, tentang kami, faq)
                 "shasum": ""
             },
             "require": {
@@ -1436,7 +1459,11 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
+<<<<<<< HEAD
             "time": "2025-08-07T13:49:53+00:00"
+=======
+            "time": "2025-07-22T15:41:55+00:00"
+>>>>>>> 7e0e9ec (tampilan Landing page header,hero, tentang kami, faq)
         },
         {
             "name": "laravel/prompts",
@@ -1498,6 +1525,7 @@
             "time": "2025-07-07T14:17:42+00:00"
         },
         {
+<<<<<<< HEAD
             "name": "laravel/sanctum",
             "version": "v4.2.0",
             "source": {
@@ -1562,6 +1590,8 @@
             "time": "2025-07-09T19:45:24+00:00"
         },
         {
+=======
+>>>>>>> 7e0e9ec (tampilan Landing page header,hero, tentang kami, faq)
             "name": "laravel/serializable-closure",
             "version": "v2.0.4",
             "source": {
@@ -2744,6 +2774,7 @@
             "time": "2025-05-08T08:14:37+00:00"
         },
         {
+<<<<<<< HEAD
             "name": "paragonie/constant_time_encoding",
             "version": "v3.0.0",
             "source": {
@@ -2811,6 +2842,8 @@
             "time": "2024-05-08T12:36:18+00:00"
         },
         {
+=======
+>>>>>>> 7e0e9ec (tampilan Landing page header,hero, tentang kami, faq)
             "name": "phpoption/phpoption",
             "version": "1.9.3",
             "source": {
@@ -2886,6 +2919,7 @@
             "time": "2024-07-20T21:41:07+00:00"
         },
         {
+<<<<<<< HEAD
             "name": "pragmarx/google2fa",
             "version": "v8.0.3",
             "source": {
@@ -2938,6 +2972,8 @@
             "time": "2024-09-05T11:56:40+00:00"
         },
         {
+=======
+>>>>>>> 7e0e9ec (tampilan Landing page header,hero, tentang kami, faq)
             "name": "psr/clock",
             "version": "1.0.0",
             "source": {
@@ -6362,6 +6398,7 @@
             "time": "2025-04-30T06:54:44+00:00"
         },
         {
+<<<<<<< HEAD
             "name": "laravel/breeze",
             "version": "v2.3.8",
             "source": {
@@ -6423,6 +6460,8 @@
             "time": "2025-07-18T18:49:59+00:00"
         },
         {
+=======
+>>>>>>> 7e0e9ec (tampilan Landing page header,hero, tentang kami, faq)
             "name": "laravel/pail",
             "version": "v1.2.3",
             "source": {
@@ -8556,12 +8595,21 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
+<<<<<<< HEAD
     "stability-flags": {},
+=======
+    "stability-flags": [],
+>>>>>>> 7e0e9ec (tampilan Landing page header,hero, tentang kami, faq)
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^8.2"
     },
+<<<<<<< HEAD
     "platform-dev": {},
     "plugin-api-version": "2.6.0"
+=======
+    "platform-dev": [],
+    "plugin-api-version": "2.3.0"
+>>>>>>> 7e0e9ec (tampilan Landing page header,hero, tentang kami, faq)
 }
