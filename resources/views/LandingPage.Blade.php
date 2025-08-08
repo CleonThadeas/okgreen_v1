@@ -67,28 +67,43 @@
 
 
   <!-- FAQ -->
-  <section id="faq" class="faq">
+<section id="faq" class="faq">
   <div class="section-title">
     <img src="{{ asset('img/question-icon.png') }}" alt="icon">
     <h2>Pertanyaan Umum</h2>
   </div>
 
-  <div class="faq-item">
-    <h3>Berapa lama waktu yang dibutuhkan untuk penjemputan setelah pengajuan?</h3>
-    <p>Penjemputan akan dilakukan maksimal 1x24 jam setelah pengajuan disetujui.</p>
-  </div>
-  <div class="faq-item">
-    <h3>Jenis sampah apa saja yang bisa saya jual melalui OKGreen?</h3>
-    <p>Kami menerima berbagai jenis sampah daur ulang seperti plastik, kertas, logam, dan kaca.</p>
-  </div>
-  <div class="faq-item">
-    <h3>Bagaimana cara saya menjual sampah saya?</h3>
-    <p>Kamu bisa menggunakan fitur pickup atau drop-off di titik terdekat.</p>
-  </div>
-  <div class="faq-item">
-    <h3>Bagaimana saya mendapatkan poin dari menjual sampah?</h3>
-    <p>Setiap penjualan yang berhasil akan mendapatkan poin yang bisa ditukar reward.</p>
-  </div>
+  <div class="faq-scroll-container"><!-- Tambahkan ini -->
+    <div class="faq-item">
+      <h3>Berapa lama waktu yang dibutuhkan untuk penjemputan setelah pengajuan?</h3>
+      <p>Penjemputan akan dilakukan maksimal 1x24 jam setelah pengajuan disetujui.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Jenis sampah apa saja yang bisa saya jual melalui OKGreen?</h3>
+      <p>Kami menerima berbagai jenis sampah daur ulang seperti plastik, kertas, logam, dan kaca.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Bagaimana cara saya menjual sampah saya?</h3>
+      <p>Kamu bisa menggunakan fitur pickup atau drop-off di titik terdekat.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Bagaimana saya mendapatkan poin dari menjual sampah?</h3>
+      <p>Setiap penjualan yang berhasil akan mendapatkan poin yang bisa ditukar reward.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Apakah saya harus memisahkan sampahnya?</h3>
+      <p>Ya, mohon pisahkan sampah sesuai jenisnya agar proses daur ulang lebih cepat dan efisien.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Apakah bisa menjual sampah dari luar kota?</h3>
+      <p>Untuk saat ini, layanan kami hanya tersedia di area tertentu. Silakan cek daftar wilayah yang tersedia di halaman utama.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Apakah saya bisa menjual sampah yang sudah dicacah/dipotong kecil?</h3>
+      <p>Bisa, selama masih bisa dikategorikan dan tidak tercampur dengan sampah lain.</p>
+    </div>
+    <!-- Tambahkan pertanyaan lain di sini -->
+  </div><!-- Tutup scroll container -->
 </section>
 
 <script>
