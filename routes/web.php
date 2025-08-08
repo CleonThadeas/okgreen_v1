@@ -17,5 +17,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/tes', function () {
+    return json_encode('tes');
+});
+
 require __DIR__.'/auth.php';
+
 
