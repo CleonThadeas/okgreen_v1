@@ -2,19 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class Admin extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use Notifiable;
+    protected $guard = 'admin'; // untuk Admin.php
 
-    protected $primaryKey = 'user_id';
+    protected $primaryKey = 'admin_id';
     public $incrementing = true;
-    protected $fillable = [
-        'name', 'email', 'password',
-    ];
+    protected $guarded = [];
 
     protected $hidden = [
         'password',
