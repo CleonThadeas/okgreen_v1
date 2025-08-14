@@ -31,15 +31,21 @@ class RouteServiceProvider extends ServiceProvider
     /**
      * Custom redirect logic based on user role.
      */
-    public static function redirectBasedOnRole(): string
-    {
-        $user = Auth::user();
-
-        return match ($user->role) {
-            'admin' => '/admin/dashboard',
-            'staff' => '/staff/dashboard',
-            'user' => '/user/dashboard',
-            default => self::HOME,
-        };
+    public static function redirectBasedOnRole()
+{
+    if (Auth::guard('admin')->check()) {
+        return '/admin/dashboard';
     }
+
+    if (Auth::guard('staff')->check()) {
+        return '/staff/dashboard';
+    }
+
+    if (Auth::check()) {
+        return '/user/dashboard';
+    }
+
+    return '/login';
+}
+
 }

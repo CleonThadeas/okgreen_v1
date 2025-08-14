@@ -2,24 +2,29 @@
 
 namespace Database\Seeders;
 
+<<<<<<< HEAD
 use App\Models\User;
+=======
+>>>>>>> 62fbded8ab217af7ea576d0b710c9ebe9be5e110
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Tambah data user dummy
+        \App\Models\User::factory(5)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // Seed admin & staff default
+        $this->call([
+            AdminSeeder::class,
+            StaffSeeder::class,
         ]);
+<<<<<<< HEAD
 
         $this->call(PaymentMethodsTableSeeder::class);
         $this->call(UserSeeder::class);
+=======
+>>>>>>> 62fbded8ab217af7ea576d0b710c9ebe9be5e110
     }
 }
