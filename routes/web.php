@@ -1,38 +1,48 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\StaffDashboardController;
 use App\Http\Controllers\UserDashboardController;
-use App\Http\Controllers\Auth\CustomLoginController;
+use App\Http\Controllers\Auth\MultiGuardLoginController;
 
-// Halaman login & logout
-Route::get('/login', [CustomLoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [CustomLoginController::class, 'login']);
-Route::post('/logout', [CustomLoginController::class, 'logout'])->name('logout');
-
-// Halaman awal
 Route::get('/', function () {
     return view('welcome');
 });
 
-// ================== USER ==================
+// ================== LOGIN & LOGOUT ==================
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [MultiGuardLoginController::class, 'create'])->name('login');
+    Route::post('/login', [MultiGuardLoginController::class, 'store']);
+});
+Route::post('/logout', [MultiGuardLoginController::class, 'destroy'])->name('logout');
+
+// ================== DASHBOARD PER GUARD ==================
+Route::middleware(['auth:web'])->get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
+Route::middleware(['auth:admin'])->get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+Route::middleware(['auth:staff'])->get('/staff/dashboard', [StaffDashboardController::class, 'index'])->name('staff.dashboard');
+
+// ================== USER PROFILE ==================
 Route::middleware(['auth:web'])->group(function () {
-    Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// ================== ADMIN ==================
-Route::middleware(['auth:admin'])->group(function () {
-    Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+// ================== DEBUG SESSION ==================
+Route::get('/debug-session', function () {
+    return response()->json([
+        'is_web_logged_in' => Auth::guard('web')->check(),
+        'is_admin_logged_in' => Auth::guard('admin')->check(),
+        'is_staff_logged_in' => Auth::guard('staff')->check(),
+        'web_user' => Auth::guard('web')->user(),
+        'admin_user' => Auth::guard('admin')->user(),
+        'staff_user' => Auth::guard('staff')->user(),
+        'session_id' => Session::getId(),
+        'all_session_data' => Session::all(),
+        'cookie_session' => request()->cookie(config('session.cookie')),
+    ]);
 });
-
-// ================== STAFF ==================
-Route::middleware(['auth:staff'])->group(function () {
-    Route::get('/staff/dashboard', [StaffDashboardController::class, 'index'])->name('staff.dashboard');
-});
-
-require __DIR__.'/auth.php';

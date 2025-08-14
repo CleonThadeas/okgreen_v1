@@ -2,26 +2,24 @@
 
 namespace App\Models;
 
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 
 class Staff extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use Notifiable;
 
-    protected $guard = 'staff';
     protected $table = 'staff';
-    protected $primaryKey = 'staff_id'; // sesuai kolom PK di DB
+    protected $primaryKey = 'id'; // ganti jika di DB kamu kolomnya staff_id
     public $incrementing = true;
     protected $keyType = 'int';
 
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'phone_number', 'address'
     ];
 
     protected $hidden = [
-        'password',
-        'remember_token',
+        'password', 'remember_token',
     ];
 }
