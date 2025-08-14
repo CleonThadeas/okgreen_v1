@@ -10,8 +10,12 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    protected $primaryKey = 'user_id';
+    protected $guard = 'web';
+    protected $table = 'users';
+    protected $primaryKey = 'id'; // default Laravel
     public $incrementing = true;
+    protected $keyType = 'int';
+
     protected $fillable = [
         'name', 'email', 'password',
     ];
