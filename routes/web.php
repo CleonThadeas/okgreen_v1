@@ -32,6 +32,7 @@ Route::middleware(['auth:web'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+
 // ================== DEBUG SESSION ==================
 Route::get('/debug-session', function () {
     return response()->json([
@@ -46,3 +47,4 @@ Route::get('/debug-session', function () {
         'cookie_session' => request()->cookie(config('session.cookie')),
     ]);
 });
+

@@ -22,6 +22,7 @@ return [
         ],
     ],
 
+
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
@@ -35,6 +36,7 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\Staff::class,
         ],
+
     ],
 
     'passwords' => [
@@ -57,6 +59,7 @@ return [
             'throttle' => 60,
         ],
     ],
+
 
     'password_timeout' => 10800,
 
