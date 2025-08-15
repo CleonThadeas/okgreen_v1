@@ -11,8 +11,9 @@
     <div class="container">
         <h1 class="mt-5">Welcome to the Waste Management System</h1>
         <p class="lead">This is a simple application to manage waste selling and recycling.</p>
-        <a href="{{ route('sell-waste.create') }}" class="btn btn-primary">Sell Waste</a>
-        <a href="{{ route('waste-types.index') }}" class="btn btn-secondary">View Waste Types</a>
+        <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
+            {{ __('login') }}
+        </a>
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {

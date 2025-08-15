@@ -10,9 +10,7 @@ return new class extends Migration
     {
         Schema::create('login_logs', function (Blueprint $table) {
             $table->id('log_id');                        // log_id: bigint auto-increment
-            $table->foreignId('user_id')                 // relasi ke users.user_id
-                  ->constrained('users', 'user_id')
-                  ->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamp('login_time');
             $table->string('device_info', 255)->nullable();
             $table->timestamps();                        // created_at & updated_at

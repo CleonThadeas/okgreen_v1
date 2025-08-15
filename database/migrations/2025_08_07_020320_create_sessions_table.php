@@ -11,8 +11,9 @@ return new class extends Migration {
             $table->string('id')->primary();
             $table->foreignId('user_id')
                   ->nullable()
-                  ->constrained('users','user_id')
-                  ->onDelete('cascade');
+                  ->constrained('users', 'id') // FK ke users.id
+                  ->onDelete('cascade')
+                  ->onUpdate('cascade');
             $table->string('ip_address', 45)->nullable();
             $table->text('user_agent')->nullable();
             $table->text('payload');

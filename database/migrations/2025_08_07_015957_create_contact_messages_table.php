@@ -10,8 +10,9 @@ return new class extends Migration {
         Schema::create('contact_messages', function (Blueprint $table) {
             $table->id('message_id');
             $table->foreignId('user_id')
-                  ->constrained('users','user_id')
-                  ->onDelete('cascade');
+                  ->constrained('users', 'id') // FK mengacu ke users.id
+                  ->onDelete('cascade')
+                  ->onUpdate('cascade');
             $table->string('subject', 255);
             $table->text('message');
             $table->timestamps(); // created_at & updated_at

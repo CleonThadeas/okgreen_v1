@@ -5,20 +5,15 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    public function up()
-    {
+    public function up(): void {
         Schema::create('user_points', function (Blueprint $table) {
-            $table->id('point_id');
-            $table->foreignId('user_id')
-                  ->constrained('users','user_id')
-                  ->onDelete('cascade');
+            $table->bigIncrements('id');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade');
             $table->integer('points')->default(0);
-            $table->timestamps(); // created_at & updated_at
+            $table->timestamps();
         });
     }
-
-    public function down()
-    {
+    public function down(): void {
         Schema::dropIfExists('user_points');
     }
 };
