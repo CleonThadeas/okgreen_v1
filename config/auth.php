@@ -54,7 +54,7 @@ return [
         'driver' => 'sanctum',
         'provider' => 'users',
     ],
-],
+
 
 
     /*
