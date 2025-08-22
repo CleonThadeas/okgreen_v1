@@ -1,0 +1,250 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0px;   /* kasih space kanan kiri di seluruh halaman */
+    background: #EAF6EB;
+}
+
+main, .jual-container {
+    margin-top: 10px; /* sesuaikan dengan tinggi header kamu */
+}
+
+
+.jual-container {
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    width: 100%;              /* ambil penuh */
+    max-width: 1300px;        /* biar nggak kepanjangan di monitor gede */
+    margin: 10px auto 10px;   /* kasih jarak dari header */
+    box-sizing: border-box;   /* biar padding tidak bikin overflow */
+}
+
+.jual-container h2 {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.jual-container label {
+    font-weight: 600;
+    display: block;
+    margin-top: 12px;
+    margin-bottom: 5px;
+}
+
+.jual-container select,
+.jual-container input,
+.jual-container textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.berat-container {
+    display: flex;
+    gap: 10px;
+}
+
+.berat-container input {
+    flex: 2;
+}
+
+.berat-container select {
+    flex: 1;
+}
+
+.upload-box {
+    border: 1px dashed #aaa;
+    text-align: center;
+    padding: 40px;
+    cursor: pointer;
+    border-radius: 6px;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.upload-box:hover {
+    background: #f9f9f9;
+}
+
+.jual-btn {
+    background: #5f876b;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.jual-btn:hover {
+    background: #4e7057;
+}
+
+/* Popup Overlay */
+.popup-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* Card */
+.popup-card {
+  width: 340px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+  overflow: hidden;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Header */
+.popup-header {
+  height: 96px;
+  background: #EAF6EB;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.popup-header img {
+  width: 140px;
+  height: auto;
+}
+
+/* Body */
+.popup-body {
+  text-align: center;
+  padding: 20px;
+}
+.popup-body h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+  color: #170F49;
+}
+.popup-body p {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #6F6C8F;
+}
+
+/* Footer */
+.popup-footer {
+  display: flex;
+  gap: 10px;
+  padding: 0 20px 20px;
+}
+.popup-footer button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.btn-ignore {
+  background: #fff;
+  border: 1px solid #D9DBE9;
+  color: #514F6E;
+}
+.btn-accept {
+  background: linear-gradient(180deg, #79AC78 0%, #618264 100%);
+  border: none;
+  color: #fff;
+}
+
+/* User Greeting */
+.user-greeting {
+  width: 100%;
+  height: 70px;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.user-greeting .logo {
+  height: 45px;
+  margin-right: 10px;
+}
+
+.user-greeting .brand {
+  font-weight: bold;
+  font-size: 20px;
+  color: #3B755F;
+}
+
+.user-greeting .welcome {
+  font-size: 16px;
+  color: #333;
+}
+
+
+/* Animasi */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Efek popup muncul smooth */
+/* Popup awal */
+.popup-overlay {
+    pointer-events: none; /* supaya tidak blokir klik */
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+/* Saat popup aktif */
+.popup-overlay.active {
+    pointer-events: auto; /* aktifkan klik */
+    opacity: 1;
+}
+
+/* Animasi kartu popup */
+.popup-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    transform: translateY(30px);
+    opacity: 0;
+    transition: all 0.4s ease-in-out;
+}
+.popup-overlay.active .popup-card {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+
+/* Animasi tombol hover */
+.popup-footer button {
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+    margin: 0 5px;
+    border-radius: 6px;
+    transition: all 0.3s ease-in-out;
+}
+
+.popup-footer button:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+}

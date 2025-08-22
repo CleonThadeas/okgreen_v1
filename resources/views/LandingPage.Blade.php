@@ -20,7 +20,7 @@
         <li><a href="#tentang">Tentang Kami</a></li>
         <li><a href="#fitur">Fitur</a></li>
         <li><a href="#kontak">Kontak Kami</a></li>
-        <li><a href="#" class="btn-masuk">Gabung</a></li>
+        <li><a href="{{ route('login') }}" class="btn-masuk">Gabung</a></li>
       </ul>
     </nav>
   </header>

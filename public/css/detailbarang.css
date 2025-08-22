@@ -1,0 +1,178 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #F9F9F9;
+}
+
+/* Layout utama */
+.detail-produk-container {
+    display: flex;
+    gap: 40px;
+    padding: 40px;
+    max-width: 1200px;
+    margin: auto;
+    background-color: #fff;
+    border-radius: 10px;
+}
+
+/* Gambar produk */
+.produk-gambar {
+    flex: 1;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px; /* kasih ruang biar ga nempel ke tepi */
+}
+
+.produk-gambar img {
+    width: 100%;          /* full lebar container */
+    max-width: 220px;     /* batas maksimal biar mirip contoh */
+    height: 200px;        /* tinggi konsisten */
+    border-radius: 12px;
+    object-fit: contain;  /* biar ga kepotong */
+    cursor: pointer;
+}
+
+/* Tombol kembali */
+.btn-kembali {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    color: #333;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+
+/* Info produk */
+.produk-info {
+    flex: 1;
+}
+.tag-hotsale {
+    background-color: #ff4d4f;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: bold;
+}
+.kategori-rating {
+    margin: 10px 0;
+    font-size: 14px;
+}
+.kategori {
+    color: #5E7C65;
+    margin-right: 10px;
+}
+.rating-score {
+    font-weight: bold;
+}
+.deskripsi-label {
+    margin-top: 20px;
+    font-weight: bold;
+}
+.deskripsi {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.thumb-produk {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+}
+
+/* Pilihan ukuran */
+.size-container {
+    margin-top: 10px;
+}
+.size {
+    border: 1px solid #ccc;
+    padding: 8px 14px;
+    margin-right: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    background: white;
+    transition: all 0.2s ease;
+}
+.size:hover {
+    background: #e8f0ec;
+}
+.size.active {
+    background: #5E7C65;
+    color: white;
+}
+
+/* Bottom bar */
+.bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    align-items: center;
+    z-index: 10;
+}
+.bottom-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.thumb-bottom {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    object-fit: cover;
+}
+.bottom-nama {
+    font-weight: bold;
+}
+.qty-control {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.qty-btn {
+    border: 1px solid #ccc;
+    background: white;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 30px;
+    text-align: center;
+    transition: background 0.2s ease;
+}
+.qty-btn:hover {
+    background: #f0f0f0;
+}
+.qty-control input {
+    width: 40px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    height: 32px;
+}
+.btn-beli {
+    background-color: #5E7C65;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    margin-left: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background 0.2s ease;
+}
+.btn-beli:hover {
+    background-color: #4d6654;
+}
