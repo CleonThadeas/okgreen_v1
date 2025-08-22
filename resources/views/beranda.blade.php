@@ -74,7 +74,6 @@
 <section class="edukasi">
   <div class="section-header">
     <h2>Edukasi</h2>
-    <a href="{{ route('edukasi') }}" class="section-btn">➔</a>
   </div>
 
   <div class="edukasi-content">
