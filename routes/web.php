@@ -30,10 +30,6 @@ Route::get('/detail-produk/{id}', function ($id) {
     return view('detailbarang', ['id' => $id]);
 })->name('detail-barang');
 
-Route::get('/edukasi', function () {
-    return view('edukasi');
-})->name('edukasi');
-
 Route::get('/co-detail', function () {
     return view('co-detail');
 });
