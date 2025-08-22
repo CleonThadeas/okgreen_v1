@@ -1,5 +1,9 @@
-<h1>Halo Admin</h1>
-<form method="POST" action="{{ route('logout') }}">
-    @csrf
-    <button type="submit">Logout</button>
-</form>
+@extends('layouts.admin')
+
+@section('title','Dashboard Admin')
+
+@section('content')
+<div class="card">
+  <h2>Dashboard Admin</h2>
+</div>
+@endsection

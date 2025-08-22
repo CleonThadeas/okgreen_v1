@@ -1,68 +1,59 @@
 <?php
-
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use App\Models\User;
-use App\Models\Admin;
-use App\Models\Staff;
 
 class MultiGuardLoginController extends Controller
 {
     public function create()
     {
-        return view('auth.login'); // pakai view Breeze/Fortify bawaan
+        return view('auth.login'); // view login
     }
 
     public function store(Request $request)
-{
-    $request->validate([
-        'email' => 'required|email',
-        'password' => 'required'
-    ]);
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string'
+        ]);
 
-    $email = $request->email;
-    $password = $request->password;
+        $email = $request->email;
+        $password = $request->password;
+        $remember = $request->filled('remember');
 
-    // ADMIN
-    if ($admin = Admin::where('email', $email)->first()) {
-        if (Hash::check($password, $admin->password)) {
-            Auth::guard('admin')->login($admin);
-            return redirect()->route('admin.dashboard');
+        // 1) coba login sebagai admin
+        if (Auth::guard('admin')->attempt(['email' => $email, 'password' => $password], $remember)) {
+            $request->session()->regenerate();
+            return redirect()->intended(route('admin.dashboard'));
         }
-    }
 
-    // STAFF
-    if ($staff = Staff::where('email', $email)->first()) {
-        if (Hash::check($password, $staff->password)) {
-            Auth::guard('staff')->login($staff);
-            return redirect()->route('staff.dashboard');
+        // 2) coba login sebagai staff
+        if (Auth::guard('staff')->attempt(['email' => $email, 'password' => $password], $remember)) {
+            $request->session()->regenerate();
+            return redirect()->intended(route('staff.dashboard'));
         }
-    }
 
-    // USER
-    if ($user = User::where('email', $email)->first()) {
-        if (Hash::check($password, $user->password)) {
-            Auth::guard('web')->login($user);
-            return redirect()->route('dashboard');
+        // 3) coba login sebagai user (web)
+        if (Auth::guard('web')->attempt(['email' => $email, 'password' => $password], $remember)) {
+            $request->session()->regenerate();
+            return redirect()->intended(route('dashboard'));
         }
+
+        // Jika semua gagal, lempar error (biasa)
+        throw ValidationException::withMessages([
+            'email' => ['Credensial tidak cocok dengan data kami.'],
+        ]);
     }
-
-    throw ValidationException::withMessages([
-        'email' => __('auth.failed'),
-    ]);
-}
-
 
     public function destroy(Request $request)
     {
-        foreach (['admin', 'staff', 'web'] as $guard) {
-            Auth::guard($guard)->logout();
-        }
+        // logout dari semua guard supaya aman
+        Auth::guard('web')->logout();
+        Auth::guard('admin')->logout();
+        Auth::guard('staff')->logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
