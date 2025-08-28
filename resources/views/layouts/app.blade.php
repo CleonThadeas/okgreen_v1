@@ -1,36 +1,25 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OkGreen - @yield('title')</title>
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+</head>
+<body>
+    <nav style="background:#4CAF50; padding:10px; color:white;">
+        <a href="{{ route('dashboard') }}" style="margin-right:15px;">Dashboard</a>
+        <a href="{{ route('sell-waste.index') }}" style="margin-right:15px;">Jual Sampah</a>
+        <a href="{{ route('buy-waste.index') }}" style="margin-right:15px;">Beli Sampah</a>
+        <a href="{{ route('edu.index') }}" style="margin-right:15px;">Edukasi</a>
+        <form action="{{ route('logout') }}" method="POST" style="display:inline;">
+            @csrf
+            <button type="submit" style="background:red; color:white; border:none; padding:5px 10px; cursor:pointer;">Logout</button>
+        </form>
+    </nav>
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
-
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
-            @include('layouts.navigation')
-
-            <!-- Page Heading -->
-            @isset($header)
-                <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endisset
-
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
-        </div>
-    </body>
+    <div class="container" style="padding:20px;">
+        @yield('content')
+    </div>
+</body>
 </html>

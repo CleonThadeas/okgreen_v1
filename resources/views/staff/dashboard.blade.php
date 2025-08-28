@@ -1,5 +1,15 @@
-<h1>Halo Staff</h1>
-<form method="POST" action="{{ route('logout') }}">
-    @csrf
-    <button type="submit">Logout</button>
-</form>
+@extends('layouts.staff')
+
+@section('title','Dashboard Staff')
+
+@section('content')
+<div class="card">
+  <h2>Dashboard Staff</h2>
+  <p class="muted">Quick links</p>
+
+  <div style="margin-top:12px;">
+    <a href="{{ route('staff.wastes.index') }}" class="btn">Kelola Sampah</a>
+    <a href="{{ route('staff.sell_requests.index') }}" class="btn">Permintaan Jual</a>
+  </div>
+</div>
+@endsection
