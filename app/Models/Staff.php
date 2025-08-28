@@ -5,13 +5,14 @@ namespace App\Models;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
 
 class Staff extends Authenticatable
 {
-    use Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     protected $table = 'staff';
-    protected $primaryKey = 'id'; // ganti jika di DB kamu kolomnya staff_id
+    protected $primaryKey = 'id'; 
     public $incrementing = true;
     protected $keyType = 'int';
 

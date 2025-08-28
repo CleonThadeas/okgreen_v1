@@ -9,18 +9,18 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-        public function up()
+    public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('role')->default('user');
+            $table->date('date_of_birth')->nullable();
+            $table->enum('gender', ['laki-laki', 'perempuan'])->nullable();
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('role');
+            $table->dropColumn(['date_of_birth', 'gender']);
         });
     }
-
 };
