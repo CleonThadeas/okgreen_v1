@@ -69,4 +69,34 @@ class AuthController extends Controller
     {
         return response()->json($request->user());
     }
+
+    // Update Profile
+    public function updateProfile(Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'name'          => 'sometimes|string|max:100',
+            'email'         => 'sometimes|string|email|unique:users,email,' . $user->id,
+            'password'      => 'sometimes|string|min:6',
+            'phone_number'  => 'nullable|string|max:20',
+            'address'       => 'nullable|string|max:255',
+            'date_of_birth' => 'nullable|date',
+            'gender'        => 'nullable|string|in:laki-laki,perempuan',
+        ]);
+
+        // Kalau ada password, hash dulu
+        if (isset($validated['password'])) {
+            $validated['password'] = bcrypt($validated['password']);
+        }
+
+        // Update semua field tervalidasi
+        $user->fill($validated)->save();
+
+        return response()->json([
+            'message' => 'Profile updated successfully',
+            'user'    => $user->fresh()
+        ]);
+    }
 }

@@ -16,11 +16,18 @@ class User extends Authenticatable
     protected $keyType = 'int';
 
     protected $fillable = [
-        'name', 'email', 'password', 'email_verified_at','phone_number', 'jenis_kelamin',
-    'tanggal_lahir',
+        'name',
+        'email',
+        'password',
+        'phone_number',
+        'address',
+        'date_of_birth',
+        'gender',
     ];
 
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+
 }

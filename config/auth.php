@@ -12,31 +12,38 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        'api' => [
+            'driver' => 'sanctum',
+            'provider' => 'users',
+        ],
+
         'admin' => [
-            'driver' => 'session',
+            'driver' => 'sanctum',
             'provider' => 'admins',
         ],
+
         'staff' => [
-            'driver' => 'session',
+            'driver' => 'sanctum',
             'provider' => 'staff',
         ],
     ],
-
 
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
+
         'admins' => [
             'driver' => 'eloquent',
             'model' => App\Models\Admin::class,
         ],
+
         'staff' => [
             'driver' => 'eloquent',
             'model' => App\Models\Staff::class,
         ],
-
     ],
 
     'passwords' => [
@@ -59,7 +66,6 @@ return [
             'throttle' => 60,
         ],
     ],
-
 
     'password_timeout' => 10800,
 
