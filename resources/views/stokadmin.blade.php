@@ -10,25 +10,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-  <header class="navbar">
-    <div class="logo">OKGreen</div>
-    <nav>
-      <ul>
-        <li><a href="{{ route('berandadmin') }}">Beranda</a></li>
-        <li><a href="{{ route('stokadmin') }}">Stok</a></li>
-        <li><a href="{{ route('banyaksampah') }}">Status</a></li>
-        <li>Edukasi</a></li>
-      </ul>
-      </div>
-    </nav>
-     <div class="right-icons">
-      <i class="fas fa-bell"></i>
-      <i class="fas fa-user-circle"></i>
-    </div>
-  </header>
+  <body class="dashboard-page">
+  @include('partials.navbar')
+    
       <div class="container">
         <div class="header">
-            <button class="back-btn">←</button>
+            <button class="back-btn"><a href="{{ route('stoksampah') }}">←</a></button>
             <h2>Detail stok</h2>
              <input type="text" placeholder="Cari">
         </div>
@@ -52,7 +39,7 @@
           <td>Rp.5.000</td>
           <td>10kg</td>
         <td>
-          <button class="edit">✏</button>
+          <a href="{{ route('stokform') }}" button class="edit">✏</a></button>
           <button class="delete">🗑</button>
         </td>
         </tr>
@@ -63,7 +50,7 @@
           <td>Rp.5.000</td>
           <td>20kg</td>
         <td>
-          <button class="edit">✏</button>
+          <a href="{{ route('stokform') }}" button class="edit">✏</a></button>
           <button class="delete">🗑</button>
         </td>
         </tr>
@@ -74,7 +61,7 @@
           <td>Rp.5.000</td>
           <td>15kg</td>
         <td>
-          <button class="edit">✏</button>
+          <a href="{{ route('stokform') }}" button class="edit">✏</a></button>
           <button class="delete">🗑</button>
         </td>
         </tr>
@@ -85,7 +72,7 @@
           <td>Rp.7.000</td>
           <td>23kg</td>
         <td>
-          <button class="edit">✏</button>
+          <a href="{{ route('stokform') }}" button class="edit">✏</a></button>
           <button class="delete">🗑</button>
         </td>
         </tr>
@@ -96,7 +83,7 @@
           <td>Rp.10.000</td>
           <td>5kg</td>
         <td>
-          <button class="edit">✏</button>
+          <a href="{{ route('stokform') }}" button class="edit">✏</a></button>
           <button class="delete">🗑</button>
         </td>
         </tr>
@@ -108,7 +95,7 @@
           <td>Rp.6.000</td>
           <td>30kg</td>
         <td>
-          <button class="edit">✏</button>
+          <a href="{{ route('stokform') }}" button class="edit">✏</a></button>
           <button class="delete">🗑</button>
         </td>
         </tr>
@@ -120,7 +107,7 @@
           <td>Rp.10.000</td>
           <td>17kg</td>
         <td>
-          <button class="edit">✏</button>
+          <a href="{{ route('stokform') }}" button class="edit">✏</a></button>
           <button class="delete">🗑</button>
         </td>
         </tr>

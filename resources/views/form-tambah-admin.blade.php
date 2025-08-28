@@ -5,35 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="{{ asset('css/form-tambah-admin.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/navbar.css') }}">
+      <title>Form Tambah Admin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-    <title>Form Tambah Admin</title>
-</head>
-<body>
-    <div>
-        <header class="navbar">
-    <div class="logo-wrapper">
-      <span class="logo">OKGreen</span>
-    </div>
-    <nav>
-      <ul>
-        <li><a href="{{ route('berandadmin') }}">Beranda</a></li>
-        <li><a href="{{ route('stokadmin') }}">Stok</a></li>
-        <li><a href="{{ route('banyaksampah') }}">Status</a></li>
-        <li>Edukasi</a></li>
-      </ul>
-    </nav>
-    <div class="right-icons">
-      <i class="fas fa-bell"></i>
-      <i class="fas fa-user-circle"></i>
-    </div>
-  </header>
-
+  <body class="dashboard-page">
+  @include('partials.navbar')
 <div class="container">
   <div class="header">
-    <button class="back-btn">←</button>
+    <button class="back-btn"><a href="{{ route('detailadmin') }}">←</a></button>
     <h2>Detail Admin</h2>
   </div>
         <div class="form-container">

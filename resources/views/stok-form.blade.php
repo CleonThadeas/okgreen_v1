@@ -11,8 +11,7 @@
 
 <div class="form-container">
     <div class="product-header">
-        <img src="{{ asset('img/bungkusrokok.jpeg') }}" alt="Bungkus Rokok">
-        <h2>Bungkus Rokok <span class="edit-icon">✏️</span></h2>
+        <h2>Bungkus Rokok <button class="edit">✏</button></h2>
     </div>
 
     <form action="" method="POST">

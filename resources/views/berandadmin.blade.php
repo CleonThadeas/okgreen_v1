@@ -5,29 +5,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Beranda</title>
+
   <link rel="stylesheet" href="{{ asset('css/beranda-admin.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/navbar.css') }}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-  <header class="navbar">
-    <div class="logo-wrapper">
-      <span class="logo">OKGreen</span>
-    </div>
-    <nav>
-      <ul>
-        <li><a href="{{ route('berandadmin') }}">Beranda</a></li>
-        <li><a href="{{ route('stokadmin') }}">Stok</a></li>
-        <li><a href="{{ route('stoksampah') }}">Status</a></li>
-        <li>Edukasi</a></li>
-      </ul>
-    </nav>
-    <div class="right-icons">
-      <i class="fas fa-bell"></i>
-      <i class="fas fa-user-circle"></i>
-    </div>
-  </header>
-
+  <body class="dashboard-page">
+  @include('partials.navbar')
+    
   <div class="container">
     <div class="header">
       <h2>Beranda</h2>
@@ -48,7 +33,7 @@
           <h3>Banyak Sampah</h3>
           <span class="icon blue">📋</span>
         </div>
-        <h2><a href="{{ route('banyaksampah') }}">132</a></h2>
+        <h2><a href="{{ route('stoksampah') }}">132</a></h2>
         <p><span class="text-bold">32</span> Belum Selesai</p>
       </div>
       <div class="card">

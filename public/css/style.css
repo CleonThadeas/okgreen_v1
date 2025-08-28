@@ -298,6 +298,7 @@ body {
 
 
 .footer {
+
     background-color: #065f46; /* Tailwind: bg-green-800 */
     color: white;
     font-size: 0.875rem;
@@ -332,7 +333,64 @@ body {
     text-align: center;
     margin-top: 1.5rem;
     color: #bbf7d0; /* Tailwind: text-green-200 */
+  background-color: #5E7C65; /* Tailwind: bg-green-800 */
+  color: #fff;
+  font-size: 0.875rem;
+  padding: 2.5rem 0;
 }
+
+.footer-grid {
+  max-width: 72rem;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 2rem; /* jarak antar kolom */
+  padding: 0 2rem;
+}
+
+.footer-brand {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.footer-heading {
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.footer-grid ul {
+  list-style: none;   /* hapus bullet */
+  padding: 0;
+  margin: 0;
+}
+
+.footer-grid li {
+  margin-bottom: 0.5rem;
+}
+
+.footer-grid a {
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-grid a:hover {
+  color: #bbf7d0; /* hijau muda saat hover */
+}
+
+.email-link {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.footer-bottom {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: #bbf7d0; /* Tailwind: text-green-200 */
+}
+
 
 .faq-scroll-container {
     max-height: 400px; /* Bisa disesuaikan */

@@ -1,0 +1,400 @@
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: #fff;
+  color: #202020;
+}
+
+
+/* Hero Section */
+.hero {
+  position: relative;
+  text-align: center;
+  margin: 30px auto;     /* beri jarak 30px dari header */
+  width: 85%;            /* perkecil sedikit dari 90% biar nggak terlalu lebar */
+  max-width: 1100px;     /* batasi ukuran maksimal */
+}
+
+.hero-slider {
+  position: relative;
+  overflow: hidden;
+}
+
+.carousel-slide {
+  display: none;
+}
+
+.carousel-slide.active {
+  display: block;
+}
+
+.hero img {
+  width: 100%;
+  border-radius: 12px;   /* lebih lembut */
+  max-height: 450px;     /* batasi tinggi gambar */
+  object-fit: cover;     /* biar proporsional */
+}
+
+.carousel-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.indicator {
+  width: 10px;
+  height: 10px;
+  background: #79AC78;
+  opacity: 0.3;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.indicator.active {
+  background: #618264;
+  opacity: 1;
+}
+
+
+
+/* ================== PRODUK SECTION ================== */
+.produk {
+  padding: 60px 80px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.section-icon-right {
+  width: 40px;  /* agak lebih besar */
+  height: 40px;
+}
+
+.section-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.section-btn {
+  font-size: 24px;
+  text-decoration: none;
+  color: #618264;
+}
+
+.produk-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 25px;
+  margin-top: 30px;
+}
+
+/* Card produk */
+.produk-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+}
+
+.produk-card img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.produk-card p {
+  font-size: 16px;
+  margin: 10px 0;
+}
+
+.produk-card span {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Hover effect */
+.produk-card:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+/* ================== SCROLL REVEAL ================== */
+.produk-card, .reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s ease;
+}
+
+.produk-card.active, .reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ================== PLAY BUTTON ================== */
+.play-btn {
+  background: #618264;
+  border: none;
+  color: white;
+  font-size: 28px;
+  border-radius: 50%;
+  width: 70px;
+  height: 70px;
+  cursor: pointer;
+  position: relative;
+  outline: none;
+  transition: transform 0.2s;
+}
+
+/* Efek pulse */
+.play-btn::after {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 2px solid rgba(97,130,100,0.5);
+  animation: pulse 2s infinite;
+}
+
+/* Klik bounce */
+.play-btn.clicked {
+  transform: scale(0.9);
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.8); opacity: 0.7; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+
+/* ===== Edukasi Section ===== */
+.edukasi {
+  padding: 40px 60px;
+  background: #fff;
+}
+
+.edukasi .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.edukasi .section-header h2 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+}
+
+.edukasi .section-btn {
+  font-size: 24px;
+  text-decoration: none;
+  color: #2f4f2f;
+}
+
+/* Konten edukasi jadi column */
+.edukasi-content {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  align-items: center;
+}
+
+/* Video */
+.edukasi-video {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+/* Atur iframe biar full width */
+.edukasi-video iframe {
+  width: 100%;
+  max-width: 1200px;  /* biar lebar, bisa dibesarkan lagi kalau mau full */
+  height: 500px;      /* sesuaikan tinggi */
+  border-radius: 16px;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
+
+
+/* Cards wrapper */
+.edukasi-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
+/* Single card */
+.edukasi-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.edukasi-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+}
+
+.edukasi-card img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 15px;
+}
+
+.edukasi-card h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #2f4f2f;
+}
+
+.edukasi-card p {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.5;
+}
+
+@media (max-width: 992px) {
+  .edukasi-video iframe {
+    height: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .edukasi-video iframe {
+    height: 250px;
+  }
+}
+
+.footer {
+  background-color: #5E7C65; /* Tailwind: bg-green-800 */
+  color: #fff;
+  font-size: 0.875rem;
+  padding: 2.5rem 0;
+}
+
+.footer-grid {
+  max-width: 72rem;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 2rem; /* jarak antar kolom */
+  padding: 0 2rem;
+}
+
+.footer-brand {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.footer-heading {
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.footer-grid ul {
+  list-style: none;   /* hapus bullet */
+  padding: 0;
+  margin: 0;
+}
+
+.footer-grid li {
+  margin-bottom: 0.5rem;
+}
+
+.footer-grid a {
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-grid a:hover {
+  color: #bbf7d0; /* hijau muda saat hover */
+}
+
+.email-link {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.footer-bottom {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: #bbf7d0; /* Tailwind: text-green-200 */
+}
+
+
+
+/* Greeting Section */
+.greeting {
+  text-align: center;
+  padding: 25px 15px;
+  background: #f8fdf8;
+  border-bottom: 1px solid #e0e0e0;
+  animation: fadeInDown 0.8s ease;
+}
+
+.greeting h2 {
+  color: #2e7d32;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.greeting p {
+  color: #555;
+  font-size: 16px;
+  margin: 0;
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.modal {
+  display: none; 
+  position: fixed; 
+  z-index: 9999; 
+  padding-top: 60px; 
+  left: 0; 
+  top: 0; 
+  width: 100%; 
+  height: 100%; 
+  background-color: rgba(0,0,0,0.8);
+}
+
+.modal-content {
+  margin: auto;
+  display: block;
+  max-width: 80%;
+  max-height: 80%;
+  border-radius: 8px;
+}
+
+.close {
+  position: absolute;
+  top: 20px;
+  right: 35px;
+  color: #fff;
+  font-size: 40px;
+  font-weight: bold;
+  cursor: pointer;
+}
