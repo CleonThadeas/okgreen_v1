@@ -1,0 +1,215 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #fff;
+}
+
+/* Section produk */
+.produk-section {
+    padding: 40px;
+}
+
+.produk-section h2 {
+    margin-bottom: 20px;
+}
+
+/* Grid produk */
+.produk-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 25px;
+}
+
+/* Card produk */
+.produk-card {
+    display: block;
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    box-shadow: 0px 3px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+}
+
+.produk-card:hover {
+    transform: scale(1.03);
+}
+
+/* Gambar produk */
+.produk-img-container {
+    position: relative;
+}
+
+.produk-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: contain;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* Deskripsi & harga */
+.produk-desc {
+    font-size: 14px;
+    margin: 8px 0;
+}
+.produk-price {
+    font-weight: bold;
+    font-size: 14px;
+}
+.produk-stock {
+    font-size: 13px;
+    margin-top: 5px;
+    color: #555;
+}
+
+/* Tombol tambah/hapus */
+.produk-action {
+    margin-top: 8px;
+}
+.tambah-btn {
+    background: #5E7C65;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.tambah-btn:hover {
+    background: #4e6653;
+}
+.tambah-btn.disabled,
+.stok-habis .tambah-btn {
+    background: #95a5a6;
+    cursor: not-allowed;
+}
+
+/* Label stok habis */
+.stok-habis-label {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #e74c3c;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Tombol pilih beberapa */
+.pilih-beberapa-btn {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    z-index: 999;
+}
+.icon-pilih {
+    width: 20px;
+    height: 20px;
+}
+
+/* Popup tutorial */
+.popup {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.4);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+.popup-content {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    max-width: 400px;
+    text-align: left;
+    position: relative;
+}
+.popup-close {
+    position: absolute;
+    top: 10px; right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+.popup-button {
+    background: #5E7C65;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+/* Bottom bar */
+/* Bottom bar */
+.bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0; /* biar full width */
+    width: 100%;
+    background: #fff;
+    border-top: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 16px;
+    box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
+    z-index: 1000;
+    box-sizing: border-box; /* biar padding dihitung */
+}
+
+.bottom-bar #selected-count {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+.bottom-bar button {
+    background: #4e7057;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease-in-out;
+    white-space: nowrap; /* biar teks ga pecah */
+}
+
+.bottom-bar button:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+}
+
+
+/* Animasi gambar terbang */
+.fly-image {
+    position: fixed;
+    width: 80px;
+    height: 80px;
+    z-index: 9999;
+    pointer-events: none;
+    transition: all 0.8s ease-in-out;
+    border-radius: 8px;
+    object-fit: cover;
+}

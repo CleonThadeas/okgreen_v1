@@ -1,0 +1,125 @@
+/* Reset dasar */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background: #f8f8f8;
+  color: #333;
+}
+
+/* Container utama */
+.container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Konten */
+.content {
+  width: 100%;
+  max-width: 700px;       /* biar gak kepanjangan */
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px 24px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.content h1 {
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: #2d2d2d;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+/* Foto profil */
+.profile-pic {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.profile-pic img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ccc;
+}
+
+.profile-pic .name {
+  margin: 10px 0 2px;
+  font-weight: 600;
+}
+
+.profile-pic .note {
+  font-size: 13px;
+  color: #777;
+}
+
+/* Form */
+form {
+  width: 100%;
+}
+
+/* Dua kolom untuk nama depan & belakang */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+/* Label + input */
+form label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+form input,
+form select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+  background: #fff;
+  margin-bottom: 15px;
+}
+
+/* Tombol */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn.cancel {
+  background: #ccc;
+  color: #333;
+}
+
+.btn.cancel:hover {
+  background: #b3b3b3;
+}
+
+.btn.save {
+  background: #4a6b52;
+  color: #fff;
+}
+
+.btn.save:hover {
+  background: #3b5642;
+}

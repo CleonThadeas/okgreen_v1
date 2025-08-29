@@ -1,0 +1,258 @@
+/* =========================
+   GLOBAL STYLE
+========================= */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;  
+  background: #EAF6EB;
+}
+
+main, .jual-container {
+  margin-top: 10px; /* jarak dari header */
+}
+
+/* =========================
+   FORM CONTAINER AS CARD
+========================= */
+.jual-container {
+  background: #fff;
+  padding: 30px 40px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 980px;       /* form jadi tidak kepanjangan */
+  margin: 30px auto;      /* center di tengah layar */
+  box-sizing: border-box;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12); /* efek card */
+}
+
+
+.jual-container h2 {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.jual-container label {
+  font-weight: 600;
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 5px;
+}
+
+.jual-container select,
+.jual-container input,
+.jual-container textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.berat-container {
+  display: flex;
+  gap: 10px;
+}
+
+.berat-container input {
+  flex: 2;
+}
+
+.berat-container select {
+  flex: 1;
+}
+
+.upload-box {
+  border: 1px dashed #aaa;
+  text-align: center;
+  padding: 40px;
+  cursor: pointer;
+  border-radius: 6px;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.upload-box:hover {
+  background: #f9f9f9;
+}
+
+.jual-btn {
+  background: #5f876b;
+  color: #fff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.jual-btn:hover {
+  background: #4e7057;
+}
+
+/* =========================
+   USER GREETING (HEADER)
+========================= */
+.user-greeting {
+  width: 100%;
+  height: 70px;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.user-greeting .logo {
+  height: 45px;
+  margin-right: 10px;
+}
+
+.user-greeting .brand {
+  font-weight: bold;
+  font-size: 20px;
+  color: #3B755F;
+}
+
+.user-greeting .welcome {
+  font-size: 16px;
+  color: #333;
+}
+
+/* =========================
+   POPUP OVERLAY
+========================= */
+.popup-overlay {
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.popup-overlay.active {
+  pointer-events: auto;
+  opacity: 1;
+}
+
+/* =========================
+   POPUP CARD
+========================= */
+.popup-card {
+  background: #fff;
+  border-radius: 16px;
+  max-width: 360px;
+  width: 90%;
+  text-align: center;
+  transform: translateY(25px);
+  opacity: 0;
+  transition: all 0.35s ease-in-out;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15),
+              0 2px 6px rgba(0,0,0,0.1);
+  overflow: hidden; /* biar header ikut radius */
+}
+
+.popup-overlay.active .popup-card {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* =========================
+   POPUP HEADER
+========================= */
+.popup-header {
+  height: 96px;
+  background: #EAF6EB;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+}
+
+.popup-header img {
+  max-height: 70px;
+}
+
+/* =========================
+   POPUP BODY
+========================= */
+.popup-body {
+  text-align: center;
+  padding: 20px;
+}
+
+.popup-body h3 {
+  color: #2e5d43;
+  font-size: 20px;
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+
+.popup-body p {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.4;
+  margin: 0 auto 10px;
+}
+
+/* =========================
+   POPUP FOOTER
+========================= */
+.popup-footer {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 20px 20px;
+}
+
+.popup-footer button,
+.popup-footer a {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}
+
+/* Tombol Ignore */
+.btn-ignore {
+  background: #fff;
+  border: 1px solid #D9DBE9;
+  color: #514F6E;
+}
+
+/* Tombol Accept */
+.btn-accept {
+  background: linear-gradient(180deg, #79AC78 0%, #618264 100%);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Hover efek */
+.popup-footer button:hover,
+.popup-footer a:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 5px 12px rgba(0,0,0,0.18);
+}
+
+/* =========================
+   ANIMASI
+========================= */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
