@@ -6,16 +6,19 @@
         <img src="{{ asset('img/logo-greenleaf.png') }}" alt="Logo">
     </div>
     <nav>
-        <a href="{{ route('beranda') }}" class="{{ Route::is('beranda') ? 'active' : '' }}">beranda</a>
-        <a href="{{ route('jual-barang') }}" class="{{ Route::is('jual-barang') ? 'active' : '' }}">jual barang</a>
-        <a href="{{ route('belibarang') }}" class="{{ Route::is('belibarang') ? 'active' : '' }}">beli barang</a>
+        <a href="{{ route('dashboard') }}" class="{{ Route::is('dashboard') ? 'active' : '' }}">beranda</a>
+        <a href="{{ route('sell-waste.index') }}" class="{{ Route::is('sell-waste.index') ? 'active' : '' }}">jual barang</a>
+        <a href="{{ route('buy-waste.index') }}" class="{{ Route::is('buy-waste.index') ? 'active' : '' }}">beli barang</a>
     </nav>
-    <div class="icons">
+    {{-- 
+<div class="icons">
     <a href="{{ route('notifikasi') }}">
         <img src="{{ asset('img/bell.png') }}" alt="Notifikasi">
     </a>
     <a href="{{ route('profil') }}">
         <img src="{{ asset('img/user.png') }}" alt="Profil">
     </a>
-    </div>
+</div>
+--}}
+
 </header>

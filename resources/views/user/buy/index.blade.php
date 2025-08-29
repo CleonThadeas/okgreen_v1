@@ -1,156 +1,198 @@
-@extends('layouts.app')
+{{-- resources/views/user/belibarang.blade.php --}}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beli Barang</title>
+    <link rel="stylesheet" href="{{ asset('css/belibarang.css') }}?v={{ time() }}">
+</head>
+<body>
 
-@section('title', 'Beli Sampah')
+    {{-- Include header --}}
+    @include('partials.header')
 
-@section('content')
-<div class="container">
-    <h2 class="mb-4">Daftar Sampah Tersedia</h2>
+    <!-- Tombol Pilih Beberapa -->
+    <div class="pilih-beberapa-btn" onclick="togglePopup()">
+        <img src="{{ asset('img/info.png') }}" alt="Pilih" class="icon-pilih">
+        Pilih Beberapa
+    </div>
 
-    @if(session('error')) <div style="color:red">{{ session('error') }}</div> @endif
-    @if(session('success')) <div style="color:green">{{ session('success') }}</div> @endif
+    <!-- Popup Tutorial -->
+    <div id="popup-pilih" class="popup" style="display:none;">
+        <div class="popup-content">
+            <span class="popup-close" onclick="togglePopup()">&times;</span>
+            <h2>Pelajari !</h2>
+            <p>Cara memilih beberapa barang untuk checkout:</p>
+            <ol>
+                <li>Klik button "Tambah" yang terdapat di bawah produk, untuk memilih produk</li>
+            </ol>
+            <p>Setelah memilih, kamu bisa lanjutkan checkout seperti biasa.</p>
+            <button class="popup-button" onclick="togglePopup()">Mengerti</button>
+        </div>
+    </div>
 
-    <form id="multiCheckoutForm" action="{{ route('checkout.prepare') }}" method="POST">
-      @csrf
-
-      <table border="1" cellpadding="10" cellspacing="0" width="100%">
-          <thead>
-              <tr>
-                  <th>Pilih</th>
-                  <th>Foto</th>
-                  <th>Kategori</th>
-                  <th>Jenis Sampah</th>
-                  <th>Harga / Kg</th>
-                  <th>Stok Tersedia (Kg)</th>
-                  <th>Jumlah (Kg)</th>
-              </tr>
-          </thead>
-          <tbody>
-              @forelse($wastes as $waste)
-                  @php
-                    $id = $waste->id;
-                    $stock = (int) ($waste->stock->available_weight ?? 0);
+    {{-- Konten Produk --}}
+    <section class="produk-section">
+        <h2>Produk Kami</h2>
+        <div class="produk-container">
+            @forelse($wastes as $waste)
+                @php
+                    $stok = (int) ($waste->stock->available_weight ?? 0);
                     $price = $waste->price_per_unit ?? 0;
-                  @endphp
-                  <tr data-id="{{ $id }}">
-                      <td style="text-align:center;">
-                        @if($stock <= 0)
-                          <input type="checkbox" disabled>
-                        @else
-                          <input class="select-item" type="checkbox" name="items[{{ $id }}][selected]" value="1" id="sel_{{ $id }}">
+                @endphp
+                <div class="produk-card {{ $stok == 0 ? 'stok-habis' : '' }}"
+                     data-id="{{ $waste->id }}"
+                     data-name="{{ $waste->type_name }}"
+                     data-price="{{ $price }}"
+                     data-stock="{{ $stok }}"
+                     data-deskripsi="{{ $waste->description ?? '' }}">
+                    
+                    <div class="produk-img-container">
+                        <a href="{{ route('detail-barang', ['id' => $waste->id]) }}">
+                            @if(!empty($waste->photo))
+                                <img src="{{ asset('storage/'.$waste->photo) }}" alt="{{ $waste->type_name }}">
+                            @else
+                                <img src="{{ asset('img/no-image.png') }}" alt="No Image">
+                            @endif
+                        </a>
+                        @if($stok == 0)
+                            <span class="stok-habis-label">Stok Habis</span>
                         @endif
-                      </td>
+                    </div>
 
-                      <td>
-                        @if($waste->photo)
-                          <img src="{{ asset('storage/'.$waste->photo) }}" width="80">
-                        @else
-                          <span>Tidak ada foto</span>
-                        @endif
-                      </td>
+                    <div class="produk-desc">{{ $waste->type_name }}</div>
+                    <div class="produk-price">Rp {{ number_format($price, 0, ',', '.') }}</div>
+                    <div class="produk-stock">Stok: {{ $stok }}</div>
 
-                      <td>{{ $waste->category->category_name ?? '-' }}</td>
-                      <td>{{ $waste->type_name }}</td>
-                      <td>Rp {{ number_format($price, 0, ',', '.') }}</td>
+                    <div class="produk-action">
+                        <button class="tambah-btn" {{ $stok == 0 ? 'disabled' : '' }}>
+                            {{ $stok == 0 ? 'Tidak Tersedia' : 'Tambah' }}
+                        </button>
+                    </div>
+                </div>
+            @empty
+                <p>Belum ada produk tersedia.</p>
+            @endforelse
+        </div>
+    </section>
 
-                      <td>
-                        {{ $stock }}
-                        @if($stock <= 0)
-                          <span style="color:red; font-weight:bold; margin-left:8px;">(Stok Habis)</span>
-                        @endif
-                      </td>
+    <!-- Bottom bar -->
+    <div class="bottom-bar" id="bottom-bar">
+        <span id="selected-count">0 produk dipilih</span>
+        <button id="checkout-btn">Checkout</button>
+    </div>
 
-                      <td>
-                        @if($stock > 0)
-                          <input 
-                            type="number" 
-                            name="items[{{ $id }}][quantity]" 
-                            min="1" 
-                            max="{{ $stock }}" 
-                            placeholder="0"
-                            value=""
-                            oninput="validasiJumlah(this, {{ $stock }})"
-                            style="width:80px; padding:4px;"
-                          > Kg
-                        @else
-                          <span style="color:red">Tidak tersedia</span>
-                        @endif
-                      </td>
-                  </tr>
-              @empty
-                  <tr>
-                      <td colspan="7" class="text-center">Belum ada sampah tersedia.</td>
-                  </tr>
-              @endforelse
-          </tbody>
-      </table>
+    {{-- ===== Inline JS (digabung, fungsi & perilaku sama seperti versi sebelumnya) ===== --}}
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const tambahButtons = document.querySelectorAll('.tambah-btn');
+        const selectedCountEl = document.getElementById('selected-count');
+        const checkoutBtn = document.getElementById('checkout-btn');
+        let selectedProducts = new Set();
+        let productData = {}; // Menyimpan data detail produk
 
-      <div style="margin-top:12px;">
-        <button id="btnCheckoutNow" type="submit" class="btn">Checkout Sekarang</button>
-      </div>
-    </form>
-</div>
+        // handler klik tombol Tambah/Hapus
+        tambahButtons.forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                const card = btn.closest('.produk-card');
+                const productId = card.dataset.id;
+                const productName = card.dataset.name;
+                const productImg = card.querySelector('img').src;
+                const productDesc = card.dataset.deskripsi || '';
+                const stok = parseInt(card.dataset.stock);
 
-<script>
-function validasiJumlah(input, stock) {
-    let val = parseInt(input.value);
-
-    // Jika kosong → jangan ubah
-    if (isNaN(val)) return;
-
-    // Hanya angka bulat
-    if (!Number.isInteger(val)) {
-        input.value = Math.floor(val);
-    }
-
-    // Tidak boleh < 1
-    if (val < 1) {
-        input.value = "";
-        return;
-    }
-
-    // Tidak boleh lebih besar dari stok
-    if (val > stock) {
-        input.value = stock;
-    }
-
-    // Auto centang checkbox produk
-    const row = input.closest('tr');
-    const chk = row.querySelector('.select-item');
-    if (chk && !chk.checked) {
-        chk.checked = true;
-    }
-}
-
-document.getElementById('multiCheckoutForm').addEventListener('submit', function(e){
-    let anySelected = false;
-
-    document.querySelectorAll('tbody tr').forEach(function(row){
-        const chk = row.querySelector('.select-item');
-        if (chk && chk.checked) {
-            anySelected = true;
-            const qtyInput = row.querySelector('input[type=number]');
-            if (qtyInput) {
-                let q = parseInt(qtyInput.value);
-                let stock = parseInt(row.cells[5].innerText) || 0;
-
-                if (isNaN(q) || q < 1) {
-                    alert('Jumlah harus minimal 1 untuk produk: ' + row.cells[3].innerText);
-                    e.preventDefault(); return false;
+                // jika stok 0, beri peringatan (sesuai salah satu versi sebelumnya)
+                if (stok === 0) {
+                    alert('Produk ini stoknya habis!');
+                    return;
                 }
-                if (q > stock) {
-                    alert('Stok tidak cukup untuk produk: ' + row.cells[3].innerText +
-                          '\nStok: ' + stock + ' kg. Anda meminta: ' + q + ' kg.');
-                    qtyInput.value = stock;
-                    e.preventDefault(); return false;
+
+                if (selectedProducts.has(productId)) {
+                    // hapus pilihan
+                    selectedProducts.delete(productId);
+                    delete productData[productId];
+                    btn.textContent = 'Tambah';
+                    btn.style.backgroundColor = ''; 
+                } else {
+                    // tambah pilihan
+                    selectedProducts.add(productId);
+                    productData[productId] = {
+                        id: productId,
+                        nama: productName,
+                        gambar: productImg,
+                        deskripsi: productDesc
+                    };
+                    btn.textContent = 'Hapus';
+                    btn.style.backgroundColor = '#f44336'; 
+
+                    // Animasi "terbang" ke bottom bar (jika CSS mendukung .fly-image)
+                    flyToCart(card.querySelector('img'));
                 }
-            }
+
+                selectedCountEl.textContent = `${selectedProducts.size} produk dipilih`;
+            });
+        });
+
+        // fungsi animasi: clone gambar, terbang ke bottom bar, lalu remove
+        function flyToCart(imgElement) {
+            if (!imgElement) return;
+            const bottomBar = document.getElementById('bottom-bar');
+            const imgClone = imgElement.cloneNode(true);
+            const rect = imgElement.getBoundingClientRect();
+            const barRect = bottomBar.getBoundingClientRect();
+
+            imgClone.classList.add('fly-image');
+            imgClone.style.position = 'fixed';
+            imgClone.style.top = rect.top + 'px';
+            imgClone.style.left = rect.left + 'px';
+            imgClone.style.width = rect.width + 'px';
+            imgClone.style.height = rect.height + 'px';
+            imgClone.style.transition = 'all .6s ease-in-out';
+            imgClone.style.zIndex = 9999;
+            document.body.appendChild(imgClone);
+
+            // lakukan animasi ke posisi bottom bar
+            setTimeout(() => {
+                imgClone.style.top = (barRect.top + 8) + 'px';
+                imgClone.style.left = (barRect.left + barRect.width / 2 - 20) + 'px';
+                imgClone.style.width = '30px';
+                imgClone.style.height = '30px';
+                imgClone.style.opacity = '0.5';
+            }, 10);
+
+            setTimeout(() => {
+                if (imgClone && imgClone.parentNode) imgClone.parentNode.removeChild(imgClone);
+            }, 800);
         }
-    });
 
-    if (!anySelected) {
-        alert('Pilih minimal satu produk untuk checkout.');
-        e.preventDefault(); return false;
-    }
-});
-</script>
-@endsection
+        // event checkout: jika kosong, alert; jika ada, encode data dan redirect
+        if (checkoutBtn) {
+            checkoutBtn.addEventListener('click', function () {
+                if (selectedProducts.size === 0) {
+                    alert('Pilih minimal 1 produk sebelum checkout.');
+                    return;
+                }
+
+                // Encode data produk ke JSON & kirim via query string
+                const data = encodeURIComponent(JSON.stringify(Object.values(productData)));
+                window.location.href = `/co-detail?data=${data}`;
+            });
+        }
+
+        // toggle popup (tombol "Pilih Beberapa")
+        window.togglePopup = function () {
+            const popup = document.getElementById('popup-pilih');
+            if (!popup) return;
+            popup.style.display = (popup.style.display === 'flex' || popup.style.display === 'block') ? 'none' : 'flex';
+            // jika ingin posisikan tengah, biarkan CSS menangani; JS di sini hanya toggle display
+        };
+
+        // tambahan: pastikan popup close (jika ada tombol lain)
+        const popupClose = document.querySelectorAll('.popup-close');
+        popupClose.forEach(el => el.addEventListener('click', togglePopup));
+    });
+    </script>
+</body>
+</html>

@@ -16,7 +16,7 @@ use App\Http\Controllers\Staff\WasteManagementController as StaffWasteCtrl;
 use App\Http\Controllers\CheckoutController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('LandingPage');
 });
 
 // ================== LOGIN & LOGOUT ==================
@@ -31,7 +31,7 @@ Route::post('/logout', [MultiGuardLoginController::class, 'destroy'])
     ->name('logout');
 
 // ================== DASHBOARD PER GUARD ==================
-Route::middleware(['auth:web'])->get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
+Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
 Route::middleware(['auth:admin'])->get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 Route::middleware(['auth:staff'])->get('/staff/dashboard', [StaffDashboardController::class, 'index'])->name('staff.dashboard');
 
@@ -47,9 +47,10 @@ Route::middleware(['auth:web'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+
 // ================== USER (web guard) - Pembelian Sampah ==================
 // User (explicit web guard)
-Route::middleware('auth:web')->group(function(){
+// Route::middleware('auth:web')->group(function()//
     Route::get('/buy-waste', [WasteController::class, 'index'])->name('buy-waste.index');
     Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -62,7 +63,6 @@ Route::middleware('auth:web')->group(function(){
     Route::post('/checkout/prepare', [CheckoutController::class, 'prepare'])->name('checkout.prepare');
     Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout.form');
     Route::post('/checkout/confirm', [CheckoutController::class, 'confirm'])->name('checkout.confirm');
-});
 
 
 // ================== STAFF ==================
