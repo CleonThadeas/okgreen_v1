@@ -18,64 +18,64 @@ class CheckoutController extends Controller
      * validasi stok lalu simpan ke session sebagai 'checkout.items'
      */
     public function prepare(Request $r)
-{
-    $r->validate([
-        'items' => 'required|array',
-    ]);
+    {
+        $r->validate([
+            'items' => 'required|array',
+        ]);
 
-    $posted = $r->input('items'); // items[waste_id][selected], items[waste_id][quantity]
-    $items = [];
-    $allowed = [1,2,3,4,5,6];
+        $posted = $r->input('items');
+        $items = [];
 
-    foreach ($posted as $wasteId => $data) {
-        if (!isset($data['selected'])) continue;
+        foreach ($posted as $wasteId => $data) {
+            if (!isset($data['selected'])) continue;
 
-        // quantity must be provided and be integer in allowed set
-        $qtyRaw = $data['quantity'] ?? null;
-        if ($qtyRaw === null) {
-            return back()->with('error','Jumlah tidak dipilih untuk produk ID '.$wasteId);
+            // Ambil qty
+            $qtyRaw = $data['quantity'] ?? null;
+            if ($qtyRaw === null) {
+                return back()->with('error','Jumlah tidak dipilih untuk produk ID '.$wasteId);
+            }
+
+            $qty = (int) $qtyRaw;
+
+            // Validasi jumlah
+            if ($qty < 1) {
+                return back()->with('error','Jumlah minimal 1 untuk produk ID '.$wasteId);
+            }
+
+            $type = WasteType::with('stock','category')->find($wasteId);
+            if (!$type) {
+                return back()->with('error','Produk tidak ditemukan: ID '.$wasteId);
+            }
+
+            $stockQty = (int) ($type->stock->available_weight ?? 0);
+            if ($stockQty <= 0) {
+                return back()->with('error','Stok habis untuk: '.$type->type_name);
+            }
+            if ($qty > $stockQty) {
+                return back()->with('error','Permintaan melebihi stok untuk: '.$type->type_name);
+            }
+
+            $price = $type->price_per_unit ?? 0;
+            $subtotal = $price * $qty;
+
+            $items[] = [
+                'waste_type_id' => $type->id,
+                'type_name' => $type->type_name,
+                'category_name' => $type->category->category_name ?? '-',
+                'quantity' => $qty,
+                'price_per_unit' => $price,
+                'subtotal' => $subtotal,
+            ];
         }
 
-        $qty = (int) $qtyRaw;
-        if (!in_array($qty, $allowed, true)) {
-            return back()->with('error','Jumlah tidak valid untuk produk ID '.$wasteId.'. Pilih antara 1 sampai 6 kg.');
+        if (empty($items)) {
+            return back()->with('error','Tidak ada item yang dipilih untuk checkout.');
         }
 
-        $type = WasteType::with('stock','category')->find($wasteId);
-        if (!$type) {
-            return back()->with('error','Produk tidak ditemukan: ID '.$wasteId);
-        }
+        $r->session()->put('checkout.items', $items);
 
-        $stockQty = (int) ($type->stock->available_weight ?? 0);
-        if ($stockQty <= 0) {
-            return back()->with('error','Stok habis untuk: '.$type->type_name);
-        }
-        if ($qty > $stockQty) {
-            return back()->with('error','Permintaan melebihi stok untuk: '.$type->type_name);
-        }
-
-        $price = $type->price_per_unit ?? 0;
-        $subtotal = $price * $qty;
-
-        $items[] = [
-            'waste_type_id' => $type->id,
-            'type_name' => $type->type_name,
-            'category_name' => $type->category->category_name ?? '-',
-            'quantity' => $qty,
-            'price_per_unit' => $price,
-            'subtotal' => $subtotal,
-        ];
+        return redirect()->route('checkout.form');
     }
-
-    if (empty($items)) {
-        return back()->with('error','Tidak ada item yang dipilih untuk checkout.');
-    }
-
-    $r->session()->put('checkout.items', $items);
-
-    return redirect()->route('checkout.form');
-}
-
 
     /**
      * Tampilkan form checkout (alamat, metode pembayaran, ringkasan)
@@ -84,12 +84,11 @@ class CheckoutController extends Controller
     {
         $items = $r->session()->get('checkout.items', []);
         if (empty($items)) {
-            return redirect()->route('buy-waste.index')->with('error','Keranjang checkout kosong.');
+            return redirect()->route('buy.index')->with('error','Keranjang checkout kosong.');
         }
 
         $subtotal = collect($items)->sum('subtotal');
 
-        // nilai ongkir: pickup gratis, delivery ada biaya
         $shippingPickup = 0;
         $shippingDelivery = 10000;
 
@@ -100,7 +99,7 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Konfirmasi checkout: validasi lagi, buat transaksi, kurangi stok (lockForUpdate)
+     * Konfirmasi checkout: validasi lagi, buat transaksi, kurangi stok
      */
     public function confirm(Request $r)
     {
@@ -112,11 +111,11 @@ class CheckoutController extends Controller
         $user = $r->user();
         $items = $r->session()->get('checkout.items', []);
         if (empty($items)) {
-            return redirect()->route('buy-waste.index')->with('error','Tidak ada item untuk diproses.');
+            return redirect()->route('buy.index')->with('error','Tidak ada item untuk diproses.');
         }
 
         $shippingPickup = 0;
-        $shippingDelivery = 10000; // dummy
+        $shippingDelivery = 10000;
         $shipping = ($r->address_type === 'delivery') ? $shippingDelivery : $shippingPickup;
 
         DB::beginTransaction();

@@ -60,27 +60,20 @@
                       </td>
 
                       <td>
-                        <!-- quantity options 1..6 -->
-                        <div class="qty-boxes" style="display:flex; gap:8px; flex-wrap:wrap;">
-                          @for($q=1;$q<=6;$q++)
-                            @php $disabled = ($stock <= 0 || $q > $stock) ? 'disabled' : ''; @endphp
-                            <label class="qty-box" style="border:1px solid #ddd; padding:6px 10px; border-radius:6px; cursor:pointer; user-select:none; {{ $disabled ? 'opacity:0.5; cursor:not-allowed;' : '' }}">
-                              <input
-                                type="radio"
-                                name="items[{{ $id }}][quantity]"
-                                value="{{ $q }}"
-                                class="qty-radio"
-                                style="display:none;"
-                                {{ $disabled ? 'disabled' : '' }}
-                              >
-                              {{ $q }} kg
-                            </label>
-                          @endfor
-                        </div>
-
-                        <div class="muted" style="font-size:0.9rem; margin-top:6px;">
-                          Pilih 1 - 6 kg (bulat)
-                        </div>
+                        @if($stock > 0)
+                          <input 
+                            type="number" 
+                            name="items[{{ $id }}][quantity]" 
+                            min="1" 
+                            max="{{ $stock }}" 
+                            placeholder="0"
+                            value=""
+                            oninput="validasiJumlah(this, {{ $stock }})"
+                            style="width:80px; padding:4px;"
+                          > Kg
+                        @else
+                          <span style="color:red">Tidak tersedia</span>
+                        @endif
                       </td>
                   </tr>
               @empty
@@ -97,95 +90,67 @@
     </form>
 </div>
 
-<style>
-.qty-box.selected { border-color:#0b7a4a; background:#ecfff3; font-weight:700; }
-</style>
-
 <script>
-document.addEventListener('DOMContentLoaded', function(){
-  document.querySelectorAll('.qty-box').forEach(function(lbl){
-    lbl.addEventListener('click', function(){
-      if (lbl.querySelector('input[type=radio]').disabled) return;
-      const radio = lbl.querySelector('input[type=radio]');
-      radio.checked = true;
-      const container = lbl.closest('.qty-boxes');
-      container.querySelectorAll('.qty-box').forEach(l => l.classList.remove('selected'));
-      lbl.classList.add('selected');
-      const row = lbl.closest('tr');
-      const chk = row.querySelector('.select-item');
-      if (chk && !chk.checked) chk.checked = true;
-    });
-  });
+function validasiJumlah(input, stock) {
+    let val = parseInt(input.value);
 
-  document.querySelectorAll('.select-item').forEach(function(chk){
-    chk.addEventListener('change', function(){
-      const row = chk.closest('tr');
-      const container = row.querySelector('.qty-boxes');
-      if (!chk.checked) {
-        container.querySelectorAll('.qty-box').forEach(l => l.classList.remove('selected'));
-        const r = container.querySelector('input[type=radio]:checked');
-        if(r) r.checked = false;
-      } else {
-        const any = container.querySelector('input[type=radio]:checked');
-        if(!any) {
-          const firstAvail = container.querySelector('input[type=radio]:not(:disabled)');
-          if(firstAvail) {
-            firstAvail.checked = true;
-            firstAvail.closest('.qty-box').classList.add('selected');
-          }
-        }
-      }
-    });
-  });
+    // Jika kosong → jangan ubah
+    if (isNaN(val)) return;
 
-  document.getElementById('multiCheckoutForm').addEventListener('submit', function(e){
-    const rows = document.querySelectorAll('tbody tr');
+    // Hanya angka bulat
+    if (!Number.isInteger(val)) {
+        input.value = Math.floor(val);
+    }
+
+    // Tidak boleh < 1
+    if (val < 1) {
+        input.value = "";
+        return;
+    }
+
+    // Tidak boleh lebih besar dari stok
+    if (val > stock) {
+        input.value = stock;
+    }
+
+    // Auto centang checkbox produk
+    const row = input.closest('tr');
+    const chk = row.querySelector('.select-item');
+    if (chk && !chk.checked) {
+        chk.checked = true;
+    }
+}
+
+document.getElementById('multiCheckoutForm').addEventListener('submit', function(e){
     let anySelected = false;
 
-    for (let row of rows) {
-      const chk = row.querySelector('.select-item');
-      const stock = parseInt(row.cells[5].innerText) || 0;
-      if (chk && chk.checked) {
-        anySelected = true;
-        const qRadio = row.querySelector('input[type=radio]:checked');
-        if (!qRadio) {
-          alert('Silakan pilih jumlah (1-6 kg) untuk produk: ' + row.cells[3].innerText);
-          e.preventDefault(); return false;
-        }
-        const q = parseInt(qRadio.value, 10);
-        if (!Number.isInteger(q) || q < 1 || q > 6) {
-          alert('Jumlah harus bulat 1-6 untuk produk: ' + row.cells[3].innerText);
-          e.preventDefault(); return false;
-        }
-        if (q > stock) {
-          alert('Stok tidak cukup untuk produk: ' + row.cells[3].innerText +
-                '\\nStok: ' + stock + ' kg. Anda meminta: ' + q + ' kg.');
-          e.preventDefault(); return false;
-        }
-      }
-    }
-    if (!anySelected) {
-      alert('Pilih minimal satu produk untuk checkout.');
-      e.preventDefault(); return false;
-    }
-  });
+    document.querySelectorAll('tbody tr').forEach(function(row){
+        const chk = row.querySelector('.select-item');
+        if (chk && chk.checked) {
+            anySelected = true;
+            const qtyInput = row.querySelector('input[type=number]');
+            if (qtyInput) {
+                let q = parseInt(qtyInput.value);
+                let stock = parseInt(row.cells[5].innerText) || 0;
 
-  document.querySelectorAll('tbody tr').forEach(function(row){
-    const stock = parseInt(row.cells[5].innerText) || 0;
-    if (stock <= 0) {
-      row.querySelectorAll('.qty-box').forEach(l => { l.classList.add('disabled'); l.style.opacity = 0.5; });
-    } else {
-      row.querySelectorAll('.qty-box').forEach(function(l){
-        const radio = l.querySelector('input[type=radio]');
-        const val = parseInt(radio.value);
-        if (val > stock) {
-          radio.disabled = true;
-          l.style.opacity = 0.5;
-          l.style.cursor = 'not-allowed';
+                if (isNaN(q) || q < 1) {
+                    alert('Jumlah harus minimal 1 untuk produk: ' + row.cells[3].innerText);
+                    e.preventDefault(); return false;
+                }
+                if (q > stock) {
+                    alert('Stok tidak cukup untuk produk: ' + row.cells[3].innerText +
+                          '\nStok: ' + stock + ' kg. Anda meminta: ' + q + ' kg.');
+                    qtyInput.value = stock;
+                    e.preventDefault(); return false;
+                }
+            }
         }
-      });
+    });
+
+    if (!anySelected) {
+        alert('Pilih minimal satu produk untuk checkout.');
+        e.preventDefault(); return false;
     }
-  });
 });
 </script>
 @endsection
