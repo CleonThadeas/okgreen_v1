@@ -1,6 +1,9 @@
 <?php
 
+<<<<<<< HEAD
+=======
 use App\Http\Middleware\IsAdmin;
+>>>>>>> 32077f6ba26b2b1eeacf8581eecb8d0ac80eae3f
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
