@@ -69,7 +69,6 @@
     </div>
 </section>
 
-
 <!-- Bottom bar -->
 <div class="bottom-bar" id="bottom-bar">
     <span id="selected-count">0 produk dipilih</span>

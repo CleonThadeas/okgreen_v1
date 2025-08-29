@@ -82,7 +82,7 @@
   <iframe
     width="100%"
     height="500"
-    src="https://www.youtube.com/embed/tVbu49X0aus"
+    src="https://www.youtube.com/embed/snRhl3ING0Y"
     title="Video Edukasi"
     frameborder="0"
     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

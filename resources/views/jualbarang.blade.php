@@ -87,8 +87,8 @@
                 </div>
                 <div class="popup-footer">
                 <button type="button" onclick="closePopup()">Ignore</button>
-                <button class="btn-accept">Get Notification</button>
-                </div>
+                <a href="{{ url('notifikasi') }}" class="btn-accept">Get Notification</a>
+            </div>
             </div>
             </div>
         </form>

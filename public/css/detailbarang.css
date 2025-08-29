@@ -4,15 +4,31 @@ body {
     background-color: #F9F9F9;
 }
 
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;  /* cegah scroll horizontal */
+    overflow-y: hidden;  /* cegah scroll vertical kosong */
+}
+
+
 /* Layout utama */
 .detail-produk-container {
     display: flex;
     gap: 40px;
-    padding: 40px;
+    padding: 50px 70px;
     max-width: 1200px;
     margin: auto;
     background-color: #fff;
     border-radius: 10px;
+
+    /* Biar full ke bawah */
+    min-height: 100vh;
+    box-sizing: border-box;
+
+    /* Biar tidak ketutup bottom bar */
+    padding-bottom: 120px;
 }
 
 /* Gambar produk */
@@ -26,11 +42,11 @@ body {
 }
 
 .produk-gambar img {
-    width: 100%;          /* full lebar container */
-    max-width: 220px;     /* batas maksimal biar mirip contoh */
-    height: 200px;        /* tinggi konsisten */
+    width: 100%;          
+    max-width: 380px;     
+    height: 300px;        
     border-radius: 12px;
-    object-fit: contain;  /* biar ga kepotong */
+    object-fit: contain;  
     cursor: pointer;
 }
 
@@ -44,11 +60,12 @@ body {
     text-decoration: none;
 }
 
-
 /* Info produk */
 .produk-info {
     flex: 1;
+    font-size: 1.05rem;
 }
+
 .tag-hotsale {
     background-color: #ff4d4f;
     color: white;
@@ -57,6 +74,7 @@ body {
     font-size: 12px;
     font-weight: bold;
 }
+
 .kategori-rating {
     margin: 10px 0;
     font-size: 14px;
@@ -68,6 +86,7 @@ body {
 .rating-score {
     font-weight: bold;
 }
+
 .deskripsi-label {
     margin-top: 20px;
     font-weight: bold;
@@ -105,74 +124,82 @@ body {
     color: white;
 }
 
-/* Bottom bar */
 .bottom-bar {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    background: white;
+    background: #fff;
     border-top: 1px solid #ddd;
     display: flex;
     justify-content: space-between;
+    align-items: center;   /* biar semua konten sejajar tengah */
     padding: 10px 20px;
-    align-items: center;
-    z-index: 10;
+    z-index: 1000;
 }
+
 .bottom-left {
     display: flex;
     align-items: center;
     gap: 10px;
 }
+
 .thumb-bottom {
     width: 40px;
-    height: 40px;
-    border-radius: 5px;
-    object-fit: cover;
+    height: auto;
+    border-radius: 4px;
 }
+
 .bottom-nama {
+    font-size: 14px;
     font-weight: bold;
 }
+
+.bottom-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;  /* kasih jarak antara qty dan tombol beli */
+}
+
 .qty-control {
     display: flex;
     align-items: center;
     gap: 5px;
 }
-.qty-btn {
-    border: 1px solid #ccc;
-    background: white;
-    width: 32px;
-    height: 32px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-size: 18px;
-    font-weight: bold;
-    line-height: 30px;
-    text-align: center;
-    transition: background 0.2s ease;
-}
-.qty-btn:hover {
-    background: #f0f0f0;
-}
+
 .qty-control input {
     width: 40px;
     text-align: center;
     border: 1px solid #ccc;
-    border-radius: 5px;
-    height: 32px;
+    border-radius: 4px;
+    padding: 5px;
 }
+
+.qty-btn {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    background: #fff;
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
 .btn-beli {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     background-color: #5E7C65;
     color: white;
     padding: 10px 20px;
     border: none;
     border-radius: 6px;
-    margin-left: 10px;
-    cursor: pointer;
     font-size: 14px;
     font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;   /* hilangin underline */
     transition: background 0.2s ease;
 }
+
 .btn-beli:hover {
     background-color: #4d6654;
 }
