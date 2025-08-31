@@ -29,7 +29,6 @@ class CheckoutController extends Controller
         foreach ($posted as $wasteId => $data) {
             if (!isset($data['selected'])) continue;
 
-            // Ambil qty
             $qtyRaw = $data['quantity'] ?? null;
             if ($qtyRaw === null) {
                 return back()->with('error','Jumlah tidak dipilih untuk produk ID '.$wasteId);
@@ -37,7 +36,6 @@ class CheckoutController extends Controller
 
             $qty = (int) $qtyRaw;
 
-            // Validasi jumlah
             if ($qty < 1) {
                 return back()->with('error','Jumlah minimal 1 untuk produk ID '.$wasteId);
             }
@@ -99,7 +97,9 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Konfirmasi checkout: validasi lagi, buat transaksi, kurangi stok
+     * Konfirmasi checkout: validasi lagi, buat transaksi, kurangi stok.
+     * Jika payment_method == 'qris_static' => status pending, expired_at = now + 10 menit, simpan qr_text.
+     * Jika metode lain => langsung 'paid' (seperti behavior lama).
      */
     public function confirm(Request $r)
     {
@@ -123,13 +123,29 @@ class CheckoutController extends Controller
             $subtotal = collect($items)->sum('subtotal');
             $total = $subtotal + $shipping;
 
-            $transaction = BuyTransaction::create([
+            // Tentukan status awal berdasarkan payment_method
+            $paymentMethod = $r->payment_method;
+            $isQrisStatic = ($paymentMethod === 'qris_static' || $paymentMethod === 'qris');
+
+            $txData = [
                 'user_id' => $user->id,
                 'total_amount' => $total,
-                'status' => 'paid',
                 'transaction_date' => Carbon::now(),
-            ]);
+            ];
 
+            if ($isQrisStatic) {
+                $txData['status'] = 'pending';
+                $txData['expired_at'] = Carbon::now()->addMinutes(10);
+                // qr_text bisa disimpan dari config/env atau per-transaksi (jika QR berbeda)
+                $txData['qr_text'] = config('qris.static_payload', env('QRIS_STATIC_PAYLOAD', null));
+            } else {
+                $txData['status'] = 'paid';
+                $txData['handled_at'] = Carbon::now();
+            }
+
+            $transaction = BuyTransaction::create($txData);
+
+            // Kurangi stok dan buat BuyCartItem — ini men-reserve stok segera.
             foreach ($items as $it) {
                 $stock = WasteStock::where('waste_type_id', $it['waste_type_id'])->lockForUpdate()->first();
                 if (!$stock || $stock->available_weight < $it['quantity']) {
@@ -151,13 +167,61 @@ class CheckoutController extends Controller
 
             DB::commit();
 
+            // Hapus session keranjang
             $r->session()->forget('checkout.items');
 
-            return redirect()->route('transactions.index')->with('success','Transaksi berhasil (PAID).');
+            if ($isQrisStatic) {
+                // Redirect ke halaman QR + countdown
+                return redirect()->route('checkout.qr', ['id' => $transaction->id])
+                    ->with('success',"Transaksi dibuat. Silakan bayar menggunakan QRIS dalam 10 menit.");
+            } else {
+                return redirect()->route('transactions.index')->with('success','Transaksi berhasil (PAID).');
+            }
         } catch (\Throwable $e) {
             DB::rollBack();
             Log::error('Checkout confirm error: '.$e->getMessage());
             return back()->with('error','Terjadi kesalahan saat memproses transaksi.');
         }
+    }
+
+    /**
+     * Tampilkan halaman QR + countdown untuk transaksi QRIS statis
+     */
+    public function qrView(Request $r, $id)
+    {
+        $tx = BuyTransaction::findOrFail($id);
+
+        // pastikan pemilik transaksi yang melihat (atau staff)
+        if ($tx->user_id !== $r->user()->id && !$r->user()->hasRole('staff')) {
+            abort(403, 'Unauthorized');
+        }
+
+        // jika bukan pending, arahkan sesuai status
+        if ($tx->status !== 'pending') {
+            return redirect()->route('transactions.show', $tx->id)
+                ->with('info','Transaksi ini sudah berstatus: '.$tx->status);
+        }
+
+        return view('user.buy.checkout_qr', compact('tx'));
+    }
+
+    /**
+     * Endpoint JSON untuk polling status transaksi
+     */
+    public function status(Request $r, $id)
+    {
+        $tx = BuyTransaction::findOrFail($id);
+
+        // cek permission (pemilik atau staff)
+        if ($tx->user_id !== $r->user()->id && !$r->user()->hasRole('staff')) {
+            return response()->json(['error' => 'unauthorized'], 403);
+        }
+
+        return response()->json([
+            'status' => $tx->status,
+            'handled_by_staff_id' => $tx->handled_by_staff_id,
+            'handled_at' => $tx->handled_at ? $tx->handled_at->toDateTimeString() : null,
+            'expired_at' => $tx->expired_at ? $tx->expired_at->toDateTimeString() : null,
+        ]);
     }
 }

@@ -14,6 +14,7 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\Admin\WasteManagementController as AdminWasteCtrl;
 use App\Http\Controllers\Staff\WasteManagementController as StaffWasteCtrl;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\Staff\StaffTransactionController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -51,17 +52,12 @@ Route::middleware(['auth:web'])->group(function () {
 // User (explicit web guard)
 Route::middleware('auth:web')->group(function(){
     Route::get('/buy-waste', [WasteController::class, 'index'])->name('buy-waste.index');
-    Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
-    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-    Route::post('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
-    Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
+    Route::get('/checkout/form', [CheckoutController::class, 'show'])->name('checkout.form');
+Route::post('/checkout/prepare', [CheckoutController::class, 'prepare'])->name('checkout.prepare');
+Route::post('/checkout/confirm', [CheckoutController::class, 'confirm'])->name('checkout.confirm');
+Route::get('/checkout/qr/{id}', [CheckoutController::class, 'qrView'])->name('checkout.qr');
+Route::get('/transactions/{id}/status', [CheckoutController::class, 'status']);
 
-    // tambahan
-    Route::view('/sell-waste', 'user.sell.index')->name('sell-waste.index');
-    Route::view('/edu', 'user.edukasi.index')->name('edu.index');
-    Route::post('/checkout/prepare', [CheckoutController::class, 'prepare'])->name('checkout.prepare');
-    Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout.form');
-    Route::post('/checkout/confirm', [CheckoutController::class, 'confirm'])->name('checkout.confirm');
 });
 
 
