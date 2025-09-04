@@ -13,7 +13,7 @@ class Kernel extends ConsoleKernel
 
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('transactions:mark-expired')->everyMinute();
+        $schedule->command('transactions:cancel-expired')->everyFiveMinutes();
     }
 
     protected function commands()

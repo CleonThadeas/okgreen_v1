@@ -36,8 +36,8 @@
 
     <div class="card" style="margin-bottom:12px;">
       <h3>Metode Pembayaran</h3>
-      <label><input type="radio" name="payment_method" value="transfer" checked> Transfer Bank (dummy)</label>
-      <label style="margin-left:12px;"><input type="radio" name="payment_method" value="cod"> COD (dummy)</label>
+      <label style="margin-left:12px;"><input type="radio" name="payment_method" value="qris"> QRIS
+      </label>
     </div>
 
     <div class="card">
