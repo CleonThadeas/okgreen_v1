@@ -90,3 +90,18 @@ Route::get('/profil', function () {
     return view('profil');
 })->name('profil');
 
+route::get('/berandavoucher', function () {
+    return view('berandavoucher');
+})->name('berandavoucher');
+
+route:: get('/tukarvoucher', function () {
+    return view('tukarvoucher');
+})->name('tukarvoucher');
+
+route:: get('/profileadmin', function () {
+    return view('profileadmin');
+})->name('profileadmin');
+
+route:: get('/detailstokstaff', function () {
+    return view('detailstokstaff');
+})->name('detailstokstaff');

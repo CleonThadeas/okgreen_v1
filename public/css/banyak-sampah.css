@@ -120,3 +120,91 @@ strong {
   display:block;
   border-radius:8px;
 }
+
+.stats-container {
+  display: flex;
+  justify-content: center; 
+  align-items: center;    
+  gap: 40px;              
+  margin-top: 20px;
+}
+
+.chart-container {
+  width: 180px; 
+  height: 180px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.legend {
+  display: flex;
+  flex-direction: row;  
+  justify-content: center;
+  align-items: center;
+  gap: 40px;            
+  margin-top: 10px;
+}
+
+.legend-item {
+  text-align: center;
+}
+
+.percent {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.legend-item .percent {
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.done {
+  color: green;
+}
+
+.progress {
+  color: orange;
+}
+
+.chart-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  max-width: 1000px; 
+  margin: 30px auto;
+}
+
+.bar-chart-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  max-width: 1055px;
+  margin: 30px auto;
+}
+
+#barChart {
+  width: 100% !important;
+  height: auto !important;
+}
+
+.chart-card canvas {
+  width: 100% !important;
+  height: auto !important;
+}
+
+.chartjs-render-monitor {
+  transition: all 0.3s ease;
+}
+
+#filterSampah {
+  margin: 0 auto 15px auto;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+

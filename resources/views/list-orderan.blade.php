@@ -9,23 +9,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-  <header class="navbar">
-    <div class="logo-wrapper">
-      <span class="logo">OKGreen</span>
-    </div>
-     <nav>
-      <ul>
-        <li><a href="{{ route('berandadmin') }}">Beranda</a></li>
-        <li><a href="{{ route('stokadmin') }}">Stok</a></li>
-        <li><a href="{{ route('banyaksampah') }}">Status</a></li>
-      </ul>
-      </div>
-    </nav>
-    <div class="right-icons">
-      <i class="fas fa-bell"></i>
-      <i class="fas fa-user-circle"></i>
-    </div>
-  </header>
+      <body class="dashboard-page">
+    @include('partials.navbar')
 
   <div class="container">
     <div class="header">

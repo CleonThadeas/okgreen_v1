@@ -37,7 +37,6 @@ body {
   cursor: pointer;
 }
 
-/* ===== DASHBOARD CARDS ===== */
 .dashboard-cards {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -255,4 +254,51 @@ tbody td {
 strong {
     font-size: 18px;
     display: block;
+}
+
+.stats-container {
+  display: flex;
+  justify-content: center; 
+  align-items: center;    
+  gap: 40px;              
+  margin-top: 20px;
+}
+
+.chart-container {
+  width: 180px; 
+  height: 180px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.legend {
+  display: flex;
+  flex-direction: row;    /* dari column jadi row */
+  justify-content: center;
+  align-items: center;
+  gap: 40px;              /* jarak antar item legend */
+  margin-top: 10px;
+}
+
+.legend-item {
+  text-align: center;
+}
+
+.percent {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.legend-item .percent {
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.done {
+  color: green;
+}
+
+.progress {
+  color: orange;
 }
