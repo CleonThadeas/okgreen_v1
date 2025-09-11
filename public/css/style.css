@@ -298,7 +298,7 @@ body {
 
 
 .footer {
-
+<<<<<<< HEAD
     background-color: #065f46; /* Tailwind: bg-green-800 */
     color: white;
     font-size: 0.875rem;
@@ -333,6 +333,9 @@ body {
     text-align: center;
     margin-top: 1.5rem;
     color: #bbf7d0; /* Tailwind: text-green-200 */
+}
+
+=======
   background-color: #5E7C65; /* Tailwind: bg-green-800 */
   color: #fff;
   font-size: 0.875rem;
@@ -391,7 +394,7 @@ body {
   color: #bbf7d0; /* Tailwind: text-green-200 */
 }
 
-
+>>>>>>> 0d16e55 (mulai memasukkan back end)
 .faq-scroll-container {
     max-height: 400px; /* Bisa disesuaikan */
     overflow-y: auto;

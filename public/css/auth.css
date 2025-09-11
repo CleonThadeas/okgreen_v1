@@ -1,0 +1,146 @@
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #EAF6EB;
+}
+
+/* Header Shape */
+.header-shape {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 180px;
+    background: #5e7750;
+    border-bottom-left-radius: 50% 30%;
+    border-bottom-right-radius: 50% 30%;
+    z-index: -1;
+}
+
+/* Container */
+.auth-container {
+    max-width: 600px; /* lebih lebar dari 400px */
+    margin: 70px auto;
+    padding: 30px; /* biar tidak terlalu tinggi */
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    text-align: center;
+}
+
+
+.auth-container h1 {
+    margin-bottom: 5px;
+    color: #5e7750;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.auth-container p {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* Form */
+.auth-container form {
+    text-align: left;
+}
+
+.auth-container label {
+    display: block;
+    margin: 10px 0 5px;
+    font-weight: 600;
+    color: #333;
+}
+
+.auth-container input[type="text"],
+.auth-container input[type="email"],
+.auth-container input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    border: 1.5px solid #ccc;   /* biar ada border */
+    border-radius: 8px;
+    background-color: #f3f3f3;  /* lebih soft */
+    font-size: 1rem;
+    margin-bottom: 12px;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.auth-container input:focus {
+    outline: none;
+    border-color: #5e7750;      /* fokus hijau */
+    background-color: #fff;
+}
+
+/* Button */
+.btn-submit {
+    width: 100%;
+    padding: 12px;
+    background: #5e7750;
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.3s;
+}
+
+.btn-submit:hover {
+    background: #4a6141;
+}
+
+/* Link tambahan */
+.register-text {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.register-text a {
+    color: #5e7750;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.register-text a:hover {
+    text-decoration: underline;
+}
+
+/* Error message */
+.error-msg {
+    background: #ffefef;
+    color: #d93025;
+    border: 1px solid #f5c2c7;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+}
+
+/* Logo */
+.logo {
+    margin-top: 20px;
+}
+
+.logo img {
+    width: 100px;
+}
+
+/* Checkbox remember me */
+.remember-me {
+    display: flex;
+    align-items: center;
+    margin: 10px 0 20px;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.remember-me input[type="checkbox"] {
+    width: 16px;   /* lebih proporsional */
+    height: 16px;
+    cursor: pointer;
+    accent-color: #5e7750; /* warna hijau saat dicentang */
+    margin-right: 8px;
+}
