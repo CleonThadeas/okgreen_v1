@@ -18,6 +18,11 @@ return [
             'provider' => 'users',
         ],
 
+        'sanctum' => [
+            'driver' => 'sanctum',
+            'provider' => 'users',
+        ],
+
         'admin' => [
             'driver' => 'sanctum',
             'provider' => 'admins',
