@@ -42,7 +42,9 @@
 
                       <td>
                         @if($waste->photo)
-                          <img src="{{ asset('storage/'.$waste->photo) }}" width="80">
+                          <img src="{{ asset('storage/'.$waste->photo) }}" width="80"
+                               style="cursor:pointer"
+                               onclick="openDetailModal({{ $id }})">
                         @else
                           <span>Tidak ada foto</span>
                         @endif
@@ -90,30 +92,42 @@
     </form>
 </div>
 
+<!-- Modal Detail Produk -->
+<div id="detailModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+     background:rgba(0,0,0,0.6); z-index:1000; align-items:center; justify-content:center;">
+  <div style="background:#fff; padding:20px; border-radius:8px; width:600px; max-height:80%; overflow:auto; position:relative;">
+    <span onclick="closeDetailModal()" style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:22px;">&times;</span>
+    
+    <div id="modalPhotos" style="text-align:center; margin-bottom:12px;">
+      <!-- foto carousel dimasukkan via JS -->
+    </div>
+    <h3 id="modalTypeName"></h3>
+    <p><strong>Kategori:</strong> <span id="modalCategory"></span></p>
+    <p><strong>Stok Tersedia:</strong> <span id="modalStock"></span> Kg</p>
+    <p><strong>Harga:</strong> Rp <span id="modalPrice"></span> /Kg</p>
+    <p><strong>Dibeli:</strong> <span id="modalTimesBought"></span> kali
+       <span id="modalStars"></span></p>
+  </div>
+</div>
+
 <script>
 function validasiJumlah(input, stock) {
     let val = parseInt(input.value);
-
-    // Jika kosong → jangan ubah
     if (isNaN(val)) return;
 
-    // Hanya angka bulat
     if (!Number.isInteger(val)) {
         input.value = Math.floor(val);
     }
 
-    // Tidak boleh < 1
     if (val < 1) {
         input.value = "";
         return;
     }
 
-    // Tidak boleh lebih besar dari stok
     if (val > stock) {
         input.value = stock;
     }
 
-    // Auto centang checkbox produk
     const row = input.closest('tr');
     const chk = row.querySelector('.select-item');
     if (chk && !chk.checked) {
@@ -152,5 +166,36 @@ document.getElementById('multiCheckoutForm').addEventListener('submit', function
         e.preventDefault(); return false;
     }
 });
+
+// Modal handling
+const wastesData = @json($wastes);
+
+function openDetailModal(id){
+    const w = wastesData.find(x => x.id === id);
+    if(!w) return;
+
+    let photosHtml = '';
+    if(w.photo){
+        photosHtml += `<img src="/storage/${w.photo}" style="max-width:100%; border-radius:8px;">`;
+    } else {
+        photosHtml = '<em>Tidak ada foto</em>';
+    }
+    document.getElementById('modalPhotos').innerHTML = photosHtml;
+
+    document.getElementById('modalTypeName').innerText = w.type_name;
+    document.getElementById('modalCategory').innerText = w.category?.category_name ?? '-';
+    document.getElementById('modalStock').innerText = w.stock?.available_weight ?? 0;
+    document.getElementById('modalPrice').innerText = (w.price_per_unit ?? 0).toLocaleString('id-ID');
+    document.getElementById('modalTimesBought').innerText = w.times_bought;
+
+    const stars = Math.min(5, Math.ceil((w.times_bought || 0)/2));
+    document.getElementById('modalStars').innerHTML =
+        '★'.repeat(stars) + '☆'.repeat(5-stars);
+
+    document.getElementById('detailModal').style.display='flex';
+}
+function closeDetailModal(){
+    document.getElementById('detailModal').style.display='none';
+}
 </script>
 @endsection
