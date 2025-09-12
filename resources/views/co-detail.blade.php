@@ -96,7 +96,7 @@ $variasiGambar = [
             <input type="number" value="1" min="1" id="qtyInput">
             <button class="qty-btn plus">+</button>
         </div>
-        <a href="{{ route('checkout') }}" class="btn-beli">Beli</a>
+        <a href="{{ route('checkout.form') }}" class="btn-beli">Beli</a>
     </div>
 </div>
 

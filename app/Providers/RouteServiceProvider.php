@@ -10,9 +10,9 @@ class RouteServiceProvider extends ServiceProvider
 {
     /**
      * The path to the "home" route for your application.
+     * (tidak hardcode lagi, biar fleksibel pakai role)
      */
-    public const HOME = '/dashboard'; // atau route lain yang memang ada
-
+    public const HOME = '/login'; // default, kalau belum login
 
     /**
      * Define your route model bindings, pattern filters, etc.
@@ -33,20 +33,19 @@ class RouteServiceProvider extends ServiceProvider
      * Custom redirect logic based on user role.
      */
     public static function redirectBasedOnRole()
-{
-    if (Auth::guard('admin')->check()) {
-        return '/admin/dashboard';
+    {
+        if (Auth::guard('admin')->check()) {
+            return '/admin/dashboard';
+        }
+
+        if (Auth::guard('staff')->check()) {
+            return '/staff/dashboard';
+        }
+
+        if (Auth::guard('web')->check()) {
+            return '/user/dashboard';
+        }
+
+        return '/login';
     }
-
-    if (Auth::guard('staff')->check()) {
-        return '/staff/dashboard';
-    }
-
-    if (Auth::check()) {
-        return '/user/dashboard';
-    }
-
-    return '/login';
-}
-
 }

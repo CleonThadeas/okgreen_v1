@@ -104,25 +104,39 @@ html, body {
 }
 
 /* Pilihan ukuran */
+/* Pilihan ukuran */
 .size-container {
-    margin-top: 10px;
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
 }
+
 .size {
-    border: 1px solid #ccc;
-    padding: 8px 14px;
-    margin-right: 8px;
-    border-radius: 6px;
+    border: 2px solid #5E7C65;
+    padding: 10px 18px;
+    border-radius: 8px;
     cursor: pointer;
-    background: white;
-    transition: all 0.2s ease;
+    background: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    color: #5E7C65;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
+
 .size:hover {
-    background: #e8f0ec;
+    background: #f1f6f3;
+    transform: translateY(-2px);
 }
+
 .size.active {
     background: #5E7C65;
-    color: white;
+    color: #fff;
+    border-color: #5E7C65;
+    box-shadow: 0 3px 8px rgba(94,124,101,0.3);
 }
+
 
 .bottom-bar {
     position: fixed;
@@ -203,3 +217,4 @@ html, body {
 .btn-beli:hover {
     background-color: #4d6654;
 }
+

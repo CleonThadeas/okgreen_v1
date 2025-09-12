@@ -44,7 +44,7 @@
 
     <div> 
         <label>Foto Produk</label>
-        <input type="file" name="photo" accept="image/*"><br><br>
+        <input type="file" name="photo" accept="img/*"><br><br>
     </div>
 
     <button type="submit">Simpan Produk</button>

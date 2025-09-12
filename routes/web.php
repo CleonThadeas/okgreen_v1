@@ -11,13 +11,14 @@ use App\Http\Controllers\Auth\MultiGuardLoginController;
 use App\Http\Controllers\WasteController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\TransactionController;
-use App\Http\Controllers\Admin\WasteManagementController as AdminWasteCtrl;
-use App\Http\Controllers\Staff\WasteManagementController as StaffWasteCtrl;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 
+// ================== LANDING PAGE ==================
 Route::get('/', function () {
-    return view('LandingPage');
-});
+    return view('LandingPage'); // Guest akan masuk ke LandingPage
+})->name('home');
 
 // ================== LOGIN & LOGOUT ==================
 Route::middleware('guest')->group(function () {
@@ -25,20 +26,19 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [MultiGuardLoginController::class, 'store']);
 });
 
-// Protect logout for any of the guards (will try admin, staff, web)
+Route::middleware('guest')->group(function () {
+    Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
+    Route::post('/register', [RegisteredUserController::class, 'store']);
+});
+
 Route::post('/logout', [MultiGuardLoginController::class, 'destroy'])
     ->middleware('auth:admin,staff,web')
     ->name('logout');
 
 // ================== DASHBOARD PER GUARD ==================
-Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
+Route::middleware(['auth:web'])->get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
 Route::middleware(['auth:admin'])->get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 Route::middleware(['auth:staff'])->get('/staff/dashboard', [StaffDashboardController::class, 'index'])->name('staff.dashboard');
-
-// Redirect route dari dashboard ke halaman pembelian (supaya route('dashboard.buy') valid)
-Route::middleware('auth:web')->get('/dashboard/buy', function () {
-    return redirect()->route('buy-waste.index');
-})->name('dashboard.buy');
 
 // ================== USER PROFILE ==================
 Route::middleware(['auth:web'])->group(function () {
@@ -47,66 +47,62 @@ Route::middleware(['auth:web'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-
 // ================== USER (web guard) - Pembelian Sampah ==================
-// User (explicit web guard)
-// Route::middleware('auth:web')->group(function()//
+Route::middleware('auth:web')->group(function () {
     Route::get('/buy-waste', [WasteController::class, 'index'])->name('buy-waste.index');
     Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
 
-    // tambahan
     Route::view('/sell-waste', 'user.sell.index')->name('sell-waste.index');
     Route::view('/edu', 'user.edukasi.index')->name('edu.index');
+
+    // Checkout
     Route::post('/checkout/prepare', [CheckoutController::class, 'prepare'])->name('checkout.prepare');
     Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout.form');
     Route::post('/checkout/confirm', [CheckoutController::class, 'confirm'])->name('checkout.confirm');
+});
 
+// ================== PRODUK ==================
+Route::get('/produk', [ProductController::class, 'index'])->name('produk.index');
+Route::get('/detail-barang/{id}', [ProductController::class, 'detailBarang'])->name('detail-barang');
 
 // ================== STAFF ==================
-// Staff routes (manage wastes)
-Route::prefix('staff')->name('staff.')->middleware('auth:staff')->group(function(){
-    Route::get('/wastes', [App\Http\Controllers\Staff\WasteManagementController::class, 'index'])->name('wastes.index');
-    Route::get('/wastes/category/create', [App\Http\Controllers\Staff\WasteManagementController::class, 'createCategory'])->name('wastes.category.create');
-    Route::post('/wastes/category', [App\Http\Controllers\Staff\WasteManagementController::class, 'storeCategory'])->name('wastes.category.store');
+Route::prefix('staff')->name('staff.')->middleware('auth:staff')->group(function () {
+    Route::get('/wastes', [\App\Http\Controllers\Staff\WasteManagementController::class, 'index'])->name('wastes.index');
+    Route::get('/wastes/category/create', [\App\Http\Controllers\Staff\WasteManagementController::class, 'createCategory'])->name('wastes.category.create');
+    Route::post('/wastes/category', [\App\Http\Controllers\Staff\WasteManagementController::class, 'storeCategory'])->name('wastes.category.store');
 
-    Route::get('/wastes/type/create', [App\Http\Controllers\Staff\WasteManagementController::class, 'createType'])->name('wastes.type.create');
-    Route::post('/wastes/type', [App\Http\Controllers\Staff\WasteManagementController::class, 'storeType'])->name('wastes.type.store');
+    Route::get('/wastes/type/create', [\App\Http\Controllers\Staff\WasteManagementController::class, 'createType'])->name('wastes.type.create');
+    Route::post('/wastes/type', [\App\Http\Controllers\Staff\WasteManagementController::class, 'storeType'])->name('wastes.type.store');
 
-    // optional: add stock (if you want a separate form)
-    Route::post('/wastes/stock', [App\Http\Controllers\Staff\WasteManagementController::class, 'addStock'])->name('wastes.stock.add');
-// STAFF (dalam group prefix('staff')->name('staff.')->middleware('auth:staff')->group(...) )
-Route::get('/wastes/type/{id}/edit', [App\Http\Controllers\Staff\WasteManagementController::class, 'editType'])->name('wastes.type.edit');
-Route::put('/wastes/type/{id}', [App\Http\Controllers\Staff\WasteManagementController::class, 'updateType'])->name('wastes.type.update');
+    Route::post('/wastes/stock', [\App\Http\Controllers\Staff\WasteManagementController::class, 'addStock'])->name('wastes.stock.add');
+    Route::get('/wastes/type/{id}/edit', [\App\Http\Controllers\Staff\WasteManagementController::class, 'editType'])->name('wastes.type.edit');
+    Route::put('/wastes/type/{id}', [\App\Http\Controllers\Staff\WasteManagementController::class, 'updateType'])->name('wastes.type.update');
 
-    Route::get('/sell-requests', [\App\Http\Controllers\Staff\SellRequestController::class, 'index'])
-        ->name('sell_requests.index');
+    Route::get('/sell-requests', [\App\Http\Controllers\Staff\SellRequestController::class, 'index'])->name('sell_requests.index');
 });
 
 // ================== ADMIN ==================
-// Admin routes (manage wastes + staff later)
-Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function(){
-    Route::get('/wastes', [App\Http\Controllers\Admin\WasteManagementController::class, 'index'])->name('wastes.index');
-    Route::get('/wastes/category/create', [App\Http\Controllers\Admin\WasteManagementController::class, 'createCategory'])->name('wastes.category.create');
-    Route::post('/wastes/category', [App\Http\Controllers\Admin\WasteManagementController::class, 'storeCategory'])->name('wastes.category.store');
+Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function () {
+    Route::get('/wastes', [\App\Http\Controllers\Admin\WasteManagementController::class, 'index'])->name('wastes.index');
+    Route::get('/wastes/category/create', [\App\Http\Controllers\Admin\WasteManagementController::class, 'createCategory'])->name('wastes.category.create');
+    Route::post('/wastes/category', [\App\Http\Controllers\Admin\WasteManagementController::class, 'storeCategory'])->name('wastes.category.store');
 
-    Route::get('/wastes/type/create', [App\Http\Controllers\Admin\WasteManagementController::class, 'createType'])->name('wastes.type.create');
-    Route::post('/wastes/type', [App\Http\Controllers\Admin\WasteManagementController::class, 'storeType'])->name('wastes.type.store');
+    Route::get('/wastes/type/create', [\App\Http\Controllers\Admin\WasteManagementController::class, 'createType'])->name('wastes.type.create');
+    Route::post('/wastes/type', [\App\Http\Controllers\Admin\WasteManagementController::class, 'storeType'])->name('wastes.type.store');
 
-    Route::post('/wastes/stock', [App\Http\Controllers\Admin\WasteManagementController::class, 'addStock'])->name('wastes.stock.add');
-// ADMIN (dalam group prefix('admin')->name('admin.')->middleware('auth:admin')->group(...) )
-Route::get('/wastes/type/{id}/edit', [App\Http\Controllers\Admin\WasteManagementController::class, 'editType'])->name('wastes.type.edit');
-Route::put('/wastes/type/{id}', [App\Http\Controllers\Admin\WasteManagementController::class, 'updateType'])->name('wastes.type.update');
-    // Admin - Manage Staff (Users)
-Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
-Route::get('/users/create', [\App\Http\Controllers\Admin\UserController::class, 'create'])->name('users.create');
-Route::post('/users', [\App\Http\Controllers\Admin\UserController::class, 'store'])->name('users.store');
-Route::get('/users/{id}/edit', [\App\Http\Controllers\Admin\UserController::class, 'edit'])->name('users.edit');
-Route::put('/users/{id}', [\App\Http\Controllers\Admin\UserController::class, 'update'])->name('users.update');
-Route::delete('/users/{id}', [\App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('users.destroy');
+    Route::post('/wastes/stock', [\App\Http\Controllers\Admin\WasteManagementController::class, 'addStock'])->name('wastes.stock.add');
+    Route::get('/wastes/type/{id}/edit', [\App\Http\Controllers\Admin\WasteManagementController::class, 'editType'])->name('wastes.type.edit');
+    Route::put('/wastes/type/{id}', [\App\Http\Controllers\Admin\WasteManagementController::class, 'updateType'])->name('wastes.type.update');
 
+    Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
+    Route::get('/users/create', [\App\Http\Controllers\Admin\UserController::class, 'create'])->name('users.create');
+    Route::post('/users', [\App\Http\Controllers\Admin\UserController::class, 'store'])->name('users.store');
+    Route::get('/users/{id}/edit', [\App\Http\Controllers\Admin\UserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{id}', [\App\Http\Controllers\Admin\UserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{id}', [\App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('users.destroy');
 });
 
 // ================== DEBUG SESSION (HANYA LOKAL) ==================
@@ -127,10 +123,5 @@ Route::get('/debug-session', function () {
     ]);
 });
 
-Route::get('/login', function () {
-    return 'Halaman login belum dibuat';
-})->name('login');
+;
 
-Route::get('/register', function () {
-    return view('RegisterPage');
-})->name('register');
