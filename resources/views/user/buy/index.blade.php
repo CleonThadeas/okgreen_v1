@@ -1,4 +1,4 @@
-{{-- resources/views/user/belibarang.blade.php --}}
+{{-- resources/views/user/index.blade.php --}}
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Beli Barang</title>
     <link rel="stylesheet" href="{{ asset('css/belibarang.css') }}?v={{ time() }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
 </head>
 <body>
 
@@ -47,16 +49,16 @@
                      data-name="{{ $waste->type_name }}"
                      data-price="{{ $price }}"
                      data-stock="{{ $stok }}"
+                     data-photo="{{ !empty($waste->photo) ? asset('storage/'.$waste->photo) : asset('img/no-image.png') }}"
                      data-deskripsi="{{ $waste->description ?? '' }}">
-                    
-                    <div class="produk-img-container">
-                        <a href="javascript:void(0)" onclick="openDetailModal({{ $waste->id }})">
-                            @if(!empty($waste->photo))
-                                <img src="{{ asset('storage/'.$waste->photo) }}" alt="{{ $waste->type_name }}">
-                            @else
-                                <img src="{{ asset('img/no-image.png') }}" alt="No Image">
-                            @endif
-                        </a>
+
+                    <!-- Klik gambar buka modal detail -->
+                    <div class="produk-img-container" onclick="openDetailModal({{ $waste->id }})">
+                        @if(!empty($waste->photo))
+                            <img src="{{ asset('storage/'.$waste->photo) }}" alt="{{ $waste->type_name }}">
+                        @else
+                            <img src="{{ asset('img/no-image.png') }}" alt="No Image">
+                        @endif
                         @if($stok == 0)
                             <span class="stok-habis-label">Stok Habis</span>
                         @endif
@@ -66,6 +68,17 @@
                     <div class="produk-price">Rp {{ number_format($price, 0, ',', '.') }}</div>
                     <div class="produk-stock">Stok: {{ $stok }}</div>
 
+                    @if($stok > 0)
+                    <!-- Size Picker: Awalnya disembunyikan -->
+                    <div class="size-container" style="display: none;">
+                        <p class="size-label">Masukkan berat dalam <strong>Kg</strong>:</p>
+                        <div class="qty-control">
+                            <button type="button" class="qty-btn decrease">-</button>
+                            <input type="number" class="size-input" value="1" min="1" readonly>
+                            <button type="button" class="qty-btn increase">+</button>
+                        </div>
+                    </div>
+                    @endif
                     <div class="produk-action">
                         <button class="tambah-btn" {{ $stok == 0 ? 'disabled' : '' }}>
                             {{ $stok == 0 ? 'Tidak Tersedia' : 'Tambah' }}
@@ -84,148 +97,230 @@
         <button id="checkout-btn">Checkout</button>
     </div>
 
-    <!-- Modal Detail Produk -->
-    <div id="detailModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-        background:rgba(0,0,0,0.6); z-index:1000; align-items:center; justify-content:center;">
-      <div style="background:#fff; padding:20px; border-radius:8px; width:600px; max-height:80%; overflow:auto; position:relative;">
-        <span onclick="closeDetailModal()" style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:22px;">&times;</span>
-        
-        <div id="modalPhotos" style="text-align:center; margin-bottom:12px;"></div>
-        <h3 id="modalTypeName"></h3>
-        <p><strong>Kategori:</strong> <span id="modalCategory"></span></p>
-        <p><strong>Stok Tersedia:</strong> <span id="modalStock"></span> Kg</p>
-        <p><strong>Harga:</strong> Rp <span id="modalPrice"></span> /Kg</p>
-        <p><strong>Dibeli:</strong> <span id="modalTimesBought"></span> kali
-           <span id="modalStars"></span></p>
-      </div>
-    </div>
+  <!-- Modal Detail Produk -->
+<div id="detailModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeDetailModal()">&times;</span>
+    <div id="modalBody"></div>
+  </div>
+</div>
 
-    {{-- Script --}}
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const tambahButtons = document.querySelectorAll('.tambah-btn');
-        const selectedCountEl = document.getElementById('selected-count');
-        const checkoutBtn = document.getElementById('checkout-btn');
-        let selectedProducts = new Set();
-        let productData = {};
+    
 
-        tambahButtons.forEach(btn => {
-            btn.addEventListener('click', function () {
-                const card = btn.closest('.produk-card');
-                const productId = card.dataset.id;
-                const productName = card.dataset.name;
-                const productImg = card.querySelector('img').src;
-                const productDesc = card.dataset.deskripsi || '';
-                const stok = parseInt(card.dataset.stock);
+   <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const tambahButtons = document.querySelectorAll('.tambah-btn');
+    const selectedCountEl = document.getElementById('selected-count');
+    const checkoutBtn = document.getElementById('checkout-btn');
+    let selectedProducts = {}; // key: productId, value: qty
 
-                if (stok === 0) {
-                    alert('Produk ini stoknya habis!');
-                    return;
-                }
+    // Handle tambah/hapus produk
+    tambahButtons.forEach(btn => {
+        btn.addEventListener('click', function () {
+            const card = btn.closest('.produk-card');
+            const productId = card.dataset.id;
+            const productName = card.dataset.name;
+            const productImg = card.querySelector('img').src;
+            const productDesc = card.dataset.deskripsi || '';
+            const stok = parseInt(card.dataset.stock);
+            const qty = parseInt(card.querySelector('.size-input')?.value || 1);
+            const sizeContainer = card.querySelector('.size-container');
 
-                if (selectedProducts.has(productId)) {
-                    selectedProducts.delete(productId);
-                    delete productData[productId];
+            if (stok === 0) {
+                alert('Produk ini stoknya habis!');
+                return;
+            }
+
+            if (selectedProducts[productId]) {
+                // === Hapus produk dari session
+                fetch('/checkout/remove', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ product_id: productId })
+                }).finally(() => {
+                    delete selectedProducts[productId];
                     btn.textContent = 'Tambah';
-                    btn.style.backgroundColor = ''; 
-                } else {
-                    selectedProducts.add(productId);
-                    productData[productId] = {
-                        id: productId,
-                        nama: productName,
-                        gambar: productImg,
-                        deskripsi: productDesc
-                    };
-                    btn.textContent = 'Hapus';
-                    btn.style.backgroundColor = '#f44336'; 
-                    flyToCart(card.querySelector('img'));
-                }
-
-                selectedCountEl.textContent = `${selectedProducts.size} produk dipilih`;
-            });
-        });
-
-        // Animasi gambar terbang ke bottom bar
-        function flyToCart(imgElement) {
-            if (!imgElement) return;
-            const bottomBar = document.getElementById('bottom-bar');
-            const imgClone = imgElement.cloneNode(true);
-            const rect = imgElement.getBoundingClientRect();
-            const barRect = bottomBar.getBoundingClientRect();
-
-            imgClone.classList.add('fly-image');
-            imgClone.style.position = 'fixed';
-            imgClone.style.top = rect.top + 'px';
-            imgClone.style.left = rect.left + 'px';
-            imgClone.style.width = rect.width + 'px';
-            imgClone.style.height = rect.height + 'px';
-            imgClone.style.transition = 'all .6s ease-in-out';
-            imgClone.style.zIndex = 9999;
-            document.body.appendChild(imgClone);
-
-            setTimeout(() => {
-                imgClone.style.top = (barRect.top + 8) + 'px';
-                imgClone.style.left = (barRect.left + barRect.width / 2 - 20) + 'px';
-                imgClone.style.width = '30px';
-                imgClone.style.height = '30px';
-                imgClone.style.opacity = '0.5';
-            }, 10);
-
-            setTimeout(() => {
-                if (imgClone && imgClone.parentNode) imgClone.parentNode.removeChild(imgClone);
-            }, 800);
-        }
-
-        // Checkout button
-        if (checkoutBtn) {
-            checkoutBtn.addEventListener('click', function () {
-                if (selectedProducts.size === 0) {
-                    alert('Pilih minimal 1 produk sebelum checkout.');
+                    btn.style.backgroundColor = '';
+                    if (sizeContainer) sizeContainer.style.display = 'none';
+                    updateSelectedCount();
+                });
+            } else {
+                // Tampilkan size picker dulu
+                if (sizeContainer.style.display === 'none') {
+                    sizeContainer.style.display = 'block';
                     return;
                 }
-                const data = encodeURIComponent(JSON.stringify(Object.values(productData)));
-                window.location.href = `/co-detail?data=${data}`;
-            });
-        }
 
-        // Popup
-        window.togglePopup = function () {
-            const popup = document.getElementById('popup-pilih');
-            if (!popup) return;
-            popup.style.display = (popup.style.display === 'flex' || popup.style.display === 'block') ? 'none' : 'flex';
-        };
+                // Kirim ke session Laravel
+                const formData = new FormData();
+                formData.append('product_id', productId);
+                formData.append('size', qty);
+                formData.append('qty', qty);
+
+                fetch('/checkout/prepare', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) { alert(data.error); return; }
+                    selectedProducts[productId] = qty;
+                    btn.textContent = 'Hapus';
+                    btn.style.backgroundColor = '#f44336';
+                    flyToCart(card.querySelector('img'));
+                    updateSelectedCount();
+                })
+                .catch(err => { console.error(err); alert('Gagal menambahkan ke checkout'); });
+            }
+        });
     });
 
-    // Modal detail produk
+    function updateSelectedCount() {
+        selectedCountEl.textContent = `${Object.keys(selectedProducts).length} produk dipilih`;
+    }
+
+    // Animasi gambar terbang ke bottom bar
+    function flyToCart(imgElement) {
+        if (!imgElement) return;
+        const bottomBar = document.getElementById('bottom-bar');
+        const imgClone = imgElement.cloneNode(true);
+        const rect = imgElement.getBoundingClientRect();
+        const barRect = bottomBar.getBoundingClientRect();
+
+        imgClone.style.position = 'fixed';
+        imgClone.style.top = rect.top + 'px';
+        imgClone.style.left = rect.left + 'px';
+        imgClone.style.width = rect.width + 'px';
+        imgClone.style.height = rect.height + 'px';
+        imgClone.style.transition = 'all .6s ease-in-out';
+        imgClone.style.zIndex = 9999;
+        document.body.appendChild(imgClone);
+
+        setTimeout(() => {
+            imgClone.style.top = (barRect.top + 8) + 'px';
+            imgClone.style.left = (barRect.left + barRect.width / 2 - 20) + 'px';
+            imgClone.style.width = '30px';
+            imgClone.style.height = '30px';
+            imgClone.style.opacity = '0.5';
+        }, 10);
+
+        setTimeout(() => {
+            if (imgClone && imgClone.parentNode) imgClone.parentNode.removeChild(imgClone);
+        }, 800);
+    }
+
+    // Checkout button
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', function () {
+            if (Object.keys(selectedProducts).length === 0) {
+                alert('Pilih minimal 1 produk sebelum checkout.');
+                return;
+            }
+            // Session Laravel sudah terisi, cukup redirect
+            window.location.href = "{{ route('checkout.form') }}";
+        });
+    }
+
+    // Popup Tutorial
+    window.togglePopup = function () {
+        const popup = document.getElementById('popup-pilih');
+        if (!popup) return;
+        popup.style.display = (popup.style.display === 'flex' || popup.style.display === 'block') ? 'none' : 'flex';
+    };
+
+    // Handle size picker di card
+    document.querySelectorAll('.produk-card').forEach(card => {
+        const increaseBtn = card.querySelector('.increase');
+        const decreaseBtn = card.querySelector('.decrease');
+        const sizeInput = card.querySelector('.size-input');
+
+        if (increaseBtn && decreaseBtn && sizeInput) {
+            increaseBtn.addEventListener('click', () => {
+                sizeInput.value = parseInt(sizeInput.value) + 1;
+            });
+            decreaseBtn.addEventListener('click', () => {
+                if (parseInt(sizeInput.value) > 1) {
+                    sizeInput.value = parseInt(sizeInput.value) - 1;
+                }
+            });
+        }
+    });
+
+    // === Modal Detail Produk ===
     const wastesData = @json($wastes);
 
-    function openDetailModal(id){
+    window.openDetailModal = function(id) {
         const w = wastesData.find(x => x.id === id);
         if(!w) return;
 
-        let photosHtml = '';
-        if(w.photo){
-            photosHtml += `<img src="/storage/${w.photo}" style="max-width:100%; border-radius:8px;">`;
-        } else {
-            photosHtml = '<em>Tidak ada foto</em>';
-        }
-        document.getElementById('modalPhotos').innerHTML = photosHtml;
+        const modalHTML = `
+            <main class="detail-produk-container">
+                <div class="produk-gambar">
+                    <img src="${w.photo ? '/storage/' + w.photo : '/img/no-image.png'}" alt="${w.type_name}">
+                </div>
+                <div class="produk-info">
+                    <h1>${w.type_name}</h1>
+                    <p><strong>Kategori:</strong> ${w.category?.category_name ?? '-'}</p>
+                    <p><strong>Stok Tersedia:</strong> ${w.stock?.available_weight ?? 0} Kg</p>
+                    <p class="produk-deskripsi"><strong>Deskripsi:</strong> ${w.description ?? 'Tidak ada deskripsi'}</p>
+                    <p><strong>Harga:</strong> Rp ${(w.price_per_unit ?? 0).toLocaleString('id-ID')} /Kg</p>
 
-        document.getElementById('modalTypeName').innerText = w.type_name;
-        document.getElementById('modalCategory').innerText = w.category?.category_name ?? '-';
-        document.getElementById('modalStock').innerText = w.stock?.available_weight ?? 0;
-        document.getElementById('modalPrice').innerText = (w.price_per_unit ?? 0).toLocaleString('id-ID');
-        document.getElementById('modalTimesBought').innerText = w.times_bought ?? 0;
+                    <div class="size-container">
+                        <label>Masukkan Berat (Kg):</label>
+                        <div class="qty-control">
+                            <button type="button" class="qty-btn" id="modal-decrease">-</button>
+                            <input type="number" id="modal-size" value="1" min="1" readonly>
+                            <button type="button" class="qty-btn" id="modal-increase">+</button>
+                        </div>
+                    </div>
 
-        const stars = Math.min(5, Math.ceil((w.times_bought || 0)/2));
-        document.getElementById('modalStars').innerHTML = '★'.repeat(stars) + '☆'.repeat(5-stars);
+                    <div class="modal-bottom">
+                    <span id="modal-total">Rp ${(w.price_per_unit ?? 0).toLocaleString('id-ID')}</span>
+                </div>
+                </div>
+            </main>
+        `;
+        document.getElementById('modalBody').innerHTML = modalHTML;
 
-        document.getElementById('detailModal').style.display='flex';
+        const modalSizeInput = document.getElementById('modal-size');
+        const modalIncrease = document.getElementById('modal-increase');
+        const modalDecrease = document.getElementById('modal-decrease');
+
+        modalIncrease.addEventListener('click', () => {
+            modalSizeInput.value = parseInt(modalSizeInput.value) + 1;
+            updateModalTotal(w.price_per_unit);
+        });
+        modalDecrease.addEventListener('click', () => {
+            if (parseInt(modalSizeInput.value) > 1) {
+                modalSizeInput.value = parseInt(modalSizeInput.value) - 1;
+                updateModalTotal(w.price_per_unit);
+            }
+        });
+
+        document.getElementById('detailModal').style.display = 'flex';
+    };
+
+    function updateModalTotal(basePrice) {
+        const qty = parseInt(document.getElementById('modal-size').value);
+        const total = basePrice * qty;
+        document.getElementById('modal-total').textContent = "Rp " + total.toLocaleString('id-ID');
     }
-    function closeDetailModal(){
-        document.getElementById('detailModal').style.display='none';
-    }
-    </script>
 
+    window.closeDetailModal = function() {
+        document.getElementById('detailModal').style.display = 'none';
+    };
+
+    window.addToCart = function(id){
+    };
+});
+</script>
 </body>
 </html>

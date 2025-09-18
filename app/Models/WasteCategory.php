@@ -1,17 +1,13 @@
 <?php
 namespace App\Models;
-
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class WasteCategory extends Model
 {
-    use HasFactory;
-
     protected $table = 'waste_categories';
-    protected $fillable = ['category_name', 'description'];
+    protected $fillable = ['category_name'];
 
-    public function wastes()
+    public function types()
     {
         return $this->hasMany(WasteType::class, 'waste_category_id');
     }

@@ -14,6 +14,7 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\AddressController;
 
 // ================== LANDING PAGE ==================
 Route::get('/', function () {
@@ -62,6 +63,7 @@ Route::middleware('auth:web')->group(function () {
     Route::post('/checkout/prepare', [CheckoutController::class, 'prepare'])->name('checkout.prepare');
     Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout.form');
     Route::post('/checkout/confirm', [CheckoutController::class, 'confirm'])->name('checkout.confirm');
+    Route::post('/checkout/remove', [CheckoutController::class, 'remove'])->name('checkout.remove'); // ✅ ditambahkan di sini
 });
 
 // ================== PRODUK ==================
@@ -105,6 +107,9 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
     Route::delete('/users/{id}', [\App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('users.destroy');
 });
 
+// ================== ADDRESS ==================
+Route::post('/address/store', [AddressController::class, 'store'])->name('address.store');
+
 // ================== DEBUG SESSION (HANYA LOKAL) ==================
 Route::get('/debug-session', function () {
     if (!app()->isLocal()) {
@@ -122,6 +127,3 @@ Route::get('/debug-session', function () {
         'cookie_session' => request()->cookie(config('session.cookie')),
     ]);
 });
-
-;
-

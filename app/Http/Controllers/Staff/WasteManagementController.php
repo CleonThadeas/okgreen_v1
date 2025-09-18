@@ -10,21 +10,17 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\WasteCategory;
 use App\Models\WasteType;
 use App\Models\WasteStock;
+use App\Models\BuyCartItem;
+use App\Models\BuyTransaction;
 
 class WasteManagementController extends Controller
 {
-    /**
-     * index: list semua tipe (with category + stock)
-     */
     public function index()
     {
         $wastes = WasteType::with(['category','stock'])->get();
         return view('staff.wastes.index', compact('wastes'));
     }
 
-    /**
-     * form tambah kategori
-     */
     public function createCategory()
     {
         return view('staff.wastes.create_category');
@@ -37,9 +33,6 @@ class WasteManagementController extends Controller
         return redirect()->route('staff.wastes.index')->with('success','Kategori berhasil dibuat.');
     }
 
-    /**
-     * form tambah tipe
-     */
     public function createType()
     {
         $categories = WasteCategory::all();
@@ -48,25 +41,75 @@ class WasteManagementController extends Controller
 
     /**
      * store tipe sampah baru (+ upload foto)
+     * Validasi file photo dilakukan manual untuk menghindari false-negative dari rule mimes
      */
     public function storeType(Request $r)
     {
+        // Validasi semua kecuali foto (foto di-handle manual)
         $r->validate([
             'waste_category_id'=>'required|exists:waste_categories,id',
             'type_name'=>'required|string|max:150',
             'description'=>'nullable|string',
             'price_per_unit'=>'required|numeric|min:0',
             'available_weight'=>'nullable|numeric|min:0',
-            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
         DB::beginTransaction();
         try {
             $photoPath = null;
+
+            // Jika ada file, lakukan pemeriksaan manual
             if ($r->hasFile('photo')) {
-                $photoPath = $r->file('photo')->store('wastes','public');
+                $file = $r->file('photo');
+
+                // cek apakah upload valid (PHP upload error)
+                if (!$file->isValid()) {
+                    $err = $file->getError();
+                    Log::error("File upload invalid (storeType): error code {$err}");
+                    DB::rollBack();
+                    return back()->with('error','Upload foto gagal (file tidak valid).')->withInput();
+                }
+
+                // cek ukuran (limit 5MB)
+                $maxBytes = 5 * 1024 * 1024; // 5MB
+                if ($file->getSize() > $maxBytes) {
+                    Log::warning("Photo too large: {$file->getSize()} bytes");
+                    DB::rollBack();
+                    return back()->with('error','Ukuran foto melebihi 5MB.')->withInput();
+                }
+
+                // cek mime type & extension lebih longgar
+                $mime = strtolower($file->getMimeType() ?? '');
+                $ext = strtolower($file->getClientOriginalExtension() ?? '');
+
+                // daftar mime yang kita terima (termasuk variasi umum)
+                $allowedMimes = [
+                    'image/jpeg','image/pjpeg','image/jpg',
+                    'image/png','image/x-png',
+                    'image/gif',
+                    'image/webp'
+                ];
+                $allowedExt = ['jpg','jpeg','png','gif','webp'];
+
+                if (!in_array($mime, $allowedMimes) || !in_array($ext, $allowedExt)) {
+                    Log::error("Photo rejected: mime={$mime}, ext={$ext}");
+                    DB::rollBack();
+                    return back()->with('error','Format foto tidak didukung. Gunakan JPG/JPEG/PNG/GIF/WEBP.')->withInput();
+                }
+
+                // akhirnya simpan file
+                // pastikan storage:link sudah dibuat jika ingin akses via storage
+                $photoPath = $file->store('wastes', 'public');
+                if (!$photoPath) {
+                    Log::error('Gagal menyimpan file ke storage (storeType).');
+                    DB::rollBack();
+                    return back()->with('error','Gagal menyimpan foto.')->withInput();
+                }
+            } else {
+                // tidak ada file di request: bukan error — foto opsional
             }
 
+            // Simpan tipe
             $type = WasteType::create([
                 'waste_category_id' => $r->waste_category_id,
                 'type_name' => $r->type_name,
@@ -84,14 +127,13 @@ class WasteManagementController extends Controller
             return redirect()->route('staff.wastes.index')->with('success','Produk sampah berhasil ditambahkan.');
         } catch (\Throwable $e) {
             DB::rollBack();
-            Log::error('Staff storeType error: '.$e->getMessage());
+            Log::error('Staff storeType error: '.$e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
             return back()->with('error','Gagal menyimpan produk.')->withInput();
         }
     }
 
-    /**
-     * optional: tambah stok terpisah
-     */
     public function addStock(Request $r)
     {
         $r->validate([
@@ -121,9 +163,6 @@ class WasteManagementController extends Controller
         }
     }
 
-    /**
-     * Form edit tipe (route name: staff.wastes.type.edit)
-     */
     public function editType($id)
     {
         $type = WasteType::with(['category','stock'])->findOrFail($id);
@@ -131,15 +170,6 @@ class WasteManagementController extends Controller
         return view('staff.wastes.edit_type', compact('type','categories'));
     }
 
-    /**
-     * Update tipe & stock + ganti foto (route name: staff.wastes.type.update)
-     *
-     * Body params:
-     * - waste_category_id, type_name, description, price_per_unit
-     * - adjust_type: 'set' or 'add'
-     * - stock_value: numeric (if 'add' bisa negatif untuk mengurangi; jika 'set' harus >= 0)
-     * - photo: optional image
-     */
     public function updateType(Request $r, $id)
     {
         $r->validate([
@@ -149,8 +179,6 @@ class WasteManagementController extends Controller
             'price_per_unit' => 'required|numeric|min:0',
             'adjust_type' => 'required|in:set,add',
             'stock_value' => 'required|numeric',
-            'photo' => 'nullable|image|mimes:jpg,jpeg,png,JPG,JPEG,PNG|max:5120'
-
         ]);
 
         DB::beginTransaction();
@@ -161,13 +189,47 @@ class WasteManagementController extends Controller
             $type->description = $r->description ?? null;
             $type->price_per_unit = $r->price_per_unit;
 
-            // handle foto baru (hapus lama jika ada)
+            // handle upload foto baru (manual check seperti storeType)
             if ($r->hasFile('photo')) {
+                $file = $r->file('photo');
+                if (!$file->isValid()) {
+                    Log::error("File upload invalid (updateType): error ".$file->getError());
+                    DB::rollBack();
+                    return back()->with('error','Upload foto gagal (file tidak valid).')->withInput();
+                }
+
+                $maxBytes = 5 * 1024 * 1024;
+                if ($file->getSize() > $maxBytes) {
+                    DB::rollBack();
+                    return back()->with('error','Ukuran foto melebihi 5MB.')->withInput();
+                }
+
+                $mime = strtolower($file->getMimeType() ?? '');
+                $ext = strtolower($file->getClientOriginalExtension() ?? '');
+                $allowedMimes = ['image/jpeg','image/pjpeg','image/jpg','image/png','image/x-png','image/gif','image/webp'];
+                $allowedExt = ['jpg','jpeg','png','gif','webp'];
+
+                if (!in_array($mime, $allowedMimes) || !in_array($ext, $allowedExt)) {
+                    Log::error("Photo rejected (updateType): mime={$mime}, ext={$ext}");
+                    DB::rollBack();
+                    return back()->with('error','Format foto tidak didukung. Gunakan JPG/JPEG/PNG/GIF/WEBP.')->withInput();
+                }
+
+                // hapus foto lama jika ada
                 if ($type->photo && Storage::disk('public')->exists($type->photo)) {
                     Storage::disk('public')->delete($type->photo);
                 }
-                $type->photo = $r->file('photo')->store('wastes','public');
+
+                $st = $file->store('wastes', 'public');
+                if (!$st) {
+                    Log::error('Gagal menyimpan file ke storage (updateType).');
+                    DB::rollBack();
+                    return back()->with('error','Gagal menyimpan foto.')->withInput();
+                }
+
+                $type->photo = $st;
             }
+
             $type->save();
 
             // lock the stock row
@@ -178,7 +240,7 @@ class WasteManagementController extends Controller
                 $stock->available_weight = 0;
             }
 
-            $stockValue = $r->stock_value + 0; // numeric cast
+            $stockValue = (float)$r->stock_value;
 
             if ($r->adjust_type === 'set') {
                 if ($stockValue < 0) {
@@ -201,8 +263,57 @@ class WasteManagementController extends Controller
             return redirect()->route('staff.wastes.index')->with('success','Produk berhasil diperbarui.');
         } catch (\Throwable $e) {
             DB::rollBack();
-            Log::error('Staff updateType error: '.$e->getMessage());
+            Log::error('Staff updateType error: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return back()->with('error','Gagal memperbarui produk.')->withInput();
         }
     }
+
+    public function transactions($id)
+    {
+        $type = WasteType::with('category')->findOrFail($id);
+
+        $transactionIds = BuyCartItem::where('waste_type_id', $id)
+            ->pluck('buy_transaction_id')
+            ->unique()
+            ->values()
+            ->all();
+
+        $txs = BuyTransaction::whereIn('id', $transactionIds)
+            ->with('items.type.category', 'user')
+            ->orderBy('created_at','desc')
+            ->paginate(20);
+
+        return view('staff.wastes.transactions', compact('type','txs'));
+    }
+    public function deleteType(Request $r, $id)
+{
+    DB::beginTransaction();
+    try {
+        $type = WasteType::findOrFail($id);
+
+        // Jika sudah ada transaksi / item yang memakai tipe ini => tolak hapus
+        $hasItems = BuyCartItem::where('waste_type_id', $id)->exists();
+        if ($hasItems) {
+            return back()->with('error', 'Produk ini tidak dapat dihapus karena sudah terdapat transaksi terkait. Anda bisa mengosongkan stok atau menonaktifkan produk terlebih dahulu.');
+        }
+
+        // Hapus foto dari storage publik (jika ada)
+        if ($type->photo && Storage::disk('public')->exists($type->photo)) {
+            Storage::disk('public')->delete($type->photo);
+        }
+
+        // Hapus stock (jika ada)
+        WasteStock::where('waste_type_id', $id)->delete();
+
+        // Hapus tipe
+        $type->delete();
+
+        DB::commit();
+        return redirect()->route('staff.wastes.index')->with('success', 'Produk berhasil dihapus.');
+    } catch (\Throwable $e) {
+        DB::rollBack();
+        Log::error('Staff deleteType error: '.$e->getMessage(), ['id' => $id]);
+        return back()->with('error', 'Gagal menghapus produk: '.$e->getMessage());
+    }
+}
 }
