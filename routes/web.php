@@ -14,8 +14,9 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\Staff\WasteManagementController as StaffWasteCtrl;
 use App\Http\Controllers\Admin\WasteManagementController as AdminWasteCtrl;
 use App\Http\Controllers\Staff\StaffTransactionController;
+use App\Http\Controllers\SellController;
 use App\Http\Controllers\Staff\SellRequestController;
-
+use App\Http\Controllers\Staff\SellTypeController;
 
 // ================== HOME ==================
 Route::get('/', function () {
@@ -48,8 +49,9 @@ Route::middleware(['auth:web'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// ================== USER (web guard) - Pembelian ==================
+// ================== USER (web guard) - Pembelian & Penjualan ==================
 Route::middleware('auth:web')->group(function(){
+    // Beli sampah
     Route::get('/buy-waste', [WasteController::class, 'index'])->name('buy-waste.index');
 
     // Checkout
@@ -58,37 +60,53 @@ Route::middleware('auth:web')->group(function(){
     Route::post('/checkout/confirm', [CheckoutController::class, 'confirm'])->name('checkout.confirm');
     Route::get('/checkout/qr/{id}', [CheckoutController::class, 'qrView'])->name('checkout.qr');
 
-    // Transactions (user view)
+    // Transactions
     Route::get('/transactions', [TransactionController::class,'index'])->name('transactions.index');
     Route::get('/transactions/{id}', [TransactionController::class,'show'])->name('transactions.show');
     Route::get('/transactions/{id}/status', [TransactionController::class,'status'])->name('transactions.status');
 
-    // Static pages
-    Route::view('/sell-waste', 'user.sell.index')->name('sell-waste.index');
+    // SELL WASTE (User) → konsisten pakai "sell-waste.*"
+    Route::get('/sell-waste', [SellController::class,'index'])->name('sell-waste.index');
+    Route::post('/sell-waste', [SellController::class,'store'])->name('sell-waste.store');
+    Route::get('/sell-waste/types/{catId}', [SellController::class,'getTypes'])->name('sell-waste.types');
+
+    // Optional create form
+    Route::get('/sell/create', [SellController::class,'create'])->name('sell.create');
+
+    // Edukasi
     Route::view('/edu', 'user.edukasi.index')->name('edu.index');
 });
 
+// ================== STAFF ==================
 Route::prefix('staff')->name('staff.')->middleware('auth:staff')->group(function(){
-// Kelola produk
-Route::get('/wastes', [StaffWasteCtrl::class, 'index'])->name('wastes.index');
-Route::get('/wastes/category/create', [StaffWasteCtrl::class, 'createCategory'])->name('wastes.category.create');
-Route::post('/wastes/category', [StaffWasteCtrl::class, 'storeCategory'])->name('wastes.category.store');
-Route::get('/wastes/type/create', [StaffWasteCtrl::class, 'createType'])->name('wastes.type.create');
-Route::post('/wastes/type', [StaffWasteCtrl::class, 'storeType'])->name('wastes.type.store');
-Route::get('/wastes/type/{id}/edit', [StaffWasteCtrl::class, 'editType'])->name('wastes.type.edit');
-Route::put('/wastes/type/{id}', [StaffWasteCtrl::class, 'updateType'])->name('wastes.type.update');
-Route::delete('/wastes/type/{id}', [StaffWasteCtrl::class, 'deleteType'])->name('wastes.type.delete');
-Route::post('/wastes/stock', [StaffWasteCtrl::class, 'addStock'])->name('wastes.stock.add');
+    // Kelola produk
+    Route::get('/wastes', [StaffWasteCtrl::class, 'index'])->name('wastes.index');
+    Route::get('/wastes/category/create', [StaffWasteCtrl::class, 'createCategory'])->name('wastes.category.create');
+    Route::post('/wastes/category', [StaffWasteCtrl::class, 'storeCategory'])->name('wastes.category.store');
+    Route::get('/wastes/type/create', [StaffWasteCtrl::class, 'createType'])->name('wastes.type.create');
+    Route::post('/wastes/type', [StaffWasteCtrl::class, 'storeType'])->name('wastes.type.store');
+    Route::get('/wastes/type/{id}/edit', [StaffWasteCtrl::class, 'editType'])->name('wastes.type.edit');
+    Route::put('/wastes/type/{id}', [StaffWasteCtrl::class, 'updateType'])->name('wastes.type.update');
+    Route::delete('/wastes/type/{id}', [StaffWasteCtrl::class, 'deleteType'])->name('wastes.type.delete');
+    Route::post('/wastes/stock', [StaffWasteCtrl::class, 'addStock'])->name('wastes.stock.add');
 
-// 🟢 Transaksi (UTAMA)
-Route::get('/transactions', [StaffTransactionController::class, 'index'])->name('transactions.index');
-Route::get('/transactions/{id}', [StaffTransactionController::class, 'show'])->name('transactions.show');
-Route::post('/transactions/{id}/update', [StaffTransactionController::class, 'updateStatus'])->name('transactions.update');
+    // Transaksi
+    Route::get('/transactions', [StaffTransactionController::class, 'index'])->name('transactions.index');
+    Route::get('/transactions/{id}', [StaffTransactionController::class, 'show'])->name('transactions.show');
+    Route::post('/transactions/{id}/update', [StaffTransactionController::class, 'updateStatus'])->name('transactions.update');
 
-    // Sell Requests
+    // Sell requests
     Route::get('/sell-requests', [SellRequestController::class, 'index'])->name('sell_requests.index');
-});
+    Route::get('/sell-requests/{id}', [SellRequestController::class, 'show'])->name('sell_requests.show');
+    Route::post('/sell-requests/{id}/update', [SellRequestController::class, 'updateStatus'])
+    ->name('sell_requests.update');
 
+
+    // Sell waste types (jenis sampah)
+    Route::get('/sell-types', [SellTypeController::class,'index'])->name('sell-types.index');
+    Route::get('/sell-types/create', [SellTypeController::class,'create'])->name('sell-types.create');
+    Route::post('/sell-types', [SellTypeController::class,'store'])->name('sell-types.store');
+});
 
 // ================== ADMIN ==================
 Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function(){
@@ -101,7 +119,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
     Route::put('/wastes/type/{id}', [AdminWasteCtrl::class, 'updateType'])->name('wastes.type.update');
     Route::post('/wastes/stock', [AdminWasteCtrl::class, 'addStock'])->name('wastes.stock.add');
 
-    // Admin manage staff/users
+    // Manage users
     Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
     Route::get('/users/create', [\App\Http\Controllers\Admin\UserController::class, 'create'])->name('users.create');
     Route::post('/users', [\App\Http\Controllers\Admin\UserController::class, 'store'])->name('users.store');

@@ -25,6 +25,11 @@ class User extends Authenticatable
         'gender',
     ];
 
+    public function sells()
+{
+    return $this->hasMany(\App\Models\SellWaste::class, 'user_id');
+}
+
     protected $hidden = [
         'password', 'remember_token',
     ];
