@@ -1,4 +1,3 @@
-{{-- resources/views/user/index.blade.php --}}
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -7,7 +6,6 @@
     <title>Beli Barang</title>
     <link rel="stylesheet" href="{{ asset('css/belibarang.css') }}?v={{ time() }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
 </head>
 <body>
 
@@ -69,7 +67,6 @@
                     <div class="produk-stock">Stok: {{ $stok }}</div>
 
                     @if($stok > 0)
-                    <!-- Size Picker: Awalnya disembunyikan -->
                     <div class="size-container" style="display: none;">
                         <p class="size-label">Masukkan berat dalam <strong>Kg</strong>:</p>
                         <div class="qty-control">
@@ -79,6 +76,7 @@
                         </div>
                     </div>
                     @endif
+
                     <div class="produk-action">
                         <button class="tambah-btn" {{ $stok == 0 ? 'disabled' : '' }}>
                             {{ $stok == 0 ? 'Tidak Tersedia' : 'Tambah' }}
@@ -97,31 +95,26 @@
         <button id="checkout-btn">Checkout</button>
     </div>
 
-  <!-- Modal Detail Produk -->
-<div id="detailModal" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="closeDetailModal()">&times;</span>
-    <div id="modalBody"></div>
-  </div>
-</div>
+    <!-- Modal Detail Produk -->
+    <div id="detailModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeDetailModal()">&times;</span>
+        <div id="modalBody"></div>
+      </div>
+    </div>
 
-    
-
-   <script>
+<script>
 document.addEventListener('DOMContentLoaded', function () {
     const tambahButtons = document.querySelectorAll('.tambah-btn');
     const selectedCountEl = document.getElementById('selected-count');
     const checkoutBtn = document.getElementById('checkout-btn');
-    let selectedProducts = {}; // key: productId, value: qty
+    let selectedProducts = {};
 
-    // Handle tambah/hapus produk
+    // Tambah / Hapus Produk
     tambahButtons.forEach(btn => {
         btn.addEventListener('click', function () {
             const card = btn.closest('.produk-card');
             const productId = card.dataset.id;
-            const productName = card.dataset.name;
-            const productImg = card.querySelector('img').src;
-            const productDesc = card.dataset.deskripsi || '';
             const stok = parseInt(card.dataset.stock);
             const qty = parseInt(card.querySelector('.size-input')?.value || 1);
             const sizeContainer = card.querySelector('.size-container');
@@ -132,13 +125,13 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             if (selectedProducts[productId]) {
-                // === Hapus produk dari session
-                fetch('/checkout/remove', {
+                // Hapus produk dari cart (BE)
+                fetch("{{ route('checkout.remove') }}", {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
                     },
                     body: JSON.stringify({ product_id: productId })
                 }).finally(() => {
@@ -149,24 +142,19 @@ document.addEventListener('DOMContentLoaded', function () {
                     updateSelectedCount();
                 });
             } else {
-                // Tampilkan size picker dulu
                 if (sizeContainer.style.display === 'none') {
                     sizeContainer.style.display = 'block';
                     return;
                 }
 
-                // Kirim ke session Laravel
+                // Tambah produk ke cart (BE)
                 const formData = new FormData();
                 formData.append('product_id', productId);
-                formData.append('size', qty);
                 formData.append('qty', qty);
 
-                fetch('/checkout/prepare', {
+                fetch("{{ route('checkout.prepare') }}", {
                     method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
+                    headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
                     body: formData
                 })
                 .then(res => res.json())
@@ -187,7 +175,7 @@ document.addEventListener('DOMContentLoaded', function () {
         selectedCountEl.textContent = `${Object.keys(selectedProducts).length} produk dipilih`;
     }
 
-    // Animasi gambar terbang ke bottom bar
+    // Animasi terbang ke cart
     function flyToCart(imgElement) {
         if (!imgElement) return;
         const bottomBar = document.getElementById('bottom-bar');
@@ -212,19 +200,16 @@ document.addEventListener('DOMContentLoaded', function () {
             imgClone.style.opacity = '0.5';
         }, 10);
 
-        setTimeout(() => {
-            if (imgClone && imgClone.parentNode) imgClone.parentNode.removeChild(imgClone);
-        }, 800);
+        setTimeout(() => imgClone.remove(), 800);
     }
 
-    // Checkout button
+    // Checkout redirect
     if (checkoutBtn) {
         checkoutBtn.addEventListener('click', function () {
             if (Object.keys(selectedProducts).length === 0) {
                 alert('Pilih minimal 1 produk sebelum checkout.');
                 return;
             }
-            // Session Laravel sudah terisi, cukup redirect
             window.location.href = "{{ route('checkout.form') }}";
         });
     }
@@ -232,24 +217,18 @@ document.addEventListener('DOMContentLoaded', function () {
     // Popup Tutorial
     window.togglePopup = function () {
         const popup = document.getElementById('popup-pilih');
-        if (!popup) return;
         popup.style.display = (popup.style.display === 'flex' || popup.style.display === 'block') ? 'none' : 'flex';
     };
 
-    // Handle size picker di card
+    // Handle qty picker di card
     document.querySelectorAll('.produk-card').forEach(card => {
-        const increaseBtn = card.querySelector('.increase');
-        const decreaseBtn = card.querySelector('.decrease');
+        const inc = card.querySelector('.increase');
+        const dec = card.querySelector('.decrease');
         const sizeInput = card.querySelector('.size-input');
-
-        if (increaseBtn && decreaseBtn && sizeInput) {
-            increaseBtn.addEventListener('click', () => {
-                sizeInput.value = parseInt(sizeInput.value) + 1;
-            });
-            decreaseBtn.addEventListener('click', () => {
-                if (parseInt(sizeInput.value) > 1) {
-                    sizeInput.value = parseInt(sizeInput.value) - 1;
-                }
+        if (inc && dec && sizeInput) {
+            inc.addEventListener('click', () => sizeInput.value = parseInt(sizeInput.value) + 1);
+            dec.addEventListener('click', () => {
+                if (parseInt(sizeInput.value) > 1) sizeInput.value = parseInt(sizeInput.value) - 1;
             });
         }
     });
@@ -258,7 +237,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const wastesData = @json($wastes);
 
     window.openDetailModal = function(id) {
-        const w = wastesData.find(x => x.id === id);
+        const w = wastesData.find(x => x.id == id);
         if(!w) return;
 
         const modalHTML = `
@@ -272,53 +251,15 @@ document.addEventListener('DOMContentLoaded', function () {
                     <p><strong>Stok Tersedia:</strong> ${w.stock?.available_weight ?? 0} Kg</p>
                     <p class="produk-deskripsi"><strong>Deskripsi:</strong> ${w.description ?? 'Tidak ada deskripsi'}</p>
                     <p><strong>Harga:</strong> Rp ${(w.price_per_unit ?? 0).toLocaleString('id-ID')} /Kg</p>
-
-                    <div class="size-container">
-                        <label>Masukkan Berat (Kg):</label>
-                        <div class="qty-control">
-                            <button type="button" class="qty-btn" id="modal-decrease">-</button>
-                            <input type="number" id="modal-size" value="1" min="1" readonly>
-                            <button type="button" class="qty-btn" id="modal-increase">+</button>
-                        </div>
-                    </div>
-
-                    <div class="modal-bottom">
-                    <span id="modal-total">Rp ${(w.price_per_unit ?? 0).toLocaleString('id-ID')}</span>
+                    <div class="modal-bottom"><span id="modal-total">Rp ${(w.price_per_unit ?? 0).toLocaleString('id-ID')}</span></div>
                 </div>
-                </div>
-            </main>
-        `;
+            </main>`;
         document.getElementById('modalBody').innerHTML = modalHTML;
-
-        const modalSizeInput = document.getElementById('modal-size');
-        const modalIncrease = document.getElementById('modal-increase');
-        const modalDecrease = document.getElementById('modal-decrease');
-
-        modalIncrease.addEventListener('click', () => {
-            modalSizeInput.value = parseInt(modalSizeInput.value) + 1;
-            updateModalTotal(w.price_per_unit);
-        });
-        modalDecrease.addEventListener('click', () => {
-            if (parseInt(modalSizeInput.value) > 1) {
-                modalSizeInput.value = parseInt(modalSizeInput.value) - 1;
-                updateModalTotal(w.price_per_unit);
-            }
-        });
-
         document.getElementById('detailModal').style.display = 'flex';
     };
 
-    function updateModalTotal(basePrice) {
-        const qty = parseInt(document.getElementById('modal-size').value);
-        const total = basePrice * qty;
-        document.getElementById('modal-total').textContent = "Rp " + total.toLocaleString('id-ID');
-    }
-
     window.closeDetailModal = function() {
         document.getElementById('detailModal').style.display = 'none';
-    };
-
-    window.addToCart = function(id){
     };
 });
 </script>

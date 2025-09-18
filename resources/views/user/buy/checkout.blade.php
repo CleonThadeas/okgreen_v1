@@ -26,7 +26,7 @@
                 <button class="btn save change-address-btn">Ganti Alamat</button>
             </div>
 
-            <!-- Popup Modal Pilih Alamat -->
+            {{-- Modal Pilih Alamat --}}
             <div id="addressModal" class="modal">
                 <div class="modal-content">
                     <span class="close" onclick="toggleAddressModal(false)">&times;</span>
@@ -40,17 +40,12 @@
                             </li>
                         @endforeach
                     </ul>
-
-                    <!-- Tombol buka tambah alamat -->
-                    <button class="btn save" style="margin-top:10px;" onclick="toggleAddAddressModal(true)">
-                        + Tambah Alamat Baru
-                    </button>
-
+                    <button class="btn save" onclick="toggleAddAddressModal(true)">+ Tambah Alamat Baru</button>
                     <button class="btn cancel" onclick="toggleAddressModal(false)">Batalkan</button>
                 </div>
             </div>
 
-            <!-- Modal Tambah Alamat -->
+            {{-- Modal Tambah Alamat --}}
             <div id="addAddressModal" class="modal">
                 <div class="modal-content">
                     <span class="close" onclick="toggleAddAddressModal(false)">&times;</span>
@@ -59,15 +54,15 @@
                         @csrf
                         <div class="form-group">
                             <label for="addressName">Nama Penerima</label>
-                            <input type="text" id="addressName" name="name" placeholder="Nama penerima" required>
+                            <input type="text" id="addressName" name="name" required>
                         </div>
                         <div class="form-group">
                             <label for="addressPhone">Nomor Telepon</label>
-                            <input type="text" id="addressPhone" name="phone" placeholder="08xxxx" required>
+                            <input type="text" id="addressPhone" name="phone" required>
                         </div>
                         <div class="form-group">
                             <label for="addressDetail">Alamat Lengkap</label>
-                            <textarea id="addressDetail" name="address" placeholder="Alamat lengkap anda" required></textarea>
+                            <textarea id="addressDetail" name="address" required></textarea>
                         </div>
                         <div class="form-actions">
                             <button type="submit" class="btn save">Simpan</button>
@@ -77,7 +72,7 @@
                 </div>
             </div>
 
-            {{-- === Pilihan Pengiriman === --}}
+            {{-- === Metode Pengiriman === --}}
             <h2 class="section-title">Metode Pengiriman</h2>
             <div class="shipping-options">
                 <button class="shipping-btn btn save" data-type="antar">Antar ke Alamat</button>
@@ -119,33 +114,7 @@
                 @endforeach
             </div>
 
-            {{-- === Detail Harga === --}}
-            <div class="product-details">
-                @foreach($items as $it)
-                    <div>
-                        <span>{{ $it['type_name'] }} ({{ $it['quantity'] }} kg)</span>
-                        <span>Rp {{ number_format($it['subtotal'],0,',','.') }}</span>
-                    </div>
-                @endforeach
-            </div>
-
-            {{-- === Pembayaran === --}}
-            <h2 class="section-title">Pembayaran</h2>
-            <div class="payment-options">
-                <img src="{{ asset('img/dana.png') }}" alt="Dana" class="payment-method" data-method="dana">
-                <img src="{{ asset('img/qris.png') }}" alt="QRIS" class="payment-method" data-method="qris">
-            </div>
-
-            <!-- Popup QRIS -->
-            <div id="qrisModal" class="modal">
-                <div class="modal-content">
-                    <span class="close" onclick="toggleQrisModal(false)">&times;</span>
-                    <h3>Scan QRIS untuk Membayar</h3>
-                    <img src="{{ asset('img/Qris-Dummy.jpg') }}" alt="QRIS Code" style="width:250px;">
-                </div>
-            </div>
-
-            {{-- === Rincian Pembayaran === --}}
+            {{-- === Rincian Harga === --}}
             <div class="payment-details">
                 <div>
                     <span>Price ({{ count($items) }} items)</span>
@@ -165,12 +134,24 @@
                 </div>
             </div>
 
-            <div class="saved">
-                You saved {{ number_format($discount ?? 0,0,',','.') }} on this order
+            {{-- === Metode Pembayaran === --}}
+            <h2 class="section-title">Metode Pembayaran</h2>
+            <div class="payment-options">
+                <img src="{{ asset('img/dana.png') }}" alt="Dana" class="payment-method" data-method="dana">
+                <img src="{{ asset('img/qris.png') }}" alt="QRIS" class="payment-method" data-method="qris">
+            </div>
+
+            {{-- Popup QRIS --}}
+            <div id="qrisModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="toggleQrisModal(false)">&times;</span>
+                    <h3>Scan QRIS untuk Membayar</h3>
+                    <img src="{{ asset('img/Qris-Dummy.jpg') }}" alt="QRIS Code" style="width:250px;">
+                </div>
             </div>
 
             {{-- === Form Checkout === --}}
-           <form action="{{ route('cart.checkout') }}" method="POST" id="checkout-form">
+            <form action="{{ route('cart.checkout') }}" method="POST" id="checkout-form">
                 @csrf
                 @foreach($items as $it)
                     <input type="hidden" name="items[{{ $it['waste_type_id'] }}][selected]" value="1">
@@ -188,160 +169,105 @@
         </div>
     </div>
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    // === Modal Pilih Alamat ===
-    const addressModal = document.getElementById("addressModal");
-    const changeAddressBtn = document.querySelector(".change-address-btn");
-    const addressIdInput = document.getElementById("address_id");
-    const deliveryName = document.getElementById("deliveryName");
-    const deliveryAddress = document.getElementById("deliveryAddress");
-    const deliveryPhone = document.getElementById("deliveryPhone");
+    <script>
+        // public/js/checkout.js
 
-    // Open modal pilih alamat
-    changeAddressBtn.addEventListener("click", () => toggleAddressModal(true));
+document.addEventListener("DOMContentLoaded", () => {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
-    function toggleAddressModal(show) {
-        addressModal.style.display = show ? "flex" : "none";
-    }
-    window.toggleAddressModal = toggleAddressModal;
+    // === Modal Alamat ===
+    window.toggleAddressModal = (show = true) => {
+        document.getElementById("addressModal").style.display = show ? "block" : "none";
+    };
 
-    // Pilih alamat yang sudah ada
-    document.querySelectorAll(".address-item").forEach(li => {
-        li.addEventListener("click", function () {
-            deliveryName.textContent = this.querySelector("strong").textContent;
-            deliveryAddress.innerHTML = this.innerHTML.split('<br>')[1];
-            deliveryPhone.textContent = this.querySelector("small").textContent.replace('📞 ', '');
-            addressIdInput.value = this.dataset.id;
+    window.toggleAddAddressModal = (show = true) => {
+        document.getElementById("addAddressModal").style.display = show ? "block" : "none";
+    };
+
+    // Pilih alamat
+    document.querySelectorAll(".address-item").forEach(item => {
+        item.addEventListener("click", () => {
+            const id = item.dataset.id;
+            const name = item.querySelector("strong").textContent;
+            const address = item.innerHTML.split("<br>")[1];
+            const phone = item.querySelector("small").textContent;
+
+            document.getElementById("deliveryName").textContent = name;
+            document.getElementById("deliveryAddress").innerHTML = address;
+            document.getElementById("deliveryPhone").textContent = phone.replace("📞 ","");
+            document.getElementById("address_id").value = id;
+            document.getElementById("address_type").value = "antar";
+
             toggleAddressModal(false);
         });
     });
 
-    // === Modal Tambah Alamat ===
-    function toggleAddAddressModal(show) {
-        document.getElementById('addAddressModal').style.display = show ? 'flex' : 'none';
-    }
-    window.toggleAddAddressModal = toggleAddAddressModal;
+    // Tambah alamat baru (AJAX)
+    const addForm = document.getElementById("addAddressForm");
+    if (addForm) {
+        addForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const formData = new FormData(addForm);
 
-    // Submit alamat baru
-    document.getElementById('addAddressForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const formData = new FormData(this);
+            const res = await fetch("/checkout/address", {
+                method: "POST",
+                headers: { "X-CSRF-TOKEN": csrfToken },
+                body: formData
+            });
+            const data = await res.json();
 
-        fetch('{{ route("address.store") }}', {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                'Accept': 'application/json'
-            },
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
             if (data.success) {
-                alert('Alamat berhasil ditambahkan!');
-                const newAddress = `
-                    <li class="address-item" data-id="${data.address.id}">
-                        <strong>${data.address.name}</strong><br>
-                        ${data.address.address}<br>
-                        <small>📞 ${data.address.phone}</small>
-                    </li>
-                `;
-                document.getElementById('addressList').insertAdjacentHTML('beforeend', newAddress);
-                toggleAddAddressModal(false);
-                this.reset();
+                alert("Alamat berhasil ditambahkan");
+                location.reload();
             } else {
-                alert(data.message || 'Gagal menambahkan alamat');
+                alert("Gagal menambah alamat");
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Terjadi kesalahan saat menambahkan alamat.');
         });
-    });
+    }
 
-    // === Shipping ===
-    const shippingButtons = document.querySelectorAll(".shipping-btn");
-    const shippingMethodInput = document.getElementById("address_type");
-    const pickupModal = document.getElementById("pickupModal");
-    const pickupSelectBtn = pickupModal.querySelector(".btn-pilih");
-    const pickupAddress = document.getElementById("pickupAddress");
-    const selectedLocationDisplay = document.getElementById("selectedLocation");
-    const pickupLocationInput = document.getElementById("pickup_location");
-
-    shippingButtons.forEach(btn => {
-        btn.addEventListener("click", function () {
-            shippingButtons.forEach(b => b.classList.remove("active"));
-            this.classList.add("active");
-            if (this.dataset.type === "ambil") {
-                shippingMethodInput.value = "pickup";
+    // === Pengiriman ===
+    document.querySelectorAll(".shipping-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            if (btn.dataset.type === "antar") {
+                document.getElementById("address_type").value = "antar";
+                document.getElementById("selectedLocation").style.display = "none";
+            } else {
+                document.getElementById("address_type").value = "ambil";
                 togglePickupModal(true);
-            } else {
-                shippingMethodInput.value = "delivery";
-                selectedLocationDisplay.style.display = "none";
             }
         });
     });
 
-    pickupSelectBtn.addEventListener("click", function () {
-        if (!pickupAddress.value) {
-            alert("Pilih lokasi terlebih dahulu!");
-            return;
+    // Modal pickup
+    window.togglePickupModal = (show = true) => {
+        document.getElementById("pickupModal").style.display = show ? "block" : "none";
+    };
+
+    document.querySelector("#pickupModal .btn-pilih").addEventListener("click", () => {
+        const lokasi = document.getElementById("pickupAddress").value;
+        if (lokasi) {
+            document.getElementById("pickup_location").value = lokasi;
+            document.getElementById("selectedLocation").style.display = "block";
+            document.getElementById("selectedLocation").textContent = "📍 " + lokasi;
+            togglePickupModal(false);
         }
-        pickupLocationInput.value = pickupAddress.value;
-        selectedLocationDisplay.textContent = "Lokasi Pengambilan: " + pickupAddress.value;
-        selectedLocationDisplay.style.display = "block";
-        togglePickupModal(false);
     });
 
-    function togglePickupModal(show) {
-        pickupModal.style.display = show ? "flex" : "none";
-    }
-    window.togglePickupModal = togglePickupModal;
+    // === Metode Pembayaran ===
+    document.querySelectorAll(".payment-method").forEach(pm => {
+        pm.addEventListener("click", () => {
+            const method = pm.dataset.method;
+            document.getElementById("payment_method").value = method;
 
-    // === Payment ===
-    const paymentMethods = document.querySelectorAll(".payment-method");
-    const paymentMethodInput = document.getElementById("payment_method");
-
-    paymentMethods.forEach(img => {
-        img.addEventListener("click", function () {
-            paymentMethodInput.value = this.dataset.method;
-            if (this.dataset.method === "qris") {
-                toggleQrisModal(true);
-            }
+            if (method === "qris") toggleQrisModal(true);
+            else toggleQrisModal(false);
         });
     });
 
-    function toggleQrisModal(show) {
-        document.getElementById('qrisModal').style.display = show ? 'flex' : 'none';
-    }
-    window.toggleQrisModal = toggleQrisModal;
-
-    // Efek klik tombol shipping dan payment
-document.querySelectorAll(".shipping-btn, .payment-method").forEach(el => {
-    el.addEventListener("click", () => {
-        el.style.transform = "scale(0.95)";
-        setTimeout(() => {
-            el.style.transform = "scale(1)";
-        }, 150);
-    });
+    window.toggleQrisModal = (show = true) => {
+        document.getElementById("qrisModal").style.display = show ? "block" : "none";
+    };
 });
-
-// Animasi masuk konten ketika scroll
-const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-        if(entry.isIntersecting){
-            entry.target.classList.add("animate-visible");
-        }
-    });
-}, { threshold: 0.1 });
-
-document.querySelectorAll(".product-card, .payment-details, .section-title").forEach(el => {
-    el.classList.add("animate-hidden");
-    observer.observe(el);
-});
-
-});
-</script>
+    </script>
 </body>
 </html>

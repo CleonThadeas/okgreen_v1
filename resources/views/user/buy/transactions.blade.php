@@ -1,3 +1,4 @@
+{{-- resources/views/user/riwayat.blade.php --}}
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -35,6 +36,15 @@
                             <div class="muted">
                                 Tanggal: {{ \Carbon\Carbon::parse($trx->transaction_date)->format('d M Y H:i') }}
                             </div>
+                            <div class="muted">
+                                Metode Pembayaran: {{ strtoupper($trx->payment_method ?? '-') }}
+                            </div>
+                            <div class="muted">
+                                Pengiriman: {{ strtoupper($trx->shipping_method ?? 'pickup') }}
+                                @if($trx->shipping_method === 'delivery')
+                                    — {{ $trx->receiver_name }} | {{ $trx->phone }} | {{ $trx->address }}
+                                @endif
+                            </div>
                         </div>
                         <div class="trx-amount">
                             <div class="total">Rp {{ number_format($trx->total_amount,0,',','.') }}</div>
@@ -47,9 +57,10 @@
                             <thead>
                                 <tr>
                                     <th>Jenis Sampah</th>
-                                    <th>Qty (Kg)</th>
-                                    <th>Harga/kg</th>
-                                    <th>Subtotal</th>
+                                    <th class="center">Kategori</th>
+                                    <th class="center">Qty (Kg)</th>
+                                    <th class="right">Harga/kg</th>
+                                    <th class="right">Subtotal</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -57,10 +68,8 @@
                                     <tr>
                                         <td>
                                             {{ optional($item->type)->type_name ?? 'Tipe (ID: '.$item->waste_type_id.')' }}
-                                            @if(optional($item->type)->category)
-                                                <div class="muted small">Kategori: {{ $item->type->category->category_name }}</div>
-                                            @endif
                                         </td>
+                                        <td class="center">{{ optional(optional($item->type)->category)->category_name ?? '-' }}</td>
                                         <td class="center">{{ $item->quantity }}</td>
                                         <td class="right">Rp {{ number_format($item->price_per_unit,0,',','.') }}</td>
                                         <td class="right">Rp {{ number_format($item->subtotal,0,',','.') }}</td>
@@ -74,11 +83,9 @@
                         <div class="muted">
                             Subtotal: Rp {{ number_format(collect($trx->items)->sum('subtotal'),0,',','.') }}
                         </div>
-                        @if(isset($trx->shipping_cost))
-                            <div class="muted">
-                                Ongkir: Rp {{ number_format($trx->shipping_cost,0,',','.') }}
-                            </div>
-                        @endif
+                        <div class="muted">
+                            Ongkir: Rp {{ number_format($trx->shipping_cost ?? 0,0,',','.') }}
+                        </div>
                         <div class="total">
                             Total: Rp {{ number_format($trx->total_amount,0,',','.') }}
                         </div>
