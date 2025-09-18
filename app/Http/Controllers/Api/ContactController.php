@@ -11,7 +11,7 @@ use App\Models\ContactReply;
 class ContactController extends Controller
 {
     // =============================
-    // USER: Kirim pesan ke admin
+    // USER: Kirim pesan ke staff
     // =============================
     public function store(Request $request)
     {
@@ -34,10 +34,11 @@ class ContactController extends Controller
     }
 
     // =============================
-    // ADMIN: Lihat semua pesan user
+    // STAFF: Lihat semua pesan user
     // =============================
     public function index()
     {
+        // Asumsinya staff yang login bisa lihat semua pesan
         $messages = ContactMessage::with('user')->latest()->get();
 
         return response()->json([
@@ -47,13 +48,13 @@ class ContactController extends Controller
     }
 
     // =============================
-    // USER & ADMIN: Lihat detail chat + balasan
+    // USER & STAFF: Lihat detail chat + balasan
     // =============================
     public function show(Request $request, $messageId)
     {
         $message = ContactMessage::with([
             'user',
-            'replies.admin',
+            'replies.staff',
             'replies.user'
         ])->findOrFail($messageId);
 
@@ -65,7 +66,7 @@ class ContactController extends Controller
     }
 
     // =============================
-    // USER & ADMIN: Balas pesan
+    // USER & STAFF: Balas pesan
     // =============================
     public function reply(Request $request, $messageId)
     {
@@ -73,13 +74,13 @@ class ContactController extends Controller
             'reply' => 'required|string',
         ]);
 
-        if (Auth::guard('admin')->check()) {
-            // Admin membalas
+        if (Auth::guard('staff')->check()) {
+            // Staff membalas
             $reply = ContactReply::create([
                 'message_id'  => $messageId,
-                'admin_id'    => Auth::guard('admin')->id(),
+                'staff_id'    => Auth::guard('staff')->id(),
                 'reply'       => $request->reply,
-                'sender_type' => 'admin',
+                'sender_type' => 'staff',
             ]);
         } else {
             // User membalas
@@ -97,5 +98,4 @@ class ContactController extends Controller
             'data'    => $reply,
         ]);
     }
-
 }
