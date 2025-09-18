@@ -1,14 +1,21 @@
 <?php
+
 namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
 
 class WasteCategory extends Model
 {
-    protected $table = 'waste_categories';
-    protected $fillable = ['category_name'];
+    use HasApiTokens, HasFactory, Notifiable;
 
-    public function types()
-    {
-        return $this->hasMany(WasteType::class, 'waste_category_id');
-    }
+    protected $table = 'waste_categories'; 
+    protected $primaryKey = 'id';
+
+    protected $fillable = [
+        'category_name',
+    ];
 }
