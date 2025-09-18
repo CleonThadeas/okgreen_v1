@@ -13,6 +13,8 @@ use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\UserTokenController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ContactController;
+use App\Http\Controllers\Api\TransactionController; 
+use App\Http\Controllers\Api\PointController; 
 
 
 // ===========================
@@ -49,6 +51,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/contact', [ContactController::class, 'store']); 
     Route::get('/contact/{messageId}', [ContactController::class, 'show']); 
     Route::post('/contact/{messageId}/reply', [ContactController::class, 'reply']); 
+
+    // Transactions
+    Route::post('/transactions', [TransactionController::class, 'create']); // buat transaksi baru
+    Route::post('/transactions/{id}/items', [TransactionController::class, 'addItem']); // tambah item
+    Route::post('/transactions/{id}/pay', [TransactionController::class, 'pay']); // bayar
+    Route::get('/transactions/{id}/status', [TransactionController::class, 'status']); // cek status
+    Route::get('/transactions/my', [TransactionController::class, 'myTransactions']); // list transaksi user
+
+    // Point rewerd
+    Route::get('/points', [PointController::class, 'myPoints']);
+    Route::post('/points/add', [PointController::class, 'addPoints']);
+    Route::get('/rewards', [PointController::class, 'rewards']);
+    Route::post('/rewards/{id}/redeem', [PointController::class, 'redeem']);
 });
 
 
@@ -71,6 +86,11 @@ Route::middleware(['auth:staff'])->prefix('staff')->group(function () {
     Route::get('/contact', [ContactController::class, 'index']); 
     Route::get('/contact/{messageId}', [ContactController::class, 'show']); 
     Route::post('/contact/{messageId}/reply', [ContactController::class, 'reply']); 
+
+    
+    // Transactions
+    Route::get('/transactions', [TransactionController::class, 'index']);
+    Route::get('/transactions/{id}', [TransactionController::class, 'show']);
     
 });
 
@@ -117,5 +137,4 @@ Route::middleware(['auth:admin', 'is_admin'])->prefix('admin')->group(function (
     Route::post('/waste-stock', [WasteStockController::class, 'store']);
     Route::put('/waste-stock/{id}', [WasteStockController::class, 'update']);
     Route::delete('/waste-stock/{id}', [WasteStockController::class, 'destroy']);
-
 });
