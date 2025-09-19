@@ -5,13 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OkGreen Staff - @yield('title')</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/stok-admin.css') }}">
+  
     <style>
       /* staff visual different from admin & user */
       .topnav { background:#156d4a; padding:10px; color:#fff; display:flex; gap:12px; align-items:center; }
       .topnav a { color:#fff; text-decoration:none; margin-right:10px; padding:6px 8px; border-radius:6px; font-weight:600; }
       .topnav a:hover { background: rgba(255,255,255,0.06); }
       .btn-logout { background:#b03a2e; color:#fff; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; }
-      .container { padding:20px; max-width:1100px; margin:0 auto; }
+      .container { padding:20px; margin:0 auto; }
       .muted { color: rgba(255,255,255,0.9); font-weight:600; }
     </style>
 </head>

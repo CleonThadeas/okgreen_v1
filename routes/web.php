@@ -14,6 +14,7 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\Admin\WasteManagementController as AdminWasteCtrl;
 use App\Http\Controllers\Staff\WasteManagementController as StaffWasteCtrl;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\IframeController;
 
 Route::get('/', function () {
     return view('LandingPage');
@@ -69,6 +70,7 @@ Route::middleware(['auth:web'])->group(function () {
 // Staff routes (manage wastes)
 Route::prefix('staff')->name('staff.')->middleware('auth:staff')->group(function(){
     Route::get('/wastes', [App\Http\Controllers\Staff\WasteManagementController::class, 'index'])->name('wastes.index');
+
     Route::get('/wastes/category/create', [App\Http\Controllers\Staff\WasteManagementController::class, 'createCategory'])->name('wastes.category.create');
     Route::post('/wastes/category', [App\Http\Controllers\Staff\WasteManagementController::class, 'storeCategory'])->name('wastes.category.store');
 
@@ -126,11 +128,6 @@ Route::get('/debug-session', function () {
         'cookie_session' => request()->cookie(config('session.cookie')),
     ]);
 });
-
-Route::get('/login', function () {
-    return 'Halaman login belum dibuat';
-})->name('login');
-
 Route::get('/register', function () {
     return view('RegisterPage');
 })->name('register');

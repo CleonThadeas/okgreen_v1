@@ -28,11 +28,11 @@
         <div class="form-row">
             <div class="form-group">
                 <label>Nama Lengkap</label>
-                <input type="text" name="nama_lengkap" readonly>
+                <input type="text" name="nama_lengkap">
             </div>
             <div class="form-group">
                 <label>Email</label>
-                <input type="text" name="Email" readonly>
+                <input type="text" name="Email">
             </div>
         </div>
 
@@ -53,7 +53,7 @@
             </div>
             <div class="form-group">
                 <label>Posisi</label>
-                <input type="text" name="poaiai" readonly>
+                <input type="text" name="poaiai">
             </div>
         </div>
 

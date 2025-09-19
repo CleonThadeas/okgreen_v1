@@ -1,73 +1,71 @@
-@extends('layouts.staff')
+@extends('layouts.form')
 @section('title','Edit Produk Sampah')
 
 @section('content')
-<div class="card">
-  <h2>Edit Produk Sampah</h2>
-
-  @if($errors->any()) 
-    <div style="color:red"><ul>@foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul></div>
-  @endif
-
-  <form action="{{ route('staff.wastes.type.update', $type->id) }}" method="POST" enctype="multipart/form-data">
-    @csrf
-    @method('PUT')
-
-    <div>
-      <label>Kategori</label>
-      <select name="waste_category_id" required>
-        <option value="">-- Pilih Kategori --</option>
-        @foreach($categories as $c)
-          <option value="{{ $c->id }}" {{ $c->id == $type->waste_category_id ? 'selected' : '' }}>{{ $c->category_name }}</option>
-        @endforeach
-      </select>
+<div class="form-container">
+    <div class="product-header">
+        <h2>Edit Produk</h2>
     </div>
 
-    <div>
-      <label>Jenis Sampah</label>
-      <input type="text" name="type_name" value="{{ old('type_name', $type->type_name) }}" required>
-    </div>
+    <form action="{{ route('staff.wastes.type.update', $type->id) }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        @method('PUT')
 
-    <div>
-      <label>Deskripsi</label>
-      <textarea name="description">{{ old('description', $type->description) }}</textarea>
-    </div>
+        <div class="form-group">
+            <label>Kategori</label>
+            <select name="waste_category_id" required>
+                <option value="">-- Pilih Kategori --</option>
+                @foreach($categories as $c)
+                    <option value="{{ $c->id }}" {{ $c->id == $type->waste_category_id ? 'selected' : '' }}>{{ $c->category_name }}</option>
+                @endforeach
+            </select>
+        </div>
 
-    <div>
-      <label>Harga per Kg</label>
-      <input type="number" name="price_per_unit" value="{{ old('price_per_unit', $type->price_per_unit) }}" required>
-    </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Jenis Sampah</label>
+                <input type="text" name="type_name" value="{{ old('type_name', $type->type_name) }}" required>
+            </div>
+            <div class="form-group">
+                <label>Deskripsi</label>
+                <input type="text" name="description" value="{{ old('description', $type->description) }}">
+            </div>
+        </div>
 
-    <div>
-      <label>Stok Saat Ini</label>
-      <input type="text" value="{{ optional($type->stock)->available_weight ?? 0 }}" disabled>
-    </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Harga per Kg</label>
+                <input type="number" name="price_per_unit" value="{{ old('price_per_unit', $type->price_per_unit) }}" required>
+            </div>
+            <div class="form-group">
+                <label>Stok Saat Ini</label>
+                <input type="text" value="{{ optional($type->stock)->available_weight ?? 0 }}" disabled>
+            </div>
+        </div>
 
-    <div>
-      <label>Mode Perubahan Stok</label>
-      <select name="adjust_type" required>
-        <option value="add">Tambah/Kurang</option>
-        <option value="set">Set Nilai Baru</option>
-      </select>
-    </div>
+        <div class="stok-container">
+            <label>Mode Perubahan Stok</label>
+            <select name="adjust_type" required>
+                <option value="add">Tambah/Kurang</option>
+                <option value="set">Set Nilai Baru</option>
+            </select>
+        </div>
 
-    <div>
-      <label>Nilai Stok</label>
-      <input type="number" name="stock_value" value="0" required>
-    </div>
+        <div class="stok-input">
+          <span>Nilai Stok Saat Ini</span>
+          <input type="number" name="stock_value" value="0">
+        </div>
 
-    <div>
-      <label>Foto Produk</label><br>
-      @if($type->photo)
-        <img src="{{ asset('storage/'.$type->photo) }}" width="120"><br>
-      @endif
-      <input type="file" name="photo" accept="image/*">
-    </div>
+        <div class="form-group upload-group">
+            <label>Foto Produk</label><br>
+            @if($type->photo)
+                <img src="{{ asset('storage/'.$type->photo) }}" width="120"><br>
+            @endif
+            <input type="file" name="photo" accept="image/*">
+        </div>
 
-    <div style="margin-top:12px;">
-      <button type="submit">Simpan Perubahan</button>
-      <a href="{{ route('staff.wastes.index') }}" style="margin-left:12px;">Batal</a>
-    </div>
-  </form>
+        <button type="submit" class="btn-confirm">Simpan Perubahan</button>
+        <button type="cancel" class="btn-cancel">Batalkan</button>
+    </form>
 </div>
 @endsection

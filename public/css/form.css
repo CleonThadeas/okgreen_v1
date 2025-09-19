@@ -1,138 +1,87 @@
 body {
     font-family: 'Poppins', sans-serif;
-    background: #f5f7fa;
+    background: #f5f7fa; /* background layar */
+    margin: 0;
+    padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 50px;
-    margin: 0;
+    min-height: 100vh;
 }
 
 .form-container {
     background: #ffffff;
-    border-radius: 16px;
-    padding: 50px 40px;
-    max-width: 650px;
-    width: 100%;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-    border: 1px solid #e6e6e6;
+    border-radius: 15px;           /* bisa dihapus kalau mau sudut runcing */
+    padding: 30px 40px;
+    width: 90vh;               /* lebar penuh layar */
+    height: 98vh;              /* tinggi penuh layar */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;     /* field ditumpuk */
+    justify-content: center;    /* vertikal center */
 }
 
 .product-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 35px;
-}
-
-.product-header h2 {
-    font-size: 22px;
-    font-weight: 600;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: 700;
     color: #333;
-    margin: 0;
 }
 
 .form-group {
-    margin-bottom: 25px; 
+    width: 100%;
+    margin-bottom: 20px;
 }
 
 label {
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 500;
     color: #444;
     margin-bottom: 8px;
     display: block;
 }
 
-input, select {
-    width: 290px;
-    padding: 12px 15px;
-    border-radius: 10px;
+input, select, textarea {
+    width: 100%; /* full-width sesuai layar */
+    padding: 16px 20px;
+    border-radius: 12px; /* biar nggak kotak banget */
     border: 1px solid #ccc;
     background: #fafafa;
-    font-size: 15px;
-    transition: all 0.3s ease;
+    font-size: 16px;
+    box-sizing: border-box;
+    margin-bottom: 20px; /* jarak antar input */
 }
 
-input:focus, select:focus {
+textarea {
+    min-height: 150px;
+}
+
+input:focus, select:focus, textarea:focus {
     border-color: #007bff;
     background: #fff;
     outline: none;
-    box-shadow: 0 0 6px rgba(0, 123, 255, 0.15);
-}
-
-input[readonly], select:disabled {
-    background: #f1f1f1;
-    cursor: not-allowed;
-}
-
-.form-row {
-    display: flex;
-    gap: 25px;
-}
-
-.stok-container {
-    margin-top: 20px;
-    margin-bottom: 30px;
-}
-
-.stok-container label strong {
-    font-size: 16px;
-    display: block;
-    margin-bottom: 12px;
-}
-
-.radio-group {
-    display: flex;
-    gap: 25px;
-    margin-bottom: 18px;
-}
-
-.radio-group label {
-    align-items: center;
-    gap: 6px;
-    font-size: 15px;
-}
-
-.stok-input {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    margin-bottom: 35px;
-}
-
-.stok-input input {
-    width: 200px;
-    padding: 12px;
-    font-size: 15px;
-}
-
-.stok-input span {
-    font-size: 15px;
-    color: #444;
-    font-weight: 500;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.15);
 }
 
 .btn-confirm, .btn-cancel {
-    padding: 14px;
-    width: 100%;
-    border-radius: 10px;
-    font-size: 16px;
+    width: 100%; /* tombol full-width */
+    padding: 18px;
+    font-size: 18px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    margin-bottom: 20px; /* jarak antar tombol & input di atas */
+    border-radius: 12px;
+    border: none;
 }
 
 .btn-confirm {
     background: #4caf50;
     color: #fff;
-    border: none;
-    margin-bottom: 15px;
 }
 
 .btn-confirm:hover {
-    background: #43a047;
-    transform: translateY(-1px);
+    background: #B0D9B1;
 }
 
 .btn-cancel {
@@ -143,10 +92,4 @@ input[readonly], select:disabled {
 
 .btn-cancel:hover {
     background: #f8f8f8;
-    transform: translateY(-1px);
-}
-
-.form-group {
-    margin-bottom: 25px;
-    width: 100%;
 }

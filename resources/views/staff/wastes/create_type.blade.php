@@ -1,8 +1,11 @@
-@extends('layouts.staff')
+@extends('layouts.form')
 @section('title','Tambah Produk - Staff')
 
 @section('content')
-<h2>Tambah Produk Sampah</h2>
+<div class="form-container">
+    <div class="product-header">
+        <h2>Tambah Produk Sampah</h2>
+    </div>
 
 @if($errors->any()) 
 <div style="color:red">
@@ -47,6 +50,7 @@
         <input type="file" name="photo" accept="image/*"><br><br>
     </div>
 
-    <button type="submit">Simpan Produk</button>
+    <button type="submit" class="btn-confirm">Simpan Perubahan</button>
+    <button type="cancel" class="btn-cancel">Batalkan</button>
 </form>
 @endsection
