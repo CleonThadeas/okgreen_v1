@@ -18,6 +18,8 @@ use App\Http\Controllers\SellController;
 use App\Http\Controllers\Staff\SellRequestController;
 use App\Http\Controllers\Staff\SellTypeController;
 use App\Http\Controllers\UserPointController;
+use App\Models\SellWaste;
+use App\Http\Controllers\HistoryController;
 
 // ================== HOME ==================
 Route::get('/', function () {
@@ -43,15 +45,17 @@ Route::middleware('auth:web')->get('/dashboard/buy', function () {
     return redirect()->route('buy-waste.index');
 })->name('dashboard.buy');
 
-// ================== USER PROFILE ==================
-Route::middleware(['auth:web'])->group(function () {
+
+// ================== USER (web guard) ==================
+Route::middleware('auth:web')->group(function(){
+
+    // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
 
-// ================== USER (web guard) - Pembelian & Penjualan ==================
-Route::middleware('auth:web')->group(function(){
+    // Contact Us (static)
+    Route::view('/contact', 'user.profile.contact')->name('contact');
+
     // Beli sampah
     Route::get('/buy-waste', [WasteController::class, 'index'])->name('buy-waste.index');
 
@@ -61,24 +65,32 @@ Route::middleware('auth:web')->group(function(){
     Route::post('/checkout/confirm', [CheckoutController::class, 'confirm'])->name('checkout.confirm');
     Route::get('/checkout/qr/{id}', [CheckoutController::class, 'qrView'])->name('checkout.qr');
 
-    // Transactions
+    // Transactions (Pembelian)
     Route::get('/transactions', [TransactionController::class,'index'])->name('transactions.index');
     Route::get('/transactions/{id}', [TransactionController::class,'show'])->name('transactions.show');
     Route::get('/transactions/{id}/status', [TransactionController::class,'status'])->name('transactions.status');
 
-    // SELL WASTE (User) → konsisten pakai "sell-waste.*"
+    // SELL WASTE
     Route::get('/sell-waste', [SellController::class,'index'])->name('sell-waste.index');
     Route::post('/sell-waste', [SellController::class,'store'])->name('sell-waste.store');
     Route::get('/sell-waste/types/{catId}', [SellController::class,'getTypes'])->name('sell-waste.types');
-
-    // Optional create form
     Route::get('/sell/create', [SellController::class,'create'])->name('sell.create');
+
+    // ================== HISTORY ==================
+    Route::get('/history/sell', [HistoryController::class, 'sell'])->name('history.sell');
+
+
+   // History Buy diarahkan ke TransactionController@index
+Route::get('/history/buy', [TransactionController::class, 'index'])->name('history.buy');
+
+Route::get('/history/points', [HistoryController::class, 'points'])->name('history.points');
 
     // Edukasi
     Route::view('/edu', 'user.edukasi.index')->name('edu.index');
 
-    //reward
-    Route::get('/my-points', [UserPointController::class, 'index'])->name('user.points.index');
+    // Reward (Tukar Point)// Tukarkan poin
+Route::get('/my-points', [UserPointController::class, 'index'])->name('user.points.index');
+
 });
 
 // ================== STAFF ==================

@@ -4,6 +4,8 @@
 
 @section('content')
 <div class="container">
+  {{-- Sidebar --}}
+  @include('user.profile.sidebar')
   <h2>Riwayat Transaksi</h2>
 
   @if(session('success')) <div style="color:green">{{ session('success') }}</div> @endif
