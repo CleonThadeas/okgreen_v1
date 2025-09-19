@@ -15,11 +15,11 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AddressController;
-use App\Http\Controllers\IframeController;
+use App\Http\Controllers\SellController;
 
 // ================== LANDING PAGE ==================
 Route::get('/', function () {
-    return view('LandingPage'); // ✅ FE tetap masuk ke LandingPage
+    return view('LandingPage');
 })->name('home');
 
 // ================== LOGIN & REGISTER ==================
@@ -57,26 +57,28 @@ Route::middleware('auth:web')->group(function () {
     Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
-    Route::get('/checkout/cart', [CheckoutController::class, 'cart'])->name('checkout.cart');
 
-    // Checkout detail
+    // Checkout (hanya 1 versi!)
     Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout.form');
     Route::post('/checkout/prepare', [CheckoutController::class, 'prepare'])->name('checkout.prepare');
     Route::post('/checkout/confirm', [CheckoutController::class, 'confirm'])->name('checkout.confirm');
     Route::post('/checkout/remove', [CheckoutController::class, 'remove'])->name('checkout.remove');
     Route::post('/checkout/add', [CheckoutController::class, 'add'])->name('checkout.add');
-
-    // QR Checkout
+    Route::get('/checkout/cart', [CheckoutController::class, 'cart'])->name('checkout.cart');
     Route::get('/checkout/qr/{id}', [CheckoutController::class, 'qrView'])->name('checkout.qr');
 
     // Transactions
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
-
-    // Polling status transaksi
     Route::get('/transactions/{id}/status', [TransactionController::class, 'status'])->name('transactions.status');
 
     // Jual Sampah & Edukasi
-    Route::view('/sell-waste', 'user.sell.index')->name('sell-waste.index');
+    // di dalam middleware auth:web group
+ Route::get('/jual-barang', [SellController::class, 'index'])->name('jual-barang');
+
+// alias agar pemanggilan lama `sell-waste.index` tetap jalan
+Route::get('/sell-waste', fn () => redirect()->route('jual-barang'))->name('sell-waste.index');
+    Route::post('/jual-barang', [SellController::class, 'store'])->name('sell-waste.store');
+    Route::get('/sell-waste/types/{catId}', [SellController::class, 'getTypes']);
     Route::view('/edu', 'user.edukasi.index')->name('edu.index');
 });
 
@@ -89,14 +91,11 @@ Route::prefix('staff')->name('staff.')->middleware('auth:staff')->group(function
     Route::get('/wastes', [\App\Http\Controllers\Staff\WasteManagementController::class, 'index'])->name('wastes.index');
     Route::get('/wastes/category/create', [\App\Http\Controllers\Staff\WasteManagementController::class, 'createCategory'])->name('wastes.category.create');
     Route::post('/wastes/category', [\App\Http\Controllers\Staff\WasteManagementController::class, 'storeCategory'])->name('wastes.category.store');
-
     Route::get('/wastes/type/create', [\App\Http\Controllers\Staff\WasteManagementController::class, 'createType'])->name('wastes.type.create');
     Route::post('/wastes/type', [\App\Http\Controllers\Staff\WasteManagementController::class, 'storeType'])->name('wastes.type.store');
-
     Route::post('/wastes/stock', [\App\Http\Controllers\Staff\WasteManagementController::class, 'addStock'])->name('wastes.stock.add');
     Route::get('/wastes/type/{id}/edit', [\App\Http\Controllers\Staff\WasteManagementController::class, 'editType'])->name('wastes.type.edit');
     Route::put('/wastes/type/{id}', [\App\Http\Controllers\Staff\WasteManagementController::class, 'updateType'])->name('wastes.type.update');
-
     Route::get('/sell-requests', [\App\Http\Controllers\Staff\SellRequestController::class, 'index'])->name('sell_requests.index');
 });
 
@@ -105,14 +104,11 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
     Route::get('/wastes', [\App\Http\Controllers\Admin\WasteManagementController::class, 'index'])->name('wastes.index');
     Route::get('/wastes/category/create', [\App\Http\Controllers\Admin\WasteManagementController::class, 'createCategory'])->name('wastes.category.create');
     Route::post('/wastes/category', [\App\Http\Controllers\Admin\WasteManagementController::class, 'storeCategory'])->name('wastes.category.store');
-
     Route::get('/wastes/type/create', [\App\Http\Controllers\Admin\WasteManagementController::class, 'createType'])->name('wastes.type.create');
     Route::post('/wastes/type', [\App\Http\Controllers\Admin\WasteManagementController::class, 'storeType'])->name('wastes.type.store');
-
     Route::post('/wastes/stock', [\App\Http\Controllers\Admin\WasteManagementController::class, 'addStock'])->name('wastes.stock.add');
     Route::get('/wastes/type/{id}/edit', [\App\Http\Controllers\Admin\WasteManagementController::class, 'editType'])->name('wastes.type.edit');
     Route::put('/wastes/type/{id}', [\App\Http\Controllers\Admin\WasteManagementController::class, 'updateType'])->name('wastes.type.update');
-
     Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
     Route::get('/users/create', [\App\Http\Controllers\Admin\UserController::class, 'create'])->name('users.create');
     Route::post('/users', [\App\Http\Controllers\Admin\UserController::class, 'store'])->name('users.store');
@@ -141,8 +137,8 @@ Route::get('/debug-session', function () {
     ]);
 });
 
-// ================== FE STATIC PAGES (dari transaksisukses2) ==================
-Route::get('/register', fn () => view('RegisterPage'))->name('register');
+// ================== FE STATIC PAGES ==================
+// JANGAN tumpang tindih dengan route controller
 Route::get('/stokadmin', fn () => view('stokadmin'))->name('stokadmin');
 Route::get('/stokform', fn () => view('stok-form'))->name('stokform');
 Route::get('/berandadmin', fn () => view('berandadmin'))->name('berandadmin');
@@ -153,15 +149,20 @@ Route::get('/listorderan', fn () => view('list-orderan'))->name('listorderan');
 Route::get('/stoksampah', fn () => view('stoksampah'))->name('stoksampah');
 Route::get('/banyaksampah', fn () => view('banyak-sampah'))->name('banyaksampah');
 Route::get('/beranda', fn () => view('beranda'))->name('beranda');
-Route::get('/jual-barang', fn () => view('jualbarang'))->name('jual-barang');
+
+// ⚠️ HAPUS ini biar nggak override SellController
+// Route::get('/jual-barang', fn () => view('jualbarang'))->name('jual-barang');
+
 Route::get('/belibarang', fn () => view('belibarang'))->name('belibarang');
-Route::get('/detail-produk/{id}', fn ($id) => view('detailbarang', ['id' => $id]))->name('detail-barang');
+Route::get('/detail-produk/{id}', fn ($id) => view('detailbarang', ['id' => $id]))->name('detail-produk');
 Route::get('/co-detail', fn () => view('co-detail'));
-Route::get('/checkout', fn () => view('checkout'))->name('checkout');
 Route::get('/payment', fn () => view('payment'));
 Route::get('/detail_payment', fn () => view('detail_payment'))->name('detail_payment');
 Route::get('/notifikasi', fn () => view('notifikasi'))->name('notifikasi');
-Route::get('/profil', fn () => view('profil'))->name('profil');
+
+// ⚠️ HAPUS ini biar nggak bentrok sama ProfileController
+// Route::get('/profil', fn () => view('profil'))->name('profil');
+
 Route::get('/berandavoucher', fn () => view('berandavoucher'))->name('berandavoucher');
 Route::get('/tukarvoucher', fn () => view('tukarvoucher'))->name('tukarvoucher');
 Route::get('/profileadmin', fn () => view('profileadmin'))->name('profileadmin');
