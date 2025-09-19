@@ -88,6 +88,7 @@ Route::get('/detail-barang/{id}', [ProductController::class, 'detailBarang'])->n
 
 // ================== STAFF ==================
 Route::prefix('staff')->name('staff.')->middleware('auth:staff')->group(function () {
+    // Waste management
     Route::get('/wastes', [\App\Http\Controllers\Staff\WasteManagementController::class, 'index'])->name('wastes.index');
     Route::get('/wastes/category/create', [\App\Http\Controllers\Staff\WasteManagementController::class, 'createCategory'])->name('wastes.category.create');
     Route::post('/wastes/category', [\App\Http\Controllers\Staff\WasteManagementController::class, 'storeCategory'])->name('wastes.category.store');
@@ -96,8 +97,16 @@ Route::prefix('staff')->name('staff.')->middleware('auth:staff')->group(function
     Route::post('/wastes/stock', [\App\Http\Controllers\Staff\WasteManagementController::class, 'addStock'])->name('wastes.stock.add');
     Route::get('/wastes/type/{id}/edit', [\App\Http\Controllers\Staff\WasteManagementController::class, 'editType'])->name('wastes.type.edit');
     Route::put('/wastes/type/{id}', [\App\Http\Controllers\Staff\WasteManagementController::class, 'updateType'])->name('wastes.type.update');
+
+    // Sell requests
     Route::get('/sell-requests', [\App\Http\Controllers\Staff\SellRequestController::class, 'index'])->name('sell_requests.index');
+
+    // ✅ Tambahkan kembali route untuk jenis sampah yang hilang
+    Route::get('/sell-types', [\App\Http\Controllers\Staff\SellTypeController::class, 'index'])->name('sell-types.index');
+    Route::get('/sell-types/create', [\App\Http\Controllers\Staff\SellTypeController::class, 'create'])->name('sell-types.create');
+    Route::post('/sell-types', [\App\Http\Controllers\Staff\SellTypeController::class, 'store'])->name('sell-types.store');
 });
+
 
 // ================== ADMIN ==================
 Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function () {

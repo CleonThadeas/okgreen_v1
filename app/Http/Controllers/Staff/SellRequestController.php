@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Models\SellWaste;
-use App\Models\SellWastePhoto;
 use App\Models\UserPoint;
 use App\Models\PointHistory;
 
@@ -19,6 +18,9 @@ class SellRequestController extends Controller
         $this->middleware('auth:staff');
     }
 
+    /**
+     * Tampilkan daftar permintaan jual
+     */
     public function index()
     {
         $requests = SellWaste::with(['user','sellType','category'])
@@ -28,12 +30,18 @@ class SellRequestController extends Controller
         return view('staff.sell_requests.index', compact('requests'));
     }
 
+    /**
+     * Detail permintaan jual
+     */
     public function show($id)
     {
         $req = SellWaste::with(['user','sellType','category','photos'])->findOrFail($id);
         return view('staff.sell_requests.show', compact('req'));
     }
 
+    /**
+     * Update status (approve/cancel)
+     */
     public function updateStatus(Request $r, $id)
     {
         $r->validate([
@@ -45,8 +53,8 @@ class SellRequestController extends Controller
             $sell = SellWaste::lockForUpdate()->findOrFail($id);
 
             if ($r->status === 'approved') {
-                $conversion = config('okgreen.rupiah_per_point', 1000); // misalnya Rp1000 = 1 poin
-                $points = (int) floor($sell->total_price / $conversion);
+                // hitung poin berdasarkan berat x poin per kg
+                $points = (int) ($sell->weight_kg * $sell->sellType->points_per_kg);
 
                 $sell->status = 'approved';
                 $sell->points_awarded = $points;
@@ -54,7 +62,7 @@ class SellRequestController extends Controller
                 $sell->handled_at = now();
                 $sell->save();
 
-                // Tambah ke saldo user
+                // Tambahkan ke saldo user
                 $up = UserPoint::firstOrCreate(
                     ['user_id' => $sell->user_id],
                     ['points' => 0]
@@ -71,20 +79,30 @@ class SellRequestController extends Controller
                     'description'    => 'Poin dari penjualan sampah #' . $sell->id
                 ]);
 
+                DB::commit();
+                return redirect()
+                    ->route('staff.sell_requests.index')
+                    ->with('success', 'Permintaan jual #' . $sell->id . ' berhasil disetujui dan poin ditambahkan.');
+
             } elseif ($r->status === 'canceled') {
                 $sell->status = 'canceled';
                 $sell->points_awarded = 0;
                 $sell->handled_by_staff_id = Auth::id();
                 $sell->handled_at = now();
                 $sell->save();
+
+                DB::commit();
+                return redirect()
+                    ->route('staff.sell_requests.index')
+                    ->with('success', 'Permintaan jual #' . $sell->id . ' dibatalkan.');
             }
 
-            DB::commit();
-            return back()->with('success', 'Status permintaan jual diperbarui.');
         } catch (\Throwable $e) {
             DB::rollBack();
             Log::error('SellRequestController@updateStatus error: '.$e->getMessage());
-            return back()->with('error','Gagal mengupdate status: '.$e->getMessage());
+            return redirect()
+                ->route('staff.sell_requests.index')
+                ->with('error','Gagal mengupdate status: '.$e->getMessage());
         }
     }
 }
