@@ -31,6 +31,7 @@ class TransactionController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'Transaksi berhasil dibuat',
             'data' => $transaction
         ]);
     }
@@ -46,12 +47,20 @@ class TransactionController extends Controller
 
         $transaction = BuyTransaction::findOrFail($transactionId);
 
-        if (! $transaction->isActive()) {
+        // ❌ hanya cek expired kalau status masih pending
+        if ($transaction->status === 'pending' && ! $transaction->isActive()) {
             $transaction->update(['status' => 'cancelled']);
 
             return response()->json([
                 'success' => false,
                 'message' => 'Transaksi sudah kadaluarsa atau dibatalkan'
+            ], 400);
+        }
+
+        if ($transaction->status !== 'pending') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tidak bisa menambah item ke transaksi yang sudah ' . $transaction->status
             ], 400);
         }
 
@@ -69,6 +78,7 @@ class TransactionController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'Item berhasil ditambahkan ke transaksi',
             'data' => $item
         ]);
     }
@@ -78,7 +88,8 @@ class TransactionController extends Controller
     {
         $transaction = BuyTransaction::with('user')->findOrFail($transactionId);
 
-        if (! $transaction->isActive()) {
+        // ❌ hanya cek expired kalau status masih pending
+        if ($transaction->status === 'pending' && ! $transaction->isActive()) {
             $transaction->update(['status' => 'cancelled']);
 
             return response()->json([
@@ -87,12 +98,18 @@ class TransactionController extends Controller
             ], 400);
         }
 
+        if ($transaction->status !== 'pending') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Transaksi sudah ' . $transaction->status
+            ], 400);
+        }
+
         $transaction->update(['status' => 'paid']);
 
-        // === Tambahan: kasih reward point ===
+        // Kasih reward point (50 poin per transaksi sukses)
         $user = $transaction->user;
-        $pointsEarned = floor($transaction->total_amount / 1000); 
-        // contoh: 1 point tiap Rp1000 transaksi
+        $pointsEarned = 50;
 
         $userPoint = UserPoint::firstOrCreate(
             ['user_id' => $user->id],

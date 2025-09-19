@@ -47,17 +47,17 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/update-fcm-token', [UserTokenController::class, 'updateFcmToken']);
 
-    // Contact - USER
+    // Contact 
     Route::post('/contact', [ContactController::class, 'store']); 
     Route::get('/contact/{messageId}', [ContactController::class, 'show']); 
     Route::post('/contact/{messageId}/reply', [ContactController::class, 'reply']); 
 
     // Transactions
-    Route::post('/transactions', [TransactionController::class, 'create']); // buat transaksi baru
-    Route::post('/transactions/{id}/items', [TransactionController::class, 'addItem']); // tambah item
-    Route::post('/transactions/{id}/pay', [TransactionController::class, 'pay']); // bayar
-    Route::get('/transactions/{id}/status', [TransactionController::class, 'status']); // cek status
-    Route::get('/transactions/my', [TransactionController::class, 'myTransactions']); // list transaksi user
+    Route::post('/transactions', [TransactionController::class, 'create']); 
+    Route::post('/transactions/{id}/items', [TransactionController::class, 'addItem']); 
+    Route::post('/transactions/{id}/pay', [TransactionController::class, 'pay']); 
+    Route::get('/transactions/{id}/status', [TransactionController::class, 'status']); 
+    Route::get('/transactions/my', [TransactionController::class, 'myTransactions']); 
 
     // Point rewerd
     Route::get('/points', [PointController::class, 'myPoints']);
@@ -117,24 +117,30 @@ Route::middleware(['auth:admin', 'is_admin'])->prefix('admin')->group(function (
     Route::put('/staff/{id}', [StaffController::class, 'update']);
     Route::delete('/staff/{id}', [StaffController::class, 'destroy']);
 
-    // Waste Types
+    // Manage Waste Types
     Route::get('/waste-types', [WasteTypeController::class, 'index']);
     Route::get('/waste-types/{id}', [WasteTypeController::class, 'show']);
     Route::post('/waste-types', [WasteTypeController::class, 'store']);
     Route::put('/waste-types/{id}', [WasteTypeController::class, 'update']);
     Route::delete('/waste-types/{id}', [WasteTypeController::class, 'destroy']);
 
-    // Waste Categories
+    // Manage Waste Categories
     Route::get('/waste-categories', [WasteCategoryController::class, 'index']);
     Route::get('/waste-categories/{id}', [WasteCategoryController::class, 'show']);
     Route::post('/waste-categories', [WasteCategoryController::class, 'store']);
     Route::put('/waste-categories/{id}', [WasteCategoryController::class, 'update']);
     Route::delete('/waste-categories/{id}', [WasteCategoryController::class, 'destroy']);
 
-    // Waste Stock
+    // Manage Waste Stock
     Route::get('/waste-stock', [WasteStockController::class, 'index']);
     Route::get('/waste-stock/{id}', [WasteStockController::class, 'show']);
     Route::post('/waste-stock', [WasteStockController::class, 'store']);
     Route::put('/waste-stock/{id}', [WasteStockController::class, 'update']);
     Route::delete('/waste-stock/{id}', [WasteStockController::class, 'destroy']);
+
+    // Manage Reward Rules
+    Route::get('/point-rewards', [PointController::class, 'index']);
+    Route::post('/point-rewards', [PointController::class, 'store']);
+    Route::put('/point-rewards/{id}', [PointController::class, 'update']);
+    Route::delete('/point-rewards/{id}', [PointController::class, 'destroy']);
 });
