@@ -2,20 +2,25 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
 
 class Notification extends Model
 {
-    protected $table = 'notifications';
-    public $timestamps = true;
+    use HasApiTokens, HasFactory, Notifiable;
 
-    protected $fillable = ['user_id','message','status']; // status: unread|read
-
-    public const STATUS_UNREAD = 'unread';
-    public const STATUS_READ   = 'read';
+    protected $primaryKey = 'notification_id'; 
+    protected $fillable = [
+        'user_id',
+        'message',
+        'status',
+    ];
 
     public function user()
     {
-        return $this->belongsTo(User::class,'user_id');
+        return $this->belongsTo(User::class);
     }
 }
