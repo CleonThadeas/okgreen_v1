@@ -15,6 +15,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\IframeController;
 
 // ================== LANDING PAGE ==================
 Route::get('/', function () {
@@ -139,3 +140,29 @@ Route::get('/debug-session', function () {
         'cookie_session' => request()->cookie(config('session.cookie')),
     ]);
 });
+
+// ================== FE STATIC PAGES (dari transaksisukses2) ==================
+Route::get('/register', fn () => view('RegisterPage'))->name('register');
+Route::get('/stokadmin', fn () => view('stokadmin'))->name('stokadmin');
+Route::get('/stokform', fn () => view('stok-form'))->name('stokform');
+Route::get('/berandadmin', fn () => view('berandadmin'))->name('berandadmin');
+Route::get('/detailadmin', fn () => view('detail-admin'))->name('detailadmin');
+Route::get('/detailpengguna', fn () => view('detail-pengguna'))->name('detailpengguna');
+Route::get('/tambahadmin', fn () => view('form-tambah-admin'))->name('tambahadmin');
+Route::get('/listorderan', fn () => view('list-orderan'))->name('listorderan');
+Route::get('/stoksampah', fn () => view('stoksampah'))->name('stoksampah');
+Route::get('/banyaksampah', fn () => view('banyak-sampah'))->name('banyaksampah');
+Route::get('/beranda', fn () => view('beranda'))->name('beranda');
+Route::get('/jual-barang', fn () => view('jualbarang'))->name('jual-barang');
+Route::get('/belibarang', fn () => view('belibarang'))->name('belibarang');
+Route::get('/detail-produk/{id}', fn ($id) => view('detailbarang', ['id' => $id]))->name('detail-barang');
+Route::get('/co-detail', fn () => view('co-detail'));
+Route::get('/checkout', fn () => view('checkout'))->name('checkout');
+Route::get('/payment', fn () => view('payment'));
+Route::get('/detail_payment', fn () => view('detail_payment'))->name('detail_payment');
+Route::get('/notifikasi', fn () => view('notifikasi'))->name('notifikasi');
+Route::get('/profil', fn () => view('profil'))->name('profil');
+Route::get('/berandavoucher', fn () => view('berandavoucher'))->name('berandavoucher');
+Route::get('/tukarvoucher', fn () => view('tukarvoucher'))->name('tukarvoucher');
+Route::get('/profileadmin', fn () => view('profileadmin'))->name('profileadmin');
+Route::get('/detailstokstaff', fn () => view('detailstokstaff'))->name('detailstokstaff');

@@ -11,13 +11,11 @@
 </head>
 <body>
   <body class="dashboard-page">
-  @include('partials.navbar')
+  @include('partials.navbar2')
     
       <div class="container">
         <div class="header">
-            <button class="back-btn"><a href="{{ route('stoksampah') }}">←</a></button>
-            <h2>Detail stok</h2>
-             <input type="text" placeholder="Cari">
+            <h2>Beranda</h2>
         </div>
   </header>
   <table>
@@ -28,6 +26,7 @@
         <th>Kategori</th>
         <th>Harga</th>
         <th>Berat</th>
+        <th>Aksi</th>
       </tr>
     </thead>
       <tbody>
@@ -37,6 +36,9 @@
           <td>Plastik</td>
           <td>Rp.5.000</td>
           <td>10kg</td>
+        <td>
+          <a href="{{ route('stokform') }}" button class="edit">✏</a></button>
+          <button class="delete">🗑</button>
         </td>
         </tr>
         <tr>
@@ -45,6 +47,10 @@
           <td>Kertas</td>
           <td>Rp.5.000</td>
           <td>20kg</td>
+        <td>
+          <a href="{{ route('stokform') }}" button class="edit">✏</a></button>
+          <button class="delete">🗑</button>
+        </td>
         </tr>
         <tr>
           <td><img src="{{ asset('img/botolplastik.jpeg') }}" alt="Bungkus Rokok"></td>
@@ -52,6 +58,10 @@
           <td>Botol Plastik</td>
           <td>Rp.5.000</td>
           <td>15kg</td>
+        <td>
+          <a href="{{ route('stokform') }}" button class="edit">✏</a></button>
+          <button class="delete">🗑</button>
+        </td>
         </tr>
         <tr>
          <td><img src="{{ asset('img/kaleng.jpeg') }}" alt="Bungkus Rokok"></td>
@@ -59,6 +69,10 @@
           <td>Botol Kaleng</td>
           <td>Rp.7.000</td>
           <td>23kg</td>
+        <td>
+          <a href="{{ route('stokform') }}" button class="edit">✏</a></button>
+          <button class="delete">🗑</button>
+        </td>
         </tr>
         <tr>
           <td><img src="{{ asset('img/skateboard.jpeg') }}" alt="Bungkus Rokok"></td>
@@ -66,6 +80,10 @@
           <td>Kayu</td>
           <td>Rp.10.000</td>
           <td>5kg</td>
+        <td>
+          <a href="{{ route('stokform') }}" button class="edit">✏</a></button>
+          <button class="delete">🗑</button>
+        </td>
         </tr>
          </tr>
         <tr>
@@ -74,6 +92,10 @@
           <td>Logam</td>
           <td>Rp.6.000</td>
           <td>30kg</td>
+        <td>
+          <a href="{{ route('stokform') }}" button class="edit">✏</a></button>
+          <button class="delete">🗑</button>
+        </td>
         </tr>
          </tr>
         <tr>
@@ -82,6 +104,10 @@
           <td>Alumunium</td>
           <td>Rp.10.000</td>
           <td>17kg</td>
+        <td>
+          <a href="{{ route('stokform') }}" button class="edit">✏</a></button>
+          <button class="delete">🗑</button>
+        </td>
         </tr>
         </tbody>
       </table>

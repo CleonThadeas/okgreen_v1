@@ -8,9 +8,9 @@
 
   <link rel="stylesheet" href="{{ asset('css/beranda-admin.css') }}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
-  <body class="dashboard-page">
+<body class="dashboard-page">
   @include('partials.navbar')
     
   <div class="container">
@@ -89,25 +89,27 @@
         </tr>
       </tbody>
     </table>
-    <div class="statistik-card">
-    <h2>Statistik</h2>
-    <div class="statistik-content">
-        <img src="{{ asset('img/statistik.png') }}" alt="Statistik" class="statistik-img">
-        
-        <div class="statistik-info">
-            <div class="info-item">
-                <span class="icon green">✔</span>
-                <strong>75%</strong>
-                <p>Selesai</p>
-            </div>
-            <div class="info-item">
-                <span class="icon orange">↗</span>
-                <strong>25%</strong>
-                <p>Sedang Berlangsung</p>
-            </div>
+<div class="statistik-card">
+      <h2>Statistik</h2>
+      <div class="stats-container">
+        <div class="chart-container">
+          <canvas id="progressChart"></canvas>
         </div>
+        <div class="legend">
+          <div class="legend-item">
+            <i class="done">✔</i>
+            <div class="percent">75%</div>
+            <div>Selesai</div>
+          </div>
+          <div class="legend-item">
+            <i class="progress">↗</i>
+            <div class="percent">25%</div>
+            <div>Sedang Berlangsung</div>
+          </div>
+        </div>
+      </div>
     </div>
-</div>
-</div>
+  </div>
 </body>
+  <script src="{{ asset('js/statistik.js') }}"></script>
 </html>

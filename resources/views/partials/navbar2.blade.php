@@ -6,14 +6,10 @@
         <img src="{{ asset('img/logo-greenleaf.png') }}" alt="Logo">
     </div>
     <nav>
-        <a href="{{ route('berandadmin') }}" class="{{ Route::is('berandamin') ? 'active' : '' }}">Beranda</a>
-        <a href="{{ route('stokadmin') }}" class="{{ Route::is('stokadmin') ? 'active' : '' }}">Stok</a>
-        <a href="{{ route('banyaksampah') }}" class="{{ Route::is('banyaksampah') ? 'active' : '' }}">Statistik</a>
-        <a>Edukasi</a>
-
+        <a href="{{ route('detailstokstaff') }}" class="{{ Route::is('detailstokstaff') ? 'active' : '' }}">Beranda</a>
     </nav>
     <div class="icons">
-    <a href="{{ route('transactions.index') }}">
+    <a href="{{ route('notifikasi') }}">
         <img src="{{ asset('img/bell.png') }}" alt="Notifikasi">
     </a>
     <a href="{{ route('profileadmin') }}">
