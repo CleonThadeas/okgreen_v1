@@ -17,6 +17,7 @@ use App\Http\Controllers\Staff\StaffTransactionController;
 use App\Http\Controllers\SellController;
 use App\Http\Controllers\Staff\SellRequestController;
 use App\Http\Controllers\Staff\SellTypeController;
+use App\Http\Controllers\UserPointController;
 
 // ================== HOME ==================
 Route::get('/', function () {
@@ -75,6 +76,9 @@ Route::middleware('auth:web')->group(function(){
 
     // Edukasi
     Route::view('/edu', 'user.edukasi.index')->name('edu.index');
+
+    //reward
+    Route::get('/my-points', [UserPointController::class, 'index'])->name('user.points.index');
 });
 
 // ================== STAFF ==================
