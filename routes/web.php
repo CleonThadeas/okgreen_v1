@@ -18,20 +18,19 @@ use App\Http\Controllers\AddressController;
 
 // ================== LANDING PAGE ==================
 Route::get('/', function () {
-    return view('LandingPage'); // Guest akan masuk ke LandingPage
+    return view('LandingPage'); // ✅ FE tetap masuk ke LandingPage
 })->name('home');
 
-// ================== LOGIN & LOGOUT ==================
+// ================== LOGIN & REGISTER ==================
 Route::middleware('guest')->group(function () {
     Route::get('/login', [MultiGuardLoginController::class, 'create'])->name('login');
     Route::post('/login', [MultiGuardLoginController::class, 'store']);
-});
 
-Route::middleware('guest')->group(function () {
     Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('/register', [RegisteredUserController::class, 'store']);
 });
 
+// ================== LOGOUT ==================
 Route::post('/logout', [MultiGuardLoginController::class, 'destroy'])
     ->middleware('auth:admin,staff,web')
     ->name('logout');
@@ -48,22 +47,36 @@ Route::middleware(['auth:web'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// ================== USER (web guard) - Pembelian Sampah ==================
+// ================== USER (web guard) - BELI & JUAL ==================
 Route::middleware('auth:web')->group(function () {
+    // Beli Sampah
     Route::get('/buy-waste', [WasteController::class, 'index'])->name('buy-waste.index');
+
+    // Cart
     Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+    Route::get('/checkout/cart', [CheckoutController::class, 'cart'])->name('checkout.cart');
+
+    // Checkout detail
+    Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout.form');
+    Route::post('/checkout/prepare', [CheckoutController::class, 'prepare'])->name('checkout.prepare');
+    Route::post('/checkout/confirm', [CheckoutController::class, 'confirm'])->name('checkout.confirm');
+    Route::post('/checkout/remove', [CheckoutController::class, 'remove'])->name('checkout.remove');
+    Route::post('/checkout/add', [CheckoutController::class, 'add'])->name('checkout.add');
+
+    // QR Checkout
+    Route::get('/checkout/qr/{id}', [CheckoutController::class, 'qrView'])->name('checkout.qr');
+
+    // Transactions
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
 
+    // Polling status transaksi
+    Route::get('/transactions/{id}/status', [TransactionController::class, 'status'])->name('transactions.status');
+
+    // Jual Sampah & Edukasi
     Route::view('/sell-waste', 'user.sell.index')->name('sell-waste.index');
     Route::view('/edu', 'user.edukasi.index')->name('edu.index');
-
-    // Checkout
-    Route::post('/checkout/prepare', [CheckoutController::class, 'prepare'])->name('checkout.prepare');
-    Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout.form');
-    Route::post('/checkout/confirm', [CheckoutController::class, 'confirm'])->name('checkout.confirm');
-    Route::post('/checkout/remove', [CheckoutController::class, 'remove'])->name('checkout.remove'); // ✅ ditambahkan di sini
 });
 
 // ================== PRODUK ==================
@@ -110,16 +123,15 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
 // ================== ADDRESS ==================
 Route::post('/address/store', [AddressController::class, 'store'])->name('address.store');
 
-// ================== DEBUG SESSION (HANYA LOKAL) ==================
+// ================== DEBUG SESSION (LOCAL ONLY) ==================
 Route::get('/debug-session', function () {
-    if (!app()->isLocal()) {
-        abort(404);
-    }
+    if (!app()->isLocal()) abort(404);
+
     return response()->json([
-        'is_web_logged_in' => Auth::guard('web')->check(),
+        'is_web_logged_in'   => Auth::guard('web')->check(),
         'is_admin_logged_in' => Auth::guard('admin')->check(),
         'is_staff_logged_in' => Auth::guard('staff')->check(),
-        'web_user' => Auth::guard('web')->user(),
+        'web_user'   => Auth::guard('web')->user(),
         'admin_user' => Auth::guard('admin')->user(),
         'staff_user' => Auth::guard('staff')->user(),
         'session_id' => Session::getId(),

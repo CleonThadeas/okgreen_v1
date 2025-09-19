@@ -49,7 +49,7 @@
           <h3>Status</h3>
           <span class="icon green">♻️</span>
         </div>
-         <h2><a href="{{ route('banyaksampah') }}">75%</a></h2>
+         <h2><a href="{{ route('admin.wastes.index') }}">75%</a></h2>
         <p><span class="text-green">25%</span> Belum Selesai</p>
       </div>
     </div>

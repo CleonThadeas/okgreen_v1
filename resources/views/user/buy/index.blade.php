@@ -105,12 +105,81 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    const csrf = document.querySelector('meta[name="csrf-token"]').content;
+    const cartUrl = "{{ route('checkout.cart') }}";
+    const addUrl = "{{ route('checkout.add') }}";
+    const removeUrl = "{{ route('checkout.remove') }}";
+
     const tambahButtons = document.querySelectorAll('.tambah-btn');
     const selectedCountEl = document.getElementById('selected-count');
     const checkoutBtn = document.getElementById('checkout-btn');
+
+    // Start with empty, will fill from server (or localStorage fallback)
     let selectedProducts = {};
 
-    // Tambah / Hapus Produk
+    function updateSelectedCount() {
+        selectedCountEl.textContent = `${Object.keys(selectedProducts).length} produk dipilih`;
+        localStorage.setItem('selectedProducts', JSON.stringify(selectedProducts));
+    }
+
+    function restoreUIFromSelected() {
+        Object.keys(selectedProducts).forEach(productId => {
+            const card = document.querySelector(`.produk-card[data-id="${productId}"]`);
+            if (!card) return;
+            const btn = card.querySelector('.tambah-btn');
+            const sizeContainer = card.querySelector('.size-container');
+            if (btn) {
+                btn.textContent = 'Hapus';
+                btn.style.backgroundColor = '#f44336';
+            }
+            if (sizeContainer) sizeContainer.style.display = 'block';
+        });
+        updateSelectedCount();
+    }
+
+    // Ambil server cart terlebih dahulu
+    fetch(cartUrl, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(res => res.json())
+        .then(data => {
+            const cart = data.cart || [];
+            if (cart.length > 0) {
+                cart.forEach(it => selectedProducts[it.waste_type_id] = it.quantity);
+                restoreUIFromSelected();
+            } else {
+                // fallback ke localStorage: sinkron ke server (opsional)
+                const ls = JSON.parse(localStorage.getItem('selectedProducts') || '{}');
+                if (Object.keys(ls).length > 0) {
+                    // kirim masing-masing ke server (non-blocking)
+                    Object.keys(ls).forEach(pid => {
+                        fetch(addUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': csrf,
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: JSON.stringify({ waste_type_id: pid, quantity: ls[pid] })
+                        })
+                        .then(r => r.json())
+                        .then(resp => {
+                            if (resp.success) {
+                                selectedProducts[pid] = ls[pid];
+                                restoreUIFromSelected();
+                            }
+                        })
+                        .catch(() => {});
+                    });
+                }
+            }
+        })
+        .catch(() => {
+            // jika fetch gagal, fallback ke localStorage saja
+            const ls = JSON.parse(localStorage.getItem('selectedProducts') || '{}');
+            selectedProducts = ls;
+            restoreUIFromSelected();
+        });
+
+    // Event listener untuk tombol tambah/hapus
     tambahButtons.forEach(btn => {
         btn.addEventListener('click', function () {
             const card = btn.closest('.produk-card');
@@ -119,63 +188,73 @@ document.addEventListener('DOMContentLoaded', function () {
             const qty = parseInt(card.querySelector('.size-input')?.value || 1);
             const sizeContainer = card.querySelector('.size-container');
 
-            if (stok === 0) {
-                alert('Produk ini stoknya habis!');
-                return;
-            }
+            if (stok === 0) { alert('Produk ini stoknya habis!'); return; }
 
             if (selectedProducts[productId]) {
-                // Hapus produk dari cart (BE)
-                fetch("{{ route('checkout.remove') }}", {
+                // hapus item di server
+                fetch(removeUrl, {
                     method: 'POST',
                     headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrf,
                         'X-Requested-With': 'XMLHttpRequest'
                     },
                     body: JSON.stringify({ product_id: productId })
-                }).finally(() => {
-                    delete selectedProducts[productId];
-                    btn.textContent = 'Tambah';
-                    btn.style.backgroundColor = '';
-                    if (sizeContainer) sizeContainer.style.display = 'none';
-                    updateSelectedCount();
+                })
+                .then(res => res.json())
+                .then(resp => {
+                    if (resp.success) {
+                        delete selectedProducts[productId];
+                        btn.textContent = 'Tambah';
+                        btn.style.backgroundColor = '';
+                        if (sizeContainer) sizeContainer.style.display = 'none';
+                        updateSelectedCount();
+                    } else {
+                        alert(resp.error || 'Gagal menghapus item.');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Gagal menghapus item (network).');
                 });
             } else {
-                if (sizeContainer.style.display === 'none') {
+                // jika size picker belum terlihat, tampilkan dulu
+                if (sizeContainer && sizeContainer.style.display === 'none') {
                     sizeContainer.style.display = 'block';
                     return;
                 }
 
-                // Tambah produk ke cart (BE)
-                const formData = new FormData();
-                formData.append('product_id', productId);
-                formData.append('qty', qty);
-
-                fetch("{{ route('checkout.prepare') }}", {
+                // tambah item ke server
+                fetch(addUrl, {
                     method: 'POST',
-                    headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
-                    body: formData
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrf,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ waste_type_id: productId, quantity: qty })
                 })
                 .then(res => res.json())
-                .then(data => {
-                    if (data.error) { alert(data.error); return; }
-                    selectedProducts[productId] = qty;
-                    btn.textContent = 'Hapus';
-                    btn.style.backgroundColor = '#f44336';
-                    flyToCart(card.querySelector('img'));
-                    updateSelectedCount();
+                .then(resp => {
+                    if (resp.success) {
+                        selectedProducts[productId] = qty;
+                        btn.textContent = 'Hapus';
+                        btn.style.backgroundColor = '#f44336';
+                        flyToCart(card.querySelector('img'));
+                        updateSelectedCount();
+                    } else {
+                        alert(resp.error || 'Gagal menambahkan item.');
+                    }
                 })
-                .catch(err => { console.error(err); alert('Gagal menambahkan ke checkout'); });
+                .catch(err => {
+                    console.error(err);
+                    alert('Gagal menambahkan ke checkout (network).');
+                });
             }
         });
     });
 
-    function updateSelectedCount() {
-        selectedCountEl.textContent = `${Object.keys(selectedProducts).length} produk dipilih`;
-    }
-
-    // Animasi terbang ke cart
+    // Animasi terbang ke cart (tidak berubah)
     function flyToCart(imgElement) {
         if (!imgElement) return;
         const bottomBar = document.getElementById('bottom-bar');
@@ -203,7 +282,7 @@ document.addEventListener('DOMContentLoaded', function () {
         setTimeout(() => imgClone.remove(), 800);
     }
 
-    // Checkout redirect
+    // checkout redirect
     if (checkoutBtn) {
         checkoutBtn.addEventListener('click', function () {
             if (Object.keys(selectedProducts).length === 0) {
@@ -214,13 +293,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Popup Tutorial
-    window.togglePopup = function () {
-        const popup = document.getElementById('popup-pilih');
-        popup.style.display = (popup.style.display === 'flex' || popup.style.display === 'block') ? 'none' : 'flex';
-    };
-
-    // Handle qty picker di card
+    // size pickers
     document.querySelectorAll('.produk-card').forEach(card => {
         const inc = card.querySelector('.increase');
         const dec = card.querySelector('.decrease');
@@ -233,13 +306,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // === Modal Detail Produk ===
+    // modal detail (tidak berubah)
     const wastesData = @json($wastes);
 
     window.openDetailModal = function(id) {
         const w = wastesData.find(x => x.id == id);
         if(!w) return;
-
         const modalHTML = `
             <main class="detail-produk-container">
                 <div class="produk-gambar">

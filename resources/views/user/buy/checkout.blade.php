@@ -6,6 +6,25 @@
     <title>Checkout</title>
     <link rel="stylesheet" href="{{ asset('css/payment.css') }}?v={{ time() }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <style>
+        .shipping-btn.active,
+        .payment-method.active {
+            border: 2px solid #28a745;
+            background-color: #e6ffee;
+            color: #28a745;
+        }
+        .payment-method {
+            cursor: pointer;
+            border: 2px solid transparent;
+            padding: 5px;
+            transition: all 0.3s;
+            max-width: 120px;
+        }
+        .shipping-btn {
+            margin: 5px;
+            transition: background-color 0.3s, border 0.3s;
+        }
+    </style>
 </head>
 <body>
 
@@ -20,10 +39,10 @@
             {{-- === Info Pengiriman === --}}
             <div class="delivery-info">
                 <p>Delivery to</p>
-                <h3 id="deliveryName">{{ $addresses->first()->name ?? 'Nama Penerima' }}</h3>
-                <p id="deliveryAddress">{!! $addresses->first()->address ?? 'Alamat belum diatur' !!}</p>
-                <p><strong>Phone:</strong> <span id="deliveryPhone">{{ $addresses->first()->phone ?? '-' }}</span></p>
-                <button class="btn save change-address-btn">Ganti Alamat</button>
+                <h3 id="deliveryName">{{ optional($addresses->first())->name ?? 'Nama Penerima' }}</h3>
+                <p id="deliveryAddress">{!! optional($addresses->first())->address ?? 'Alamat belum diatur' !!}</p>
+                <p><strong>Phone:</strong> <span id="deliveryPhone">{{ optional($addresses->first())->phone ?? '-' }}</span></p>
+                <button class="btn save change-address-btn" onclick="toggleAddressModal(true)">Ganti Alamat</button>
             </div>
 
             {{-- Modal Pilih Alamat --}}
@@ -75,29 +94,11 @@
             {{-- === Metode Pengiriman === --}}
             <h2 class="section-title">Metode Pengiriman</h2>
             <div class="shipping-options">
-                <button class="shipping-btn btn save" data-type="antar">Antar ke Alamat</button>
-                <button class="shipping-btn btn save" data-type="ambil">Ambil Barang di Tempat</button>
+                <button type="button" class="shipping-btn btn save" data-type="antar">Antar ke Alamat</button>
+                <button type="button" class="shipping-btn btn save" data-type="pickup">Ambil Barang di Tempat</button>
             </div>
             <p id="selectedLocation" style="display:none; margin-top:10px;"></p>
             <hr>
-
-            {{-- Modal Pilih Lokasi Pickup --}}
-            <div id="pickupModal" class="modal">
-                <div class="modal-content">
-                    <span class="close" onclick="togglePickupModal(false)">&times;</span>
-                    <h3>Pilih Lokasi Pengambilan</h3>
-                    <select id="pickupAddress">
-                        <option value="">Pilih Lokasi</option>
-                        @foreach($pickupLocations as $loc)
-                            <option value="{{ $loc['name'] }} - {{ $loc['address'] }}">
-                                {{ $loc['name'] }} - {{ $loc['address'] }}
-                            </option>
-                        @endforeach
-                    </select>
-                    <button class="btn save btn-pilih">Pilih</button>
-                    <button class="btn cancel" onclick="togglePickupModal(false)">Batalkan</button>
-                </div>
-            </div>
 
             {{-- === Daftar Produk === --}}
             <div class="product-list">
@@ -118,40 +119,30 @@
             <div class="payment-details">
                 <div>
                     <span>Price ({{ count($items) }} items)</span>
-                    <span>Rp {{ number_format($subtotal,0,',','.') }}</span>
+                    <span id="basePrice">Rp {{ number_format($subtotal,0,',','.') }}</span>
                 </div>
                 <div class="discount">
                     <span>Discount</span>
-                    <span>Rp -{{ number_format($discount ?? 0,0,',','.') }}</span>
+                    <span id="discountAmount">Rp -{{ number_format($discount ?? 0,0,',','.') }}</span>
                 </div>
                 <div>
                     <span>Delivery Charges</span>
-                    <span>{{ $shipping == 0 ? 'FREE' : 'Rp '.number_format($shipping,0,',','.') }}</span>
+                    <span id="deliveryCharge">{{ $shipping == 0 ? 'FREE' : 'Rp '.number_format($shipping,0,',','.') }}</span>
                 </div>
                 <div class="total">
                     <span>Total Amount</span>
-                    <span>Rp {{ number_format($total,0,',','.') }}</span>
+                    <span id="totalAmount">Rp {{ number_format($total,0,',','.') }}</span>
                 </div>
             </div>
 
             {{-- === Metode Pembayaran === --}}
             <h2 class="section-title">Metode Pembayaran</h2>
             <div class="payment-options">
-                <img src="{{ asset('img/dana.png') }}" alt="Dana" class="payment-method" data-method="dana">
                 <img src="{{ asset('img/qris.png') }}" alt="QRIS" class="payment-method" data-method="qris">
             </div>
 
-            {{-- Popup QRIS --}}
-            <div id="qrisModal" class="modal">
-                <div class="modal-content">
-                    <span class="close" onclick="toggleQrisModal(false)">&times;</span>
-                    <h3>Scan QRIS untuk Membayar</h3>
-                    <img src="{{ asset('img/Qris-Dummy.jpg') }}" alt="QRIS Code" style="width:250px;">
-                </div>
-            </div>
-
             {{-- === Form Checkout === --}}
-            <form action="{{ route('cart.checkout') }}" method="POST" id="checkout-form">
+            <form action="{{  route('checkout.confirm') }}" method="POST" id="checkout-form">
                 @csrf
                 @foreach($items as $it)
                     <input type="hidden" name="items[{{ $it['waste_type_id'] }}][selected]" value="1">
@@ -160,7 +151,7 @@
                 <input type="hidden" name="address_type" id="address_type">
                 <input type="hidden" name="pickup_location" id="pickup_location">
                 <input type="hidden" name="payment_method" id="payment_method">
-                <input type="hidden" name="address_id" id="address_id" value="{{ $addresses->first()->id ?? '' }}">
+                <input type="hidden" name="address_id" id="address_id" value="{{ optional($addresses->first())->id ?? '' }}">
 
                 <div class="form-actions">
                     <button type="submit" class="btn save">Buat Pesanan</button>
@@ -169,19 +160,15 @@
         </div>
     </div>
 
-    <script>
-        // public/js/checkout.js
-
+<script>
 document.addEventListener("DOMContentLoaded", () => {
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
-    // === Modal Alamat ===
     window.toggleAddressModal = (show = true) => {
-        document.getElementById("addressModal").style.display = show ? "block" : "none";
+        document.getElementById("addressModal").style.display = show ? "flex" : "none";
     };
-
     window.toggleAddAddressModal = (show = true) => {
-        document.getElementById("addAddressModal").style.display = show ? "block" : "none";
+        document.getElementById("addAddressModal").style.display = show ? "flex" : "none";
     };
 
     // Pilih alamat
@@ -196,78 +183,112 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("deliveryAddress").innerHTML = address;
             document.getElementById("deliveryPhone").textContent = phone.replace("📞 ","");
             document.getElementById("address_id").value = id;
-            document.getElementById("address_type").value = "antar";
-
+            document.getElementById("address_type").value = "delivery";
             toggleAddressModal(false);
         });
     });
 
-    // Tambah alamat baru (AJAX)
+    // Tambah alamat
     const addForm = document.getElementById("addAddressForm");
     if (addForm) {
         addForm.addEventListener("submit", async (e) => {
             e.preventDefault();
             const formData = new FormData(addForm);
-
             const res = await fetch("/checkout/address", {
                 method: "POST",
                 headers: { "X-CSRF-TOKEN": csrfToken },
                 body: formData
             });
             const data = await res.json();
-
-            if (data.success) {
-                alert("Alamat berhasil ditambahkan");
-                location.reload();
-            } else {
-                alert("Gagal menambah alamat");
-            }
+            if (data.success) location.reload();
+            else alert("Gagal menambah alamat");
         });
     }
 
-    // === Pengiriman ===
+    // Pilih metode pengiriman
     document.querySelectorAll(".shipping-btn").forEach(btn => {
         btn.addEventListener("click", () => {
+            document.querySelectorAll(".shipping-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+
             if (btn.dataset.type === "antar") {
-                document.getElementById("address_type").value = "antar";
+                document.getElementById("address_type").value = "delivery";
                 document.getElementById("selectedLocation").style.display = "none";
+                document.getElementById("pickup_location").value = "";
             } else {
-                document.getElementById("address_type").value = "ambil";
-                togglePickupModal(true);
+                document.getElementById("address_type").value = "pickup";
+                const lokasi = "OKGREEN Office - Jl. Lingkungan Hijau No.88, Bandung";
+                document.getElementById("pickup_location").value = lokasi;
+                document.getElementById("selectedLocation").style.display = "block";
+                document.getElementById("selectedLocation").textContent = "📍 " + lokasi;
             }
         });
     });
 
-    // Modal pickup
-    window.togglePickupModal = (show = true) => {
-        document.getElementById("pickupModal").style.display = show ? "block" : "none";
-    };
-
-    document.querySelector("#pickupModal .btn-pilih").addEventListener("click", () => {
-        const lokasi = document.getElementById("pickupAddress").value;
-        if (lokasi) {
-            document.getElementById("pickup_location").value = lokasi;
-            document.getElementById("selectedLocation").style.display = "block";
-            document.getElementById("selectedLocation").textContent = "📍 " + lokasi;
-            togglePickupModal(false);
-        }
-    });
-
-    // === Metode Pembayaran ===
+    // Pilih metode pembayaran
     document.querySelectorAll(".payment-method").forEach(pm => {
         pm.addEventListener("click", () => {
-            const method = pm.dataset.method;
-            document.getElementById("payment_method").value = method;
-
-            if (method === "qris") toggleQrisModal(true);
-            else toggleQrisModal(false);
+            document.querySelectorAll(".payment-method").forEach(p => p.classList.remove("active"));
+            pm.classList.add("active");
+            document.getElementById("payment_method").value = pm.dataset.method;
         });
     });
 
-    window.toggleQrisModal = (show = true) => {
-        document.getElementById("qrisModal").style.display = show ? "block" : "none";
-    };
+    // Validasi form
+    document.getElementById("checkout-form").addEventListener("submit", (e) => {
+        if (!document.getElementById("address_id").value && document.getElementById("address_type").value === "delivery") {
+            alert("Harap pilih alamat terlebih dahulu.");
+            e.preventDefault();
+        } else if (document.getElementById("address_type").value === "pickup" && !document.getElementById("pickup_location").value) {
+            alert("Harap pilih lokasi pengambilan.");
+            e.preventDefault();
+        } else if (!document.getElementById("payment_method").value) {
+            alert("Harap pilih metode pembayaran.");
+            e.preventDefault();
+        }
+    });
+    // --- Variabel harga dari controller ---
+let basePrice   = {{ $subtotal }};
+let discount    = {{ $discount ?? 0 }};
+let shipPickup  = {{ $shippingPickup }};
+let shipDelivery= {{ $shippingDelivery }};
+let shipping    = {{ $shipping }};
+
+// Update total
+function updateTotal() {
+    let total = basePrice - discount + shipping;
+    document.getElementById("deliveryCharge").textContent = 
+        shipping === 0 ? "FREE" : "Rp " + shipping.toLocaleString("id-ID");
+    document.getElementById("totalAmount").textContent = "Rp " + total.toLocaleString("id-ID");
+}
+
+// Pilih metode pengiriman
+document.querySelectorAll(".shipping-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+        document.querySelectorAll(".shipping-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        if (btn.dataset.type === "antar") {
+            document.getElementById("address_type").value = "delivery";
+            document.getElementById("selectedLocation").style.display = "none";
+            document.getElementById("pickup_location").value = "";
+            shipping = shipDelivery; // pakai ongkir dari controller
+        } else {
+            document.getElementById("address_type").value = "pickup";
+            const lokasi = "OKGREEN Office - Jl. Lingkungan Hijau No.88, Bandung";
+            document.getElementById("pickup_location").value = lokasi;
+            document.getElementById("selectedLocation").style.display = "block";
+            document.getElementById("selectedLocation").textContent = "📍 " + lokasi;
+            shipping = shipPickup; // pakai ongkir pickup (biasanya 0)
+        }
+        updateTotal();
+    });
 });
-    </script>
+
+// Inisialisasi total pertama kali
+updateTotal();
+
+});
+</script>
 </body>
 </html>

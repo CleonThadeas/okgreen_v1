@@ -15,9 +15,9 @@
     </div>
      <nav>
       <ul>
-        <li><a href="{{ route('berandadmin') }}">Beranda</a></li>
-        <li><a href="{{ route('stokadmin') }}">Stok</a></li>
-        <li><a href="{{ route('banyaksampah') }}">Status</a></li>
+        <li><a href="{{ route('admin.dashboard') }}">Beranda</a></li>
+        <li><a href="{{ route('admin.wastes.index') }}">Stok</a></li>
+        <li><a href="{{ route('admin.wastes.index') }}">Status</a></li>
       </ul>
       </div>
     </nav>

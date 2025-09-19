@@ -25,10 +25,10 @@
     </nav>
     {{-- 
 <div class="icons">
-    <a href="{{ route('notifikasi') }}">
+    <a href="{{ route('transactions.index') }}">
         <img src="{{ asset('img/bell.png') }}" alt="Notifikasi">
     </a>
-    <a href="{{ route('profil') }}">
+    <a href="{{ route('profile.edit') }}">
         <img src="{{ asset('img/user.png') }}" alt="Profil">
     </a>
 </div>

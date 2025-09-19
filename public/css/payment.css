@@ -219,23 +219,27 @@ body, html {
   height: 100%;
   background: rgba(0,0,0,0.55);
   display: none;
-  justify-content: center;
-  align-items: center;
+  justify-content: center; /* horizontal center */
+  align-items: center;    /* vertical center */
   z-index: 1000;
-  transition: all 0.3s ease;
+  padding: 20px;          /* agar modal tidak mepet layar di mobile */
+  box-sizing: border-box;
 }
 
 .modal-content {
   background: #fff;
   border-radius: 14px;
   padding: 22px;
-  width: 90%;
-  max-width: 420px;
+  width: 100%;
+  max-width: 420px;       /* ukuran maksimum */
   position: relative;
   text-align: center;
   animation: zoomIn 0.3s ease;
   box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  max-height: 90vh;       /* mencegah modal terlalu tinggi */
+  overflow-y: auto;       /* scroll jika konten tinggi */
 }
+
 
 /* Animasi popup */
 @keyframes zoomIn {

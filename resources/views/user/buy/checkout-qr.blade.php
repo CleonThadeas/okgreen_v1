@@ -1,14 +1,22 @@
-@extends('layouts.app')
-
-@section('content')
-<div class="container text-center">
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembayaran QRIS</title>
+    <link rel="stylesheet" href="{{ asset('css/qris.css') }}?v={{ time() }}">
+</head>
+<body>
+    {{-- Header --}}
+    @include('partials.header')
+<div class="container qris-container text-center">
     <h3>Bayar dengan QRIS</h3>
 
-    <div id="qrcode" class="my-3"></div>
+    <div id="qrcode" class="qris-box"></div>
 
-    <p id="countdown"></p>
+    <p id="countdown" class="countdown"></p>
 
-    <div id="statusBox">
+    <div id="statusBox" class="status-box">
         Status: <strong id="txStatus">{{ $tx->status }}</strong>
     </div>
 
@@ -19,18 +27,16 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <script>
-    // render QR dari payload dummy
+    // render QR
     new QRCode(document.getElementById("qrcode"), {
         text: {!! json_encode($tx->qr_text ?? 'QRIS-DUMMY') !!},
         width: 300,
         height: 300,
     });
 
-    // --- gunakan epoch (ms) agar aman dari timezone ---
     const expireAtMs = {{ $tx->expired_at ? ($tx->expired_at->timestamp * 1000) : 'null' }};
-    const txId = {{ $tx->id }};
-    const countdownEl = document.getElementById('countdown');
     const statusEl = document.getElementById('txStatus');
+    const countdownEl = document.getElementById('countdown');
 
     if (expireAtMs) {
         const timer = setInterval(() => {
@@ -40,7 +46,6 @@
             if (distance <= 0) {
                 clearInterval(timer);
                 countdownEl.innerHTML = "Waktu habis — transaksi otomatis dibatalkan.";
-                // panggil status sekali untuk memicu auto-cancel di server
                 fetch("{{ route('transactions.status',['id'=>$tx->id]) }}");
                 return;
             }
@@ -50,7 +55,7 @@
         }, 500);
     }
 
-    // Polling status setiap 5 detik
+    // polling status
     const poll = setInterval(function(){
         fetch("{{ route('transactions.status',['id'=>$tx->id]) }}")
           .then(res => res.json())
@@ -59,11 +64,11 @@
                   statusEl.innerText = data.status;
                   if (data.status === 'paid') {
                       clearInterval(poll);
-                      // redirect ke riwayat transaksi (BUKAN transactions.show!)
                       window.location.href = "{{ route('transactions.index') }}";
                   }
               }
           }).catch(err => console.error(err));
     }, 5000);
 </script>
-@endsection
+</body>
+</html>
