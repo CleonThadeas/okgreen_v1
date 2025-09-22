@@ -3,11 +3,12 @@
 return [
 
     'defaults' => [
-        'guard' => 'web',
-        'passwords' => 'users',
-    ],
+    'guard' => env('AUTH_GUARD', 'web'),   // pastikan 'web'
+    'passwords' => 'users',
+],
 
     'guards' => [
+
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
@@ -32,7 +33,24 @@ return [
             'driver' => 'sanctum',
             'provider' => 'staff',
         ],
+
+
+    'admin' => [
+        'driver' => 'session',   
+        'provider' => 'admins',
     ],
+
+    'staff' => [
+        'driver' => 'session',   
+        'provider' => 'staff',
+    ],
+
+    'api' => [
+        'driver' => 'sanctum',
+        'provider' => 'users',
+    ],
+],
+
 
     'providers' => [
         'users' => [

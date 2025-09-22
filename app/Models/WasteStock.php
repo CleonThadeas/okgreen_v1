@@ -22,3 +22,4 @@ class WasteStock extends Model
         return $this->belongsTo(WasteType::class, 'waste_type_id');
     }
 }
+
