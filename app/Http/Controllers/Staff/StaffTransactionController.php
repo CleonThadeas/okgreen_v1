@@ -16,7 +16,7 @@ class StaffTransactionController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth'); // atau 'auth:staff' jika pakai guard custom
+        $this->middleware('auth:staff');// atau 'auth:staff' jika pakai guard custom
     }
 
     public function index()

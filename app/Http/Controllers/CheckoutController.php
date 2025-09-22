@@ -13,25 +13,23 @@ use App\Models\WasteStock;
 
 class CheckoutController extends Controller
 {
+    // Ringkasan keranjang
     public function show(Request $request)
     {
         $cart = session('buy_cart', []);
-        if (empty($cart)) {
+        if (!$cart || !is_array($cart) || count($cart) === 0) {
             return redirect()->route('buy-waste.index')->with('error', 'Keranjang kosong.');
         }
 
         $items = [];
         $subtotal = 0;
         foreach ($cart as $row) {
-            if (!is_array($row) || !isset($row['waste_type_id'], $row['quantity'])) {
-                continue; // skip kalau struktur tidak valid
-            }
+            if (!isset($row['waste_type_id'], $row['quantity'])) continue;
 
             $type = WasteType::with('category')->find($row['waste_type_id']);
             if (!$type) continue;
 
             $qty = (float) $row['quantity'];
-
             $price = (float) $type->price_per_unit;
             $sub = $price * $qty;
             $subtotal += $sub;
@@ -47,7 +45,7 @@ class CheckoutController extends Controller
             ];
         }
 
-        $shippingPickup   = 0;
+        $shippingPickup = 0;
         $shippingDelivery = 10000;
 
         return view('user.buy.checkout', [
@@ -63,6 +61,7 @@ class CheckoutController extends Controller
         ]);
     }
 
+    // Simpan keranjang sementara
     public function prepare(Request $request)
     {
         $posted = $request->input('items', []);
@@ -71,7 +70,7 @@ class CheckoutController extends Controller
         foreach ($posted as $wasteId => $data) {
             if (is_array($data)) {
                 if (!isset($data['selected'])) continue;
-                $qty = (float)($data['quantity'] ?? 0);
+                $qty = (float) ($data['quantity'] ?? 0);
                 if ($qty <= 0) continue;
                 $items[] = ['waste_type_id' => (int)$wasteId, 'quantity' => $qty];
             } elseif (isset($posted['waste_type_id'])) {
@@ -88,59 +87,56 @@ class CheckoutController extends Controller
         return redirect()->route('checkout.form');
     }
 
+    // Ambil isi keranjang JSON
     public function cart(Request $request)
     {
         $cart = session()->get('buy_cart', []);
         return response()->json(['cart' => $cart]);
     }
 
+    // Tambah item ke keranjang
     public function add(Request $request)
-{
-    $request->validate([
-        'waste_type_id' => 'required|integer|exists:waste_types,id',
-        'quantity'      => 'required|numeric|min:1',
-        'replace'       => 'boolean'  // tambahkan validasi ini
-    ]);
+    {
+        $request->validate([
+            'waste_type_id' => 'required|integer|exists:waste_types,id',
+            'quantity'      => 'required|numeric|min:1',
+            'replace'       => 'boolean'
+        ]);
 
-    $productId = (int)$request->waste_type_id;
-    $qty = (float)$request->quantity;
-    $replace = $request->boolean('replace', false);
+        $productId = (int) $request->waste_type_id;
+        $qty = (float) $request->quantity;
+        $replace = $request->boolean('replace', false);
 
-    // cek stok
-    $stock = WasteStock::where('waste_type_id', $productId)->first();
-    if ($stock && $stock->available_weight < $qty) {
-        return response()->json(['success' => false, 'error' => 'Stok tidak cukup'], 422);
-    }
-
-    $cart = session()->get('buy_cart', []);
-    $found = false;
-    foreach ($cart as &$it) {
-        if ((int)$it['waste_type_id'] === $productId) {
-            if ($replace) {
-                $it['quantity'] = $qty;
-            } else {
-                $it['quantity'] = $it['quantity'] + $qty;
-            }
-            $found = true;
-            break;
+        $stock = WasteStock::where('waste_type_id', $productId)->first();
+        if ($stock && $stock->available_weight < $qty) {
+            return response()->json(['success' => false, 'error' => 'Stok tidak cukup'], 422);
         }
+
+        $cart = session()->get('buy_cart', []);
+        $found = false;
+        foreach ($cart as &$it) {
+            if ((int)$it['waste_type_id'] === $productId) {
+                $it['quantity'] = $replace ? $qty : $it['quantity'] + $qty;
+                $found = true;
+                break;
+            }
+        }
+        unset($it);
+
+        if (!$found) {
+            $cart[] = ['waste_type_id' => $productId, 'quantity' => $qty];
+        }
+
+        session()->put('buy_cart', $cart);
+
+        return response()->json([
+            'success'    => true,
+            'cart'       => $cart,
+            'cart_count' => count($cart),
+        ]);
     }
-    unset($it);
 
-    if (!$found) {
-        $cart[] = ['waste_type_id' => $productId, 'quantity' => $qty];
-    }
-
-    session()->put('buy_cart', $cart);
-
-    return response()->json([
-        'success'    => true,
-        'cart'       => $cart,
-        'cart_count' => count($cart),
-    ]);
-}
-
-
+    // Hapus item dari keranjang
     public function remove(Request $request)
     {
         $request->validate([
@@ -149,15 +145,9 @@ class CheckoutController extends Controller
 
         $productId = (int) $request->product_id;
         $cart = session()->get('buy_cart', []);
-        $new = [];
+        $new = array_filter($cart, fn($it) => (int)$it['waste_type_id'] !== $productId);
 
-        foreach ($cart as $it) {
-            if ((int)$it['waste_type_id'] !== $productId) {
-                $new[] = $it;
-            }
-        }
-
-        session()->put('buy_cart', $new);
+        session()->put('buy_cart', array_values($new));
 
         return response()->json([
             'success'    => true,
@@ -166,6 +156,7 @@ class CheckoutController extends Controller
         ]);
     }
 
+    // Buat transaksi + redirect QR
     public function confirm(Request $request)
     {
         $request->validate([
@@ -188,8 +179,8 @@ class CheckoutController extends Controller
 
             foreach ($cart as $row) {
                 $type = WasteType::findOrFail($row['waste_type_id']);
-                $qty  = (float)$row['quantity'];
-                $price= (float)$type->price_per_unit;
+                $qty  = (float) $row['quantity'];
+                $price= (float) $type->price_per_unit;
                 $sub  = $price * $qty;
                 $subtotal += $sub;
 
@@ -200,18 +191,18 @@ class CheckoutController extends Controller
             $total = $subtotal + $shipping_cost;
 
             $tx = new BuyTransaction();
-            $tx->user_id = Auth::id();
-            $tx->total_amount = $total;
-            $tx->status = 'pending';
-            $tx->transaction_date = Carbon::now();
-            $tx->payment_method = $request->input('payment_method', 'qris');
+            $tx->user_id         = Auth::id();
+            $tx->total_amount    = $total;
+            $tx->status          = 'pending';
+            $tx->transaction_date= Carbon::now();
+            $tx->payment_method  = $request->input('payment_method','qris');
             $tx->shipping_method = $request->address_type;
-            $tx->receiver_name = $request->receiver_name;
-            $tx->address = $request->address;
-            $tx->phone = $request->phone;
-            $tx->shipping_cost = $shipping_cost;
-            $tx->expired_at = Carbon::now()->addMinutes(10);
-            $tx->qr_text = 'okgreen-demo-static-qr-payload-' . $total;
+            $tx->receiver_name   = $request->receiver_name;
+            $tx->address         = $request->address;
+            $tx->phone           = $request->phone;
+            $tx->shipping_cost   = $shipping_cost;
+            $tx->expired_at      = Carbon::now()->addMinutes(10);
+            $tx->qr_text         = 'okgreen-demo-static-qr-payload-' . $total;
             $tx->save();
 
             foreach ($itemsBuild as $it) {
@@ -244,11 +235,12 @@ class CheckoutController extends Controller
         }
     }
 
+    // Halaman QR
     public function qrView($id)
     {
         $tx = BuyTransaction::where('id', $id)
-            ->where('user_id', Auth::id())
-            ->firstOrFail();
+              ->where('user_id', Auth::id())
+              ->firstOrFail();
 
         if (!$tx->expired_at) {
             $tx->expired_at = Carbon::now()->addMinutes(10);

@@ -19,6 +19,10 @@
             @endif
 
             {{-- Pesan error --}}
+            @if(session('error'))
+                <div class="alert-error">{{ session('error') }}</div>
+            @endif
+
             @if ($errors->any())
                 <div class="alert-error">
                     <ul style="margin:0; padding-left:18px;">
@@ -29,7 +33,7 @@
                 </div>
             @endif
 
-            {{-- Form Jual Sampah (pakai data dari BE) --}}
+            {{-- Form Jual Sampah --}}
             <form action="{{ route('sell-waste.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
@@ -37,7 +41,9 @@
                 <select name="waste_category_id" id="categorySelect" required>
                     <option value="">-- Pilih Kategori --</option>
                     @foreach($categories as $c)
-                        <option value="{{ $c->id }}">{{ $c->category_name }}</option>
+                        <option value="{{ $c->id }}" {{ old('waste_category_id') == $c->id ? 'selected' : '' }}>
+                            {{ $c->category_name }}
+                        </option>
                     @endforeach
                 </select>
 
@@ -48,27 +54,28 @@
 
                 <label>Metode:</label>
                 <select name="sell_method" required>
-                    <option value="drop_point">Drop Point</option>
-                    <option value="pickup">Pickup</option>
+                    <option value="drop_point" {{ old('sell_method')=='drop_point'?'selected':'' }}>Drop Point</option>
+                    <option value="pickup" {{ old('sell_method')=='pickup'?'selected':'' }}>Pickup</option>
                 </select>
 
                 <label>Berat (Kg/Liter):</label>
                 <div class="berat-container">
-                    <input type="number" step="0.01" name="weight" required>
+                    <input type="number" step="0.01" name="weight" value="{{ old('weight') }}" required>
                 </div>
 
                 <label>Foto Sampah:</label>
                 <div class="upload-box">
-                    <input type="file" name="photo[]" multiple required>
+                    <input type="file" name="photo[]" multiple>
                 </div>
 
                 <label>Deskripsi:</label>
-                <textarea name="description" rows="3"></textarea>
+                <textarea name="description" rows="3">{{ old('description') }}</textarea>
 
                 <button type="submit" class="jual-btn">Kirim Permintaan Jual</button>
             </form>
         </div>
 
+        {{-- Riwayat Penjualan --}}
         <div class="jual-container">
             <h2>Riwayat Penjualan Saya</h2>
             <table border="1" cellpadding="8" width="100%">
@@ -86,45 +93,61 @@
                 </thead>
                 <tbody>
                     @forelse($sells as $s)
-                    <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $s->category->category_name ?? '-' }}</td>
-                        <td>{{ $s->sellType->type_name ?? '-' }}</td>
-                        <td>{{ $s->weight_kg }}</td>
-                        <td>{{ $s->price_per_kg }}</td>
-                        <td>{{ $s->points_awarded ?? 0 }}</td>
-                        <td>{{ ucfirst($s->status) }}</td>
-                        <td>{{ $s->created_at->format('d M Y H:i') }}</td>
-                    </tr>
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $s->category->category_name ?? '-' }}</td>
+                            <td>{{ $s->sellType->type_name ?? '-' }}</td>
+                            <td>{{ $s->weight_kg }}</td>
+                            <td>{{ $s->price_per_kg }}</td>
+                            <td>{{ $s->points_awarded ?? 0 }}</td>
+                            <td>{{ ucfirst($s->status) }}</td>
+                            <td>{{ $s->created_at->format('d M Y H:i') }}</td>
+                        </tr>
                     @empty
-                    <tr><td colspan="8" align="center">Belum ada penjualan.</td></tr>
+                        <tr>
+                            <td colspan="8" align="center">Belum ada penjualan.</td>
+                        </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
     </main>
 
-    {{-- Script AJAX untuk load jenis sesuai kategori --}}
+    {{-- Script AJAX load jenis sesuai kategori --}}
     <script>
-    document.getElementById('categorySelect').addEventListener('change', function(){
-        let catId = this.value;
-        let typeSelect = document.getElementById('typeSelect');
-        typeSelect.innerHTML = '<option value="">Loading...</option>';
-        if(!catId) return;
+       const categorySelect = document.getElementById('categorySelect');
+const typeSelect = document.getElementById('typeSelect');
+const oldType = "{{ old('sell_waste_type_id') }}";
 
-        fetch('/sell-waste/types/' + catId)
-            .then(res => res.json())
-            .then(data => {
-                typeSelect.innerHTML = '<option value="">-- Pilih Jenis --</option>';
-                data.forEach(t => {
-                    typeSelect.innerHTML += `<option value="${t.id}">${t.type_name} (Poin/Kg: ${t.points_per_kg})</option>`;
-                });
-            })
-            .catch(err => {
-                console.error(err);
-                typeSelect.innerHTML = '<option value="">-- Gagal memuat --</option>';
+function loadTypes(catId, selectedType = null) {
+    typeSelect.innerHTML = '<option value="">Loading...</option>';
+    if(!catId) return;
+
+    fetch('/sell-waste/types/' + catId)
+        .then(res => res.json())
+        .then(data => {
+            typeSelect.innerHTML = '<option value="">-- Pilih Jenis --</option>';
+            data.forEach(t => {
+                const selected = (t.id == selectedType) ? 'selected' : '';
+                typeSelect.innerHTML += `<option value="${t.id}" ${selected}>${t.type_name} (Poin/Kg: ${t.points_per_kg})</option>`;
             });
-    });
+        })
+        .catch(err => {
+            console.error(err);
+            typeSelect.innerHTML = '<option value="">-- Gagal memuat --</option>';
+        });
+}
+
+// Event change kategori
+categorySelect.addEventListener('change', function(){
+    loadTypes(this.value);
+});
+
+// Restore old kategori + jenis
+if(categorySelect.value) {
+    loadTypes(categorySelect.value, oldType);
+}
+
     </script>
 </body>
 </html>

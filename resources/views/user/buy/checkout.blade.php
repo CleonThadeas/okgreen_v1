@@ -142,17 +142,14 @@
             </div>
 
             {{-- === Form Checkout === --}}
-            <form action="{{  route('checkout.confirm') }}" method="POST" id="checkout-form">
-                @csrf
+            <form action="{{ route('checkout.qr', ['id' => 1]) }}" method="GET" id="checkout-form">
                 @foreach($items as $it)
                     <input type="hidden" name="items[{{ $it['waste_type_id'] }}][selected]" value="1">
                     <input type="hidden" name="items[{{ $it['waste_type_id'] }}][quantity]" value="{{ $it['quantity'] }}">
                 @endforeach
-                <input type="hidden" name="address_type" id="address_type">
-                <input type="hidden" name="pickup_location" id="pickup_location">
-                <input type="hidden" name="payment_method" id="payment_method">
-                <input type="hidden" name="address_id" id="address_id" value="{{ optional($addresses->first())->id ?? '' }}">
-
+                <input type="hidden" name="address_type" id="address_type" value="pickup">
+                <input type="hidden" name="pickup_location" id="pickup_location" value="OKGREEN Office - Jl. Lingkungan Hijau No.88, Bandung">
+                <input type="hidden" name="address_id" id="address_id" value="">
                 <div class="form-actions">
                     <button type="submit" class="btn save">Buat Pesanan</button>
                 </div>
@@ -234,19 +231,14 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // Validasi form
-    document.getElementById("checkout-form").addEventListener("submit", (e) => {
-        if (!document.getElementById("address_id").value && document.getElementById("address_type").value === "delivery") {
-            alert("Harap pilih alamat terlebih dahulu.");
-            e.preventDefault();
-        } else if (document.getElementById("address_type").value === "pickup" && !document.getElementById("pickup_location").value) {
-            alert("Harap pilih lokasi pengambilan.");
-            e.preventDefault();
-        } else if (!document.getElementById("payment_method").value) {
-            alert("Harap pilih metode pembayaran.");
-            e.preventDefault();
-        }
-    });
+  // Validasi form
+document.getElementById("checkout-form").addEventListener("submit", (e) => {
+    if (!document.getElementById("payment_method").value) {
+        alert("Harap pilih metode pembayaran.");
+        e.preventDefault();
+    }
+});
+
     // --- Variabel harga dari controller ---
 let basePrice   = {{ $subtotal }};
 let discount    = {{ $discount ?? 0 }};
