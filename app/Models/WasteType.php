@@ -16,5 +16,11 @@ class WasteType extends Model
 {
     return $this->hasOne(WasteStock::class, 'waste_type_id');
 }
+public function sellRequests()
+{
+    return $this->hasMany(\App\Models\SellWaste::class, 'waste_type_id');
+}
+
 
 }
+

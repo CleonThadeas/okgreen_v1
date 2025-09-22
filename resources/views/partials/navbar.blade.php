@@ -13,7 +13,7 @@
 
     </nav>
     <div class="icons">
-    <a href="{{ route('notifikasi') }}">
+    <a href="{{ route('transactions.index') }}">
         <img src="{{ asset('img/bell.png') }}" alt="Notifikasi">
     </a>
     <a href="{{ route('profileadmin') }}">

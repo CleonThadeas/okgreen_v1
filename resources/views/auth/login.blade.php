@@ -50,7 +50,7 @@
         </p>
 
         <div class="logo">
-            <img src="{{ asset('img/logo-greenleaf.png') }}" alt="Logo GreenLeaf" />
+            <img src="{{ asset('img/logo1.png') }}" alt="Logo GreenLeaf" />
         </div>
     </div>
 

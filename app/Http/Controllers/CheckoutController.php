@@ -3,161 +3,250 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use App\Models\WasteType;
-use App\Models\WasteStock;
+use Carbon\Carbon;
 use App\Models\BuyTransaction;
 use App\Models\BuyCartItem;
-use Carbon\Carbon;
+use App\Models\WasteType;
+use App\Models\WasteStock;
 
 class CheckoutController extends Controller
 {
-    /**
-     * Menerima item yang dipilih dari halaman index (multi-select),
-     * validasi stok lalu simpan ke session sebagai 'checkout.items'
-     */
-    public function prepare(Request $r)
+    // Ringkasan keranjang
+    public function show(Request $request)
     {
-        $r->validate([
-            'items' => 'required|array',
-        ]);
+        $cart = session('buy_cart', []);
+        if (!$cart || !is_array($cart) || count($cart) === 0) {
+            return redirect()->route('buy-waste.index')->with('error', 'Keranjang kosong.');
+        }
 
-        $posted = $r->input('items');
         $items = [];
+        $subtotal = 0;
+        foreach ($cart as $row) {
+            if (!isset($row['waste_type_id'], $row['quantity'])) continue;
 
-        foreach ($posted as $wasteId => $data) {
-            if (!isset($data['selected'])) continue;
+            $type = WasteType::with('category')->find($row['waste_type_id']);
+            if (!$type) continue;
 
-            // Ambil qty
-            $qtyRaw = $data['quantity'] ?? null;
-            if ($qtyRaw === null) {
-                return back()->with('error','Jumlah tidak dipilih untuk produk ID '.$wasteId);
-            }
-
-            $qty = (int) $qtyRaw;
-
-            // Validasi jumlah
-            if ($qty < 1) {
-                return back()->with('error','Jumlah minimal 1 untuk produk ID '.$wasteId);
-            }
-
-            $type = WasteType::with('stock','category')->find($wasteId);
-            if (!$type) {
-                return back()->with('error','Produk tidak ditemukan: ID '.$wasteId);
-            }
-
-            $stockQty = (int) ($type->stock->available_weight ?? 0);
-            if ($stockQty <= 0) {
-                return back()->with('error','Stok habis untuk: '.$type->type_name);
-            }
-            if ($qty > $stockQty) {
-                return back()->with('error','Permintaan melebihi stok untuk: '.$type->type_name);
-            }
-
-            $price = $type->price_per_unit ?? 0;
-            $subtotal = $price * $qty;
+            $qty = (float) $row['quantity'];
+            $price = (float) $type->price_per_unit;
+            $sub = $price * $qty;
+            $subtotal += $sub;
 
             $items[] = [
-                'waste_type_id' => $type->id,
-                'type_name' => $type->type_name,
-                'category_name' => $type->category->category_name ?? '-',
-                'quantity' => $qty,
+                'waste_type_id'  => $type->id,
+                'type_name'      => $type->type_name,
+                'category_name'  => optional($type->category)->category_name,
+                'quantity'       => $qty,
                 'price_per_unit' => $price,
-                'subtotal' => $subtotal,
+                'subtotal'       => $sub,
+                'image'          => $type->photo ?? null,
             ];
         }
 
-        if (empty($items)) {
-            return back()->with('error','Tidak ada item yang dipilih untuk checkout.');
+        $shippingPickup = 0;
+        $shippingDelivery = 10000;
+
+        return view('user.buy.checkout', [
+            'items'            => $items,
+            'subtotal'         => $subtotal,
+            'shipping'         => 0,
+            'total'            => $subtotal,
+            'shippingPickup'   => $shippingPickup,
+            'shippingDelivery' => $shippingDelivery,
+            'addresses'        => collect([]),
+            'pickupLocations'  => [],
+            'discount'         => 0,
+        ]);
+    }
+
+    // Simpan keranjang sementara
+    public function prepare(Request $request)
+    {
+        $posted = $request->input('items', []);
+        $items = [];
+
+        foreach ($posted as $wasteId => $data) {
+            if (is_array($data)) {
+                if (!isset($data['selected'])) continue;
+                $qty = (float) ($data['quantity'] ?? 0);
+                if ($qty <= 0) continue;
+                $items[] = ['waste_type_id' => (int)$wasteId, 'quantity' => $qty];
+            } elseif (isset($posted['waste_type_id'])) {
+                $items = $posted;
+                break;
+            }
         }
 
-        $r->session()->put('checkout.items', $items);
+        if (empty($items)) {
+            return back()->with('error', 'Tidak ada item dipilih untuk checkout.');
+        }
 
+        session(['buy_cart' => $items]);
         return redirect()->route('checkout.form');
     }
 
-    /**
-     * Tampilkan form checkout (alamat, metode pembayaran, ringkasan)
-     */
-    public function show(Request $r)
+    // Ambil isi keranjang JSON
+    public function cart(Request $request)
     {
-        $items = $r->session()->get('checkout.items', []);
-        if (empty($items)) {
-            return redirect()->route('buy.index')->with('error','Keranjang checkout kosong.');
-        }
-
-        $subtotal = collect($items)->sum('subtotal');
-
-        $shippingPickup = 0;
-        $shippingDelivery = 10000;
-
-        $shipping = $shippingPickup;
-        $total = $subtotal + $shipping;
-
-        return view('user.buy.checkout', compact('items','subtotal','shipping','total','shippingPickup','shippingDelivery'));
+        $cart = session()->get('buy_cart', []);
+        return response()->json(['cart' => $cart]);
     }
 
-    /**
-     * Konfirmasi checkout: validasi lagi, buat transaksi, kurangi stok
-     */
-    public function confirm(Request $r)
+    // Tambah item ke keranjang
+    public function add(Request $request)
     {
-        $r->validate([
-            'address_type' => 'required|in:pickup,delivery',
-            'payment_method' => 'required|string',
+        $request->validate([
+            'waste_type_id' => 'required|integer|exists:waste_types,id',
+            'quantity'      => 'required|numeric|min:1',
+            'replace'       => 'boolean'
         ]);
 
-        $user = $r->user();
-        $items = $r->session()->get('checkout.items', []);
-        if (empty($items)) {
-            return redirect()->route('buy.index')->with('error','Tidak ada item untuk diproses.');
+        $productId = (int) $request->waste_type_id;
+        $qty = (float) $request->quantity;
+        $replace = $request->boolean('replace', false);
+
+        $stock = WasteStock::where('waste_type_id', $productId)->first();
+        if ($stock && $stock->available_weight < $qty) {
+            return response()->json(['success' => false, 'error' => 'Stok tidak cukup'], 422);
         }
 
-        $shippingPickup = 0;
-        $shippingDelivery = 10000;
-        $shipping = ($r->address_type === 'delivery') ? $shippingDelivery : $shippingPickup;
+        $cart = session()->get('buy_cart', []);
+        $found = false;
+        foreach ($cart as &$it) {
+            if ((int)$it['waste_type_id'] === $productId) {
+                $it['quantity'] = $replace ? $qty : $it['quantity'] + $qty;
+                $found = true;
+                break;
+            }
+        }
+        unset($it);
+
+        if (!$found) {
+            $cart[] = ['waste_type_id' => $productId, 'quantity' => $qty];
+        }
+
+        session()->put('buy_cart', $cart);
+
+        return response()->json([
+            'success'    => true,
+            'cart'       => $cart,
+            'cart_count' => count($cart),
+        ]);
+    }
+
+    // Hapus item dari keranjang
+    public function remove(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|integer',
+        ]);
+
+        $productId = (int) $request->product_id;
+        $cart = session()->get('buy_cart', []);
+        $new = array_filter($cart, fn($it) => (int)$it['waste_type_id'] !== $productId);
+
+        session()->put('buy_cart', array_values($new));
+
+        return response()->json([
+            'success'    => true,
+            'cart'       => $new,
+            'cart_count' => count($new),
+        ]);
+    }
+
+    // Buat transaksi + redirect QR
+    public function confirm(Request $request)
+    {
+        $request->validate([
+            'address_type'   => 'required|in:pickup,delivery',
+            'payment_method' => 'required|in:transfer,qris,cod',
+            'receiver_name'  => 'nullable|string|max:150',
+            'address'        => 'nullable|string|max:255',
+            'phone'          => 'nullable|string|max:30',
+        ]);
+
+        $cart = session('buy_cart', []);
+        if (empty($cart)) {
+            return redirect()->route('buy-waste.index')->with('error', 'Keranjang kosong.');
+        }
 
         DB::beginTransaction();
         try {
-            $subtotal = collect($items)->sum('subtotal');
-            $total = $subtotal + $shipping;
+            $subtotal = 0;
+            $itemsBuild = [];
 
-            $transaction = BuyTransaction::create([
-                'user_id' => $user->id,
-                'total_amount' => $total,
-                'status' => 'paid',
-                'transaction_date' => Carbon::now(),
-            ]);
+            foreach ($cart as $row) {
+                $type = WasteType::findOrFail($row['waste_type_id']);
+                $qty  = (float) $row['quantity'];
+                $price= (float) $type->price_per_unit;
+                $sub  = $price * $qty;
+                $subtotal += $sub;
 
-            foreach ($items as $it) {
-                $stock = WasteStock::where('waste_type_id', $it['waste_type_id'])->lockForUpdate()->first();
-                if (!$stock || $stock->available_weight < $it['quantity']) {
-                    DB::rollBack();
-                    return back()->with('error','Stok tidak cukup untuk '.$it['type_name']);
-                }
+                $itemsBuild[] = compact('type', 'qty', 'price', 'sub');
+            }
 
-                $stock->available_weight -= $it['quantity'];
-                $stock->save();
+            $shipping_cost = $request->address_type === 'delivery' ? 10000 : 0;
+            $total = $subtotal + $shipping_cost;
 
+            $tx = new BuyTransaction();
+            $tx->user_id         = Auth::id();
+            $tx->total_amount    = $total;
+            $tx->status          = 'pending';
+            $tx->transaction_date= Carbon::now();
+            $tx->payment_method  = $request->input('payment_method','qris');
+            $tx->shipping_method = $request->address_type;
+            $tx->receiver_name   = $request->receiver_name;
+            $tx->address         = $request->address;
+            $tx->phone           = $request->phone;
+            $tx->shipping_cost   = $shipping_cost;
+            $tx->expired_at      = Carbon::now()->addMinutes(10);
+            $tx->qr_text         = 'okgreen-demo-static-qr-payload-' . $total;
+            $tx->save();
+
+            foreach ($itemsBuild as $it) {
                 BuyCartItem::create([
-                    'buy_transaction_id' => $transaction->id,
-                    'waste_type_id' => $it['waste_type_id'],
-                    'quantity' => $it['quantity'],
-                    'price_per_unit' => $it['price_per_unit'],
-                    'subtotal' => $it['subtotal'],
+                    'buy_transaction_id' => $tx->id,
+                    'waste_type_id'      => $it['type']->id,
+                    'quantity'           => $it['qty'],
+                    'price_per_unit'     => $it['price'],
+                    'subtotal'           => $it['sub'],
                 ]);
+
+                $stock = WasteStock::where('waste_type_id', $it['type']->id)->lockForUpdate()->first();
+                if ($stock) {
+                    if ($stock->available_weight < $it['qty']) {
+                        DB::rollBack();
+                        return back()->with('error', 'Stok tidak cukup untuk ' . $it['type']->type_name);
+                    }
+                    $stock->available_weight -= $it['qty'];
+                    $stock->save();
+                }
             }
 
             DB::commit();
+            session()->forget('buy_cart');
 
-            $r->session()->forget('checkout.items');
-
-            return redirect()->route('transactions.index')->with('success','Transaksi berhasil (PAID).');
+            return redirect()->route('checkout.qr', $tx->id);
         } catch (\Throwable $e) {
             DB::rollBack();
-            Log::error('Checkout confirm error: '.$e->getMessage());
-            return back()->with('error','Terjadi kesalahan saat memproses transaksi.');
+            return back()->with('error', 'Gagal membuat transaksi: ' . $e->getMessage());
         }
+    }
+
+    // Halaman QR
+    public function qrView($id)
+    {
+        $tx = BuyTransaction::where('id', $id)
+              ->where('user_id', Auth::id())
+              ->firstOrFail();
+
+        if (!$tx->expired_at) {
+            $tx->expired_at = Carbon::now()->addMinutes(10);
+            $tx->save();
+        }
+
+        return view('user.buy.checkout-qr', compact('tx'));
     }
 }

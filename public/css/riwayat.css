@@ -1,0 +1,139 @@
+/* Layout umum */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #F9F9F9;
+    color: #333;
+}
+
+.container-transaksi {
+    max-width: 900px;
+    margin: 80px auto 40px auto; /* ada jarak dari header */
+    padding: 0 16px;
+}
+
+.title {
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+}
+
+/* Alert box */
+.alert {
+    padding: 10px 14px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+}
+
+.alert.success {
+    background: #e8f9f0;
+    color: #207a4a;
+    border: 1px solid #a8e6c2;
+}
+
+.alert.error {
+    background: #fceaea;
+    color: #c22a2a;
+    border: 1px solid #f5b1b1;
+}
+
+/* Card transaksi */
+.card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    padding: 16px;
+}
+
+.card.empty {
+    text-align: center;
+    padding: 30px;
+    color: #777;
+}
+
+.transaksi-card {
+    margin-bottom: 18px;
+}
+
+/* Header transaksi */
+.trx-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.trx-amount {
+    text-align: right;
+}
+
+.trx-amount .total {
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+/* Table transaksi */
+.trx-items table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12px;
+}
+
+.trx-items thead {
+    background: #f6f7f8;
+    font-weight: bold;
+}
+
+.trx-items th, 
+.trx-items td {
+    padding: 10px 8px;
+    border-bottom: 1px solid #eee;
+    font-size: 0.95rem;
+}
+
+.trx-items td.center {
+    text-align: center;
+}
+
+.trx-items td.right {
+    text-align: right;
+}
+
+/* Footer transaksi */
+.trx-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
+    align-items: center;
+    font-size: 0.95rem;
+}
+
+.trx-footer .total {
+    font-weight: bold;
+    color: #222;
+}
+
+/* Text utilitas */
+.muted {
+    color: #777;
+    font-size: 0.9rem;
+}
+
+.small {
+    font-size: 0.8rem;
+}
+
+/* Responsif */
+@media (max-width: 600px) {
+    .trx-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    .trx-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+}

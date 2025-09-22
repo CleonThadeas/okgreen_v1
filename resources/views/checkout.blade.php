@@ -11,68 +11,60 @@
     {{-- Header --}}
     @include('partials.header')
     <div class="checkout-container">
-<h1 style="text-align:center; font-size:2rem; margin-top:20px;">Checkout</h1>
+        <h1 style="text-align:center; font-size:2rem; margin-top:20px;">Checkout</h1>
         <div class="back-btn" onclick="history.back()">&#8592;</div>
 
-       {{-- Info Pengiriman --}}
-<div class="delivery-info">
-    <p>Delivery to</p>
-    <h3 id="deliveryName">Faizan Khan, 344022</h3>
-    <p id="deliveryAddress">
-        Opp State Bank Of India,<br>
-        Asotra. Barmer Dist,<br>
-        Rajasthan IN
-    </p>
-    <p><strong>Phone:</strong> <span id="deliveryPhone">7976382557</span></p>
-    <button class="change-address-btn">Ganti Alamat</button>
-</div>
+        {{-- Info Pengiriman --}}
+        <div class="delivery-info">
+            <p>Delivery to</p>
+            <h3 id="deliveryName">Faizan Khan, 344022</h3>
+            <p id="deliveryAddress">
+                Opp State Bank Of India,<br>
+                Asotra. Barmer Dist,<br>
+                Rajasthan IN
+            </p>
+            <p><strong>Phone:</strong> <span id="deliveryPhone">7976382557</span></p>
+            <button class="change-address-btn">Ganti Alamat</button>
+        </div>
 
-<!-- Popup Modal Ganti Alamat -->
-<div id="addressModal" class="modal" style="display:none;">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h3>Pilih Alamat</h3>
-        <ul id="addressList"></ul>
-        <button class="cancel-btn" onclick="toggleAddressModal(false)">Batalkan</button>
-    </div>
-</div>
+        {{-- Modal Ganti Alamat --}}
+        <div id="addressModal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3>Pilih Alamat</h3>
+                <ul id="addressList"></ul>
+                <button class="cancel-btn" onclick="toggleAddressModal(false)">Batalkan</button>
+            </div>
+        </div>
 
         {{-- Pilihan Pengiriman --}}
-<h2>Metode Pengiriman</h2>
-<div class="shipping-options">
-    <button class="shipping-btn" data-type="antar">Antar ke Alamat</button>
-    <button class="shipping-btn" data-type="ambil">Ambil Barang di Tempat</button>
-</div>
+        <h2>Metode Pengiriman</h2>
+        <div class="shipping-options">
+            <button class="shipping-btn" data-type="antar">Antar ke Alamat</button>
+            <button class="shipping-btn" data-type="ambil">Ambil Barang di Tempat</button>
+        </div>
 
-<p id="selectedLocation" style="display:none; margin-top:10px;"></p>
+        <p id="selectedLocation" style="display:none; margin-top:10px;"></p>
 
-<hr>
-
-{{-- Popup Ambil di Tempat --}}
-<div id="pickupModal" class="modal" style="display:none;">
-    <div class="modal-content">
-        <span class="close" onclick="togglePickupModal(false)">&times;</span>
-        <h3>Pilih Lokasi Pengambilan</h3>
-        <select id="pickupAddress">
-            <option value="">Pilih Lokasi</option>
-            <option value="OkGreen Jl.Budi">OkGreen Jl.Budi</option>
-        </select>
-        <button class="btn-pilih">Pilih</button>
-        <button class="cancel-btn" onclick="togglePickupModal(false)">Batalkan</button>
-    </div>
-</div>
+        {{-- Modal Ambil Barang --}}
+        <div id="pickupModal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <span class="close" onclick="togglePickupModal(false)">&times;</span>
+                <h3>Pilih Lokasi Pengambilan</h3>
+                <select id="pickupAddress">
+                    <option value="">Pilih Lokasi</option>
+                    <option value="OkGreen Jl.Budi">OkGreen Jl.Budi</option>
+                </select>
+                <button class="btn-pilih">Pilih</button>
+                <button class="cancel-btn" onclick="togglePickupModal(false)">Batalkan</button>
+            </div>
+        </div>
 
         {{-- Daftar Produk --}}
         <div class="product-list">
-            <div class="product-card">
-                <img src="{{ asset('img/sample2.png') }}" alt="Coca Cola">
-            </div>
-            <div class="product-card">
-                <img src="{{ asset('img/sample3.png') }}" alt="Plastic">
-            </div>
-            <div class="product-card">
-                <img src="{{ asset('img/sample4.png') }}" alt="Cigarette">
-            </div>
+            <div class="product-card"><img src="{{ asset('img/sample2.png') }}" alt="Coca Cola"></div>
+            <div class="product-card"><img src="{{ asset('img/sample3.png') }}" alt="Plastic"></div>
+            <div class="product-card"><img src="{{ asset('img/sample4.png') }}" alt="Cigarette"></div>
         </div>
 
         {{-- Detail Produk --}}
@@ -82,7 +74,7 @@
             <div><span>Cigarette cardboard waste (1.5kg)</span> <span>Rp.5.000</span></div>
         </div>
 
-        {{-- Pilihan Pembayaran (dipindah ke sini) --}}
+        {{-- Pilihan Pembayaran --}}
         <h2>Pembayaran</h2>
         <div class="payment-options">
             <img src="{{ asset('img/dana.png') }}" alt="Dana" class="payment-method" data-method="dana">
@@ -100,86 +92,46 @@
 
         {{-- Rincian Pembayaran --}}
         <div class="payment-details">
-            <div><span>Price (3 items)</span> <span>Rp.15.000</span></div>
-            <div class="discount"><span>Discount</span> <span>Rp.-5.200</span></div>
-            <div><span>Delivery Charges</span> <span>FREE</span></div>
-            <div class="total"><span>Total Amount</span> <span>Rp.9.800</span></div>
+            <div><span>Price (3 items)</span> <span id="priceAmount">Rp.15.000</span></div>
+            <div class="discount"><span>Discount</span> <span id="discountAmount">Rp.-5.200</span></div>
+            <div>
+                <span>Delivery Charges</span>
+                <span id="deliveryChargeAmount">FREE</span>
+            </div>
+            <div class="total">
+                <span>Total Amount</span>
+                <span id="totalAmountDisplay">Rp 9.800</span>
+            </div>
         </div>
 
         <div class="saved">You saved 5.200 on this order</div>
 
         {{-- Tombol Buat Pesanan --}}
-        <button class="payment-btn" type="button" 
-                onclick="window.location.href='{{ route('detail_payment') }}'">
-            Buat Pesanan
-        </button>
-        
+        <button class="payment-btn" type="button" onclick="processPayment()">Buat Pesanan</button>
     </div>
 
-    <script>
-    document.addEventListener("DOMContentLoaded", function () {
-    const dummyAddresses = [
-        {
-            name: "Sifa Nur Agnia, 40511",
-            address: "Jl.Belakang Kejaksaan,<br>Cipageran,<br>Cimahi Utara",
-            phone: "7976382557"
-        },
-        {
-            name: "Dika Indradhy, 56001",
-            address: "Jl.Budi,<br>Cilember,<br>Bandung",
-            phone: "9988776655"
-        },
-    ];
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // --- VARIABEL DASAR ---
+    let basePrice = 15000;   // harga barang total
+    let discount = 5200;     // diskon
+    let shippingCost = 0;    // ongkir default
 
-    const addressModal = document.getElementById("addressModal");
-    const addressList = document.getElementById("addressList");
-    const changeAddressBtn = document.querySelector(".change-address-btn");
-    const closeAddressModal = addressModal.querySelector(".close");
+    const deliveryChargeAmount = document.getElementById("deliveryChargeAmount");
+    const totalAmountDisplay = document.getElementById("totalAmountDisplay");
 
-    const deliveryName = document.getElementById("deliveryName");
-    const deliveryAddress = document.getElementById("deliveryAddress");
-    const deliveryPhone = document.getElementById("deliveryPhone");
-
-    // Render daftar alamat
-    dummyAddresses.forEach(addr => {
-        const li = document.createElement("li");
-        li.innerHTML = `<strong>${addr.name}</strong><br>${addr.address}<br><small>📞 ${addr.phone}</small>`;
-        li.addEventListener("click", function () {
-            deliveryName.innerHTML = addr.name;
-            deliveryAddress.innerHTML = addr.address;
-            deliveryPhone.textContent = addr.phone;
-            toggleAddressModal(false);
-        });
-        addressList.appendChild(li);
-    });
-
-    // Event buka modal alamat
-    if (changeAddressBtn) {
-        changeAddressBtn.addEventListener("click", function () {
-            toggleAddressModal(true);
-        });
+    function updateTotal() {
+        let total = basePrice - discount + shippingCost;
+        deliveryChargeAmount.textContent = (shippingCost === 0) 
+            ? "FREE" 
+            : "Rp " + shippingCost.toLocaleString("id-ID");
+        totalAmountDisplay.textContent = "Rp " + total.toLocaleString("id-ID");
     }
-
-    // Event tutup modal alamat
-    closeAddressModal.addEventListener("click", function () {
-        toggleAddressModal(false);
-    });
-
-    window.addEventListener("click", function (e) {
-        if (e.target === addressModal) toggleAddressModal(false);
-    });
-
-    function toggleAddressModal(show) {
-        addressModal.style.display = show ? "block" : "none";
-    }
-    window.toggleAddressModal = toggleAddressModal;
 
     // --- Shipping ---
     const shippingButtons = document.querySelectorAll(".shipping-btn");
     const pickupModal = document.getElementById("pickupModal");
-    const pickupClose = pickupModal.querySelector(".close");
     const pickupSelectBtn = pickupModal.querySelector(".btn-pilih");
-    const pickupCancelBtn = pickupModal.querySelector(".cancel-btn");
     const pickupAddress = document.getElementById("pickupAddress");
     const selectedLocationDisplay = document.getElementById("selectedLocation");
 
@@ -193,50 +145,33 @@
 
             selectedShipping = this.dataset.type;
 
-            if (selectedShipping === "ambil") {
+            if (selectedShipping === "antar") {
+                shippingCost = 10000; // ongkir antar
+                updateTotal();
+                selectedLocationDisplay.style.display = "none";
+            } else if (selectedShipping === "ambil") {
+                shippingCost = 0; // free ongkir
+                updateTotal();
                 togglePickupModal(true);
-            } else {
-                selectedPickupLocation = "";
-                if (selectedLocationDisplay) selectedLocationDisplay.style.display = "none";
             }
         });
     });
 
-    // Tombol pilih lokasi pickup
+    // --- Pickup Modal ---
     pickupSelectBtn.addEventListener("click", function () {
         if (!pickupAddress.value) {
             alert("Pilih lokasi terlebih dahulu!");
             return;
         }
         selectedPickupLocation = pickupAddress.value;
-
-        if (selectedLocationDisplay) {
-            selectedLocationDisplay.textContent = `Lokasi Pengambilan: ${selectedPickupLocation}`;
-            selectedLocationDisplay.style.display = "block";
-        }
-
+        selectedLocationDisplay.textContent = `Lokasi Pengambilan: ${selectedPickupLocation}`;
+        selectedLocationDisplay.style.display = "block";
         togglePickupModal(false);
-    });
-
-    // Tombol tutup (X) modal pickup
-    pickupClose.addEventListener("click", function () {
-        togglePickupModal(false);
-    });
-
-    // Tombol batalkan modal pickup
-    pickupCancelBtn.addEventListener("click", function () {
-        togglePickupModal(false);
-    });
-
-    // Tutup modal pickup kalau klik di luar
-    window.addEventListener("click", function (e) {
-        if (e.target === pickupModal) togglePickupModal(false);
     });
 
     function togglePickupModal(show) {
         pickupModal.style.display = show ? "block" : "none";
     }
-    window.togglePickupModal = togglePickupModal;
 
     // --- Payment ---
     const paymentMethods = document.querySelectorAll(".payment-method");
@@ -258,14 +193,9 @@
         toggleQrisModal(false);
     });
 
-    window.addEventListener("click", function (e) {
-        if (e.target === qrisModal) toggleQrisModal(false);
-    });
-
     function toggleQrisModal(show) {
         qrisModal.style.display = show ? "block" : "none";
     }
-    window.toggleQrisModal = toggleQrisModal;
 
     // --- Proses Pembayaran ---
     window.processPayment = function () {
@@ -277,11 +207,13 @@
             alert("Pilih lokasi pengambilan terlebih dahulu!");
             return;
         }
-        // lanjut ke pembayaran
-        window.location.href = "{{ url('/payment') }}";
+        alert("Pesanan diproses! Total yang dibayar: " + totalAmountDisplay.textContent);
+        // window.location.href = "{{ url('/payment') }}"; // redirect kalau sudah siap
     };
+
+    // Update total awal
+    updateTotal();
 });
 </script>
-
 </body>
 </html>

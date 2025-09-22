@@ -1,16 +1,219 @@
+/* ===========================
+   RESET & BODY
+=========================== */
 body {
-    margin: 0;
     font-family: Arial, sans-serif;
-    background-color: #fff;
+    margin: 0;
+    background-color: #F9F9F9;
+    padding-bottom: 80px;
 }
 
-/* Section produk */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* ===========================
+   POPUP DETAIL PRODUK
+=========================== */
+.modal {
+    display: none; /* default hidden */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.modal-content {
+    background: #fff;
+    border-radius: 12px;
+    width: 95%;
+    max-width: 1000px; /* Lebar maksimum modal */
+    max-height: 90%;
+    overflow-y: auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    animation: fadeIn 0.3s ease-in-out;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+@keyframes fadeIn {
+    from {opacity: 0; transform: scale(0.9);}
+    to {opacity: 1; transform: scale(1);}
+}
+
+.modal-content .close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #333;
+    z-index: 10;
+}
+
+.modal-content .close:hover {
+    color: red;
+}
+
+/* ===========================
+   DETAIL PRODUK (ISI MODAL)
+=========================== */
+.detail-produk-container {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    padding: 30px;
+    box-sizing: border-box;
+}
+
+/* Kolom kiri = Gambar */
+.detail-produk-container .produk-gambar {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    max-width: 400px;
+}
+
+.detail-produk-container .produk-gambar img {
+    width: 100%;
+    max-width: 350px;
+    height: auto;
+    border-radius: 10px;
+    object-fit: contain;
+    border: 1px solid #eee;
+    background: #fafafa;
+}
+
+/* Kolom kanan = Info */
+.detail-produk-container .produk-info {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.detail-produk-container h1 {
+    font-size: 22px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.detail-produk-container p {
+    font-size: 14px;
+    margin: 6px 0;
+    color: #555;
+}
+
+/* Harga dan stok */
+.produk-info .info-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+/* ===========================
+   SIZE PICKER
+=========================== */
+.size-container {
+    margin-top: 15px;
+}
+
+.size-container label {
+    font-size: 12px;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.qty-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.qty-control .qty-btn {
+    background: #5E7C65;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.qty-control .qty-btn:hover {
+    background: #5E7C65;
+}
+
+.qty-control .size-input {
+    width: 50px;
+    text-align: center;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* ===========================
+   BAGIAN BAWAH MODAL
+=========================== */
+.modal-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+#modal-total {
+    font-size: 18px;
+    font-weight: bold;
+    color: #5E7C65;
+}
+
+.modal-bottom .btn-beli {
+    background: #5E7C65;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.modal-bottom .btn-beli:hover {
+    background: #4d6654;
+}
+
+/* ===========================
+   HALAMAN INDEX PRODUK
+=========================== */
 .produk-section {
     padding: 40px;
+    padding-bottom: 120px;
 }
 
 .produk-section h2 {
     margin-bottom: 20px;
+    font-size: 22px;
+    color: #333;
 }
 
 /* Grid produk */
@@ -22,14 +225,12 @@ body {
 
 /* Card produk */
 .produk-card {
-    display: block;
     background: #fff;
     border-radius: 10px;
     padding: 10px;
     text-align: center;
     box-shadow: 0px 3px 8px rgba(0,0,0,0.1);
     transition: transform 0.2s;
-    text-decoration: none;
     color: inherit;
     position: relative;
 }
@@ -38,7 +239,6 @@ body {
     transform: scale(1.03);
 }
 
-/* Gambar produk */
 .produk-img-container {
     position: relative;
 }
@@ -51,25 +251,33 @@ body {
     cursor: pointer;
 }
 
-/* Deskripsi & harga */
 .produk-desc {
     font-size: 14px;
     margin: 8px 0;
 }
+
 .produk-price {
     font-weight: bold;
     font-size: 14px;
 }
+
 .produk-stock {
     font-size: 13px;
     margin-top: 5px;
     color: #555;
 }
 
+/* Size picker di card */
+.produk-card .qty-control {
+    justify-content: center;
+    margin-top: 6px;
+}
+
 /* Tombol tambah/hapus */
 .produk-action {
     margin-top: 8px;
 }
+
 .tambah-btn {
     background: #5E7C65;
     color: white;
@@ -80,9 +288,11 @@ body {
     cursor: pointer;
     transition: background 0.2s;
 }
+
 .tambah-btn:hover {
     background: #4e6653;
 }
+
 .tambah-btn.disabled,
 .stok-habis .tambah-btn {
     background: #95a5a6;
@@ -102,7 +312,9 @@ body {
     font-weight: bold;
 }
 
-/* Tombol pilih beberapa */
+/* ===========================
+   POPUP TUTORIAL
+=========================== */
 .pilih-beberapa-btn {
     position: fixed;
     top: 80px;
@@ -119,22 +331,25 @@ body {
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     z-index: 999;
 }
+
 .icon-pilih {
     width: 20px;
     height: 20px;
 }
 
-/* Popup tutorial */
 .popup {
     display: none;
     position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+    top: 0; 
+    left: 0;
+    width: 100%; 
+    height: 100%;
     background: rgba(0,0,0,0.4);
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    z-index: 1500;
 }
+
 .popup-content {
     background: white;
     padding: 20px;
@@ -143,12 +358,15 @@ body {
     text-align: left;
     position: relative;
 }
+
 .popup-close {
     position: absolute;
-    top: 10px; right: 10px;
+    top: 10px; 
+    right: 10px;
     font-size: 20px;
     cursor: pointer;
 }
+
 .popup-button {
     background: #5E7C65;
     color: white;
@@ -159,23 +377,24 @@ body {
     margin-top: 10px;
 }
 
-/* Bottom bar */
-/* Bottom bar */
+/* ===========================
+   BOTTOM BAR
+=========================== */
 .bottom-bar {
     position: fixed;
     bottom: 0;
     left: 0;
-    right: 0; /* biar full width */
+    right: 0;
     width: 100%;
     background: #fff;
     border-top: 1px solid #ddd;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 5px 16px;
+    padding: 8px 16px;
     box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
     z-index: 1000;
-    box-sizing: border-box; /* biar padding dihitung */
+    box-sizing: border-box;
 }
 
 .bottom-bar #selected-count {
@@ -193,7 +412,7 @@ body {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.25s ease-in-out;
-    white-space: nowrap; /* biar teks ga pecah */
+    white-space: nowrap;
 }
 
 .bottom-bar button:hover {
@@ -201,8 +420,9 @@ body {
     opacity: 0.9;
 }
 
-
-/* Animasi gambar terbang */
+/* ===========================
+   ANIMASI GAMBAR TERBANG
+=========================== */
 .fly-image {
     position: fixed;
     width: 80px;
@@ -212,4 +432,23 @@ body {
     transition: all 0.8s ease-in-out;
     border-radius: 8px;
     object-fit: cover;
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+@media (max-width: 768px) {
+    .detail-produk-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .detail-produk-container .produk-gambar {
+        max-width: 100%;
+    }
+
+    .modal-content {
+        max-width: 95%;
+    }
 }

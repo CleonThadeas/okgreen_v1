@@ -14,7 +14,9 @@
    <!-- Greeting Section -->
 <section class="greeting" id="greeting">
   <div class="container">
-    <h2 id="greeting-title">Hello, sifa!</h2>
+    <h2 id="greeting-title">
+  Hello, {{ Auth::check() ? Auth::user()->name : 'Guest' }}!
+</h2>
     <p id="greeting-message">Selamat datang kembali di OKGreen 🌱</p>
   </div>
 </section>
@@ -40,42 +42,31 @@
 </section>
 
 
-  <!-- Produk Section -->
-  <section class="produk">
-    <div class="section-header">
-      <h2>Produk Kami</h2>
-      <a href="{{ route('buy-waste.index') }}" class="section-btn">➔</a>
-    </div>
-    <div class="produk-list">
+<!-- Produk Section -->
+<section class="produk">
+  <div class="section-header">
+    <h2>Produk Kami</h2>
+    <a href="{{ route('buy-waste.index') }}" class="section-btn">➔</a>
+  </div>
+  <div class="produk-list">
+    @forelse($wastes ?? [] as $waste)
       <div class="produk-card">
-        <img src="{{ asset('img/sample1.png') }}" alt="Produk 1">
-        <p>Lorem ipsum dolor sit amet</p>
-        <span>Rp20.000</span>
+        <img src="{{ isset($waste->image) ? asset('storage/' . $waste->image) : asset('img/no-image.png') }}" alt="{{ $waste->name ?? ($waste->type_name ?? 'Produk') }}">
+        <p>{{ $waste->name ?? $waste->type_name ?? 'Nama Produk' }}</p>
+        <span>Rp{{ number_format(optional($waste->stock)->price ?? $waste->price_per_unit ?? 0, 0, ',', '.') }}</span>
       </div>
-      <div class="produk-card">
-        <img src="{{ asset('img/sample2.png') }}" alt="Produk 2">
-        <p>Lorem ipsum dolor sit amet</p>
-        <span>Rp22.000</span>
-      </div>
-      <div class="produk-card">
-        <img src="{{ asset('img/sample3.png') }}" alt="Produk 3">
-        <p>Lorem ipsum dolor sit amet</p>
-        <span>Rp25.000</span>
-      </div>
-      <div class="produk-card">
-        <img src="{{ asset('img/sample4.png') }}" alt="Produk 4">
-        <p>Lorem ipsum dolor sit amet</p>
-        <span>Rp30.000</span>
-      </div>
-    </div>
-  </section>
+    @empty
+      <p>Tidak ada produk tersedia</p>
+    @endforelse
+</div>
+</section>
+
 
   <!-- Edukasi Section -->
 <section class="edukasi">
   <div class="section-header">
     <h2>Edukasi</h2>
   </div>
-
   <div class="edukasi-content">
     <!-- Video -->
    <div class="edukasi-video">
@@ -158,6 +149,9 @@
   <!-- JS Carousel -->
 <script>
   document.addEventListener("DOMContentLoaded", function () {
+    // Ambil nama user dari Laravel Auth
+    const userName = "{{ Auth::check() ? Auth::user()->name : 'Guest' }}";
+
     // === GREETING SECTION ===
     const greetingTitle = document.getElementById("greeting-title");
     const greetingMessage = document.getElementById("greeting-message");
@@ -166,33 +160,32 @@
     let greet = "";
 
     if (hour >= 5 && hour < 12) {
-      greet = "Selamat Pagi 🌅";
+        greet = "Selamat Pagi 🌅";
     } else if (hour >= 12 && hour < 15) {
-      greet = "Selamat Siang ☀️";
+        greet = "Selamat Siang ☀️";
     } else if (hour >= 15 && hour < 18) {
-      greet = "Selamat Sore 🌇";
+        greet = "Selamat Sore 🌇";
     } else {
-      greet = "Selamat Malam 🌙";
+        greet = "Selamat Malam 🌙";
     }
 
     // Update greeting text
     if (greetingTitle && greetingMessage) {
-      greetingTitle.textContent = `${greet}, sifa!`;
-      greetingMessage.textContent =
-        "Semoga harimu menyenangkan bersama OkGreen 🌱";
+        greetingTitle.textContent = `${greet}, ${userName}!`;
+        greetingMessage.textContent = "Semoga harimu menyenangkan bersama OkGreen 🌱";
 
-      // Animasi muncul
-      const greetingSection = document.getElementById("greeting");
-      if (greetingSection) {
-        greetingSection.style.opacity = 0;
-        greetingSection.style.transform = "translateY(-20px)";
+        // Animasi muncul
+        const greetingSection = document.getElementById("greeting");
+        if (greetingSection) {
+            greetingSection.style.opacity = 0;
+            greetingSection.style.transform = "translateY(-20px)";
 
-        setTimeout(() => {
-          greetingSection.style.transition = "all 0.8s ease";
-          greetingSection.style.opacity = 1;
-          greetingSection.style.transform = "translateY(0)";
-        }, 200);
-      }
+            setTimeout(() => {
+                greetingSection.style.transition = "all 0.8s ease";
+                greetingSection.style.opacity = 1;
+                greetingSection.style.transform = "translateY(0)";
+            }, 200);
+        }
     }
 
     // === HERO CAROUSEL AUTO-SLIDE ===

@@ -15,7 +15,7 @@
   <div>
     <div class="container">
   <div class="header">
-    <button class="back-btn"><a href="{{ route('berandadmin') }}">←</a></button>
+    <button class="back-btn"><a href="{{ route('admin.dashboard') }}">←</a></button>
     <h2>Detail Pengguna</h2>
      <input type="text" placeholder="Cari">
   </div>
@@ -33,7 +33,7 @@
           <h3>Banyak Sampah</h3>
           <span class="icon blue">📋</span>
         </div>
-        <h2><a href="{{ route('banyaksampah') }}">132</a></h2>
+        <h2><a href="{{ route('admin.wastes.index') }}">132</a></h2>
         <p><span class="text-bold">32</span> Belum Selesai</p>
       </div>
       <div class="card">
@@ -49,7 +49,7 @@
           <h3>Status</h3>
           <span class="icon green">♻️</span>
         </div>
-         <h2><a href="{{ route('banyaksampah') }}">75%</a></h2>
+         <h2><a href="{{ route('admin.wastes.index') }}">75%</a></h2>
         <p><span class="text-green">25%</span> Belum Selesai</p>
       </div>
     </div>

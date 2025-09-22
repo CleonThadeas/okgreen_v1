@@ -16,7 +16,7 @@
     
 <div class="container">
     <div class="header">
-       <button class="back-btn"><a href="{{ route('berandadmin') }}">←</a></button>
+       <button class="back-btn"><a href="{{ route('admin.dashboard') }}">←</a></button>
       <h2>Banyak Sampah</h2>
       <input type="text" placeholder="Cari">
     </div>

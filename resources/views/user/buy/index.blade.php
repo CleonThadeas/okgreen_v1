@@ -1,4 +1,3 @@
-{{-- resources/views/user/belibarang.blade.php --}}
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -6,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Beli Barang</title>
     <link rel="stylesheet" href="{{ asset('css/belibarang.css') }}?v={{ time() }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
 
-    {{-- Include header --}}
+    {{-- Header --}}
     @include('partials.header')
 
     <!-- Tombol Pilih Beberapa -->
@@ -25,14 +25,15 @@
             <h2>Pelajari !</h2>
             <p>Cara memilih beberapa barang untuk checkout:</p>
             <ol>
-                <li>Klik button "Tambah" yang terdapat di bawah produk, untuk memilih produk</li>
+                <li>Klik button "Tambah" di bawah produk.</li>
+                <li>Produk yang dipilih akan muncul hitungannya di bawah.</li>
+                <li>Klik "Checkout" untuk melanjutkan.</li>
             </ol>
-            <p>Setelah memilih, kamu bisa lanjutkan checkout seperti biasa.</p>
             <button class="popup-button" onclick="togglePopup()">Mengerti</button>
         </div>
     </div>
 
-    {{-- Konten Produk --}}
+    {{-- Daftar Produk --}}
     <section class="produk-section">
         <h2>Produk Kami</h2>
         <div class="produk-container">
@@ -46,16 +47,16 @@
                      data-name="{{ $waste->type_name }}"
                      data-price="{{ $price }}"
                      data-stock="{{ $stok }}"
+                     data-photo="{{ !empty($waste->photo) ? asset('storage/'.$waste->photo) : asset('img/no-image.png') }}"
                      data-deskripsi="{{ $waste->description ?? '' }}">
-                    
-                    <div class="produk-img-container">
-                        <a href="{{ route('detail-barang', ['id' => $waste->id]) }}">
-                            @if(!empty($waste->photo))
-                                <img src="{{ asset('storage/'.$waste->photo) }}" alt="{{ $waste->type_name }}">
-                            @else
-                                <img src="{{ asset('img/no-image.png') }}" alt="No Image">
-                            @endif
-                        </a>
+
+                    <!-- Klik gambar buka modal detail -->
+                    <div class="produk-img-container" onclick="openDetailModal({{ $waste->id }})">
+                        @if(!empty($waste->photo))
+                            <img src="{{ asset('storage/'.$waste->photo) }}" alt="{{ $waste->type_name }}">
+                        @else
+                            <img src="{{ asset('img/no-image.png') }}" alt="No Image">
+                        @endif
                         @if($stok == 0)
                             <span class="stok-habis-label">Stok Habis</span>
                         @endif
@@ -64,6 +65,17 @@
                     <div class="produk-desc">{{ $waste->type_name }}</div>
                     <div class="produk-price">Rp {{ number_format($price, 0, ',', '.') }}</div>
                     <div class="produk-stock">Stok: {{ $stok }}</div>
+
+                    @if($stok > 0)
+                    <div class="size-container" style="display: none;">
+                        <p class="size-label">Masukkan berat dalam <strong>Kg</strong>:</p>
+                        <div class="qty-control">
+                            <button type="button" class="qty-btn decrease">-</button>
+                            <input type="number" class="size-input" value="1" min="1" readonly>
+                            <button type="button" class="qty-btn increase">+</button>
+                        </div>
+                    </div>
+                    @endif
 
                     <div class="produk-action">
                         <button class="tambah-btn" {{ $stok == 0 ? 'disabled' : '' }}>
@@ -83,116 +95,294 @@
         <button id="checkout-btn">Checkout</button>
     </div>
 
-    {{-- ===== Inline JS (digabung, fungsi & perilaku sama seperti versi sebelumnya) ===== --}}
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const tambahButtons = document.querySelectorAll('.tambah-btn');
-        const selectedCountEl = document.getElementById('selected-count');
-        const checkoutBtn = document.getElementById('checkout-btn');
-        let selectedProducts = new Set();
-        let productData = {}; // Menyimpan data detail produk
+    <!-- Modal Detail Produk -->
+    <div id="detailModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeDetailModal()">&times;</span>
+        <div id="modalBody"></div>
+      </div>
+    </div>
 
-        // handler klik tombol Tambah/Hapus
-        tambahButtons.forEach(btn => {
-            btn.addEventListener('click', function (e) {
-                e.preventDefault();
-                const card = btn.closest('.produk-card');
-                const productId = card.dataset.id;
-                const productName = card.dataset.name;
-                const productImg = card.querySelector('img').src;
-                const productDesc = card.dataset.deskripsi || '';
-                const stok = parseInt(card.dataset.stock);
+<!-- Modal Detail Produk -->
+<div id="detailModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+     background:rgba(0,0,0,0.6); z-index:1000; align-items:center; justify-content:center;">
+  <div style="background:#fff; padding:20px; border-radius:8px; width:600px; max-height:80%; overflow:auto; position:relative;">
+    <span onclick="closeDetailModal()" style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:22px;">&times;</span>
+    
+    <div id="modalPhotos" style="text-align:center; margin-bottom:12px;">
+      <!-- foto carousel dimasukkan via JS -->
+    </div>
+    <h3 id="modalTypeName"></h3>
+    <p><strong>Kategori:</strong> <span id="modalCategory"></span></p>
+    <p><strong>Stok Tersedia:</strong> <span id="modalStock"></span> Kg</p>
+    <p><strong>Harga:</strong> Rp <span id="modalPrice"></span> /Kg</p>
+    <p><strong>Dibeli:</strong> <span id="modalTimesBought"></span> kali
+       <span id="modalStars"></span></p>
+  </div>
+</div>
 
-                // jika stok 0, beri peringatan (sesuai salah satu versi sebelumnya)
-                if (stok === 0) {
-                    alert('Produk ini stoknya habis!');
-                    return;
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const csrf = document.querySelector('meta[name="csrf-token"]').content;
+    const cartUrl = "{{ route('checkout.cart') }}";
+    const addUrl = "{{ route('checkout.add') }}";
+    const removeUrl = "{{ route('checkout.remove') }}";
+
+    const tambahButtons = document.querySelectorAll('.tambah-btn');
+    const selectedCountEl = document.getElementById('selected-count');
+    const checkoutBtn = document.getElementById('checkout-btn');
+
+    // Start with empty, will fill from server (or localStorage fallback)
+    let selectedProducts = {};
+
+    function updateSelectedCount() {
+        selectedCountEl.textContent = `${Object.keys(selectedProducts).length} produk dipilih`;
+        localStorage.setItem('selectedProducts', JSON.stringify(selectedProducts));
+    }
+
+    function restoreUIFromSelected() {
+        Object.keys(selectedProducts).forEach(productId => {
+            const card = document.querySelector(`.produk-card[data-id="${productId}"]`);
+            if (!card) return;
+            const btn = card.querySelector('.tambah-btn');
+            const sizeContainer = card.querySelector('.size-container');
+            if (btn) {
+                btn.textContent = 'Hapus';
+                btn.style.backgroundColor = '#f44336';
+            }
+            if (sizeContainer) sizeContainer.style.display = 'block';
+        });
+        updateSelectedCount();
+    }
+
+    // Ambil server cart terlebih dahulu
+    fetch(cartUrl, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(res => res.json())
+        .then(data => {
+            const cart = data.cart || [];
+            if (cart.length > 0) {
+                cart.forEach(it => selectedProducts[it.waste_type_id] = it.quantity);
+                restoreUIFromSelected();
+            } else {
+                // fallback ke localStorage: sinkron ke server (opsional)
+                const ls = JSON.parse(localStorage.getItem('selectedProducts') || '{}');
+                if (Object.keys(ls).length > 0) {
+                    // kirim masing-masing ke server (non-blocking)
+                    Object.keys(ls).forEach(pid => {
+                        fetch(addUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': csrf,
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: JSON.stringify({ waste_type_id: pid, quantity: ls[pid] })
+                        })
+                        .then(r => r.json())
+                        .then(resp => {
+                            if (resp.success) {
+                                selectedProducts[pid] = ls[pid];
+                                restoreUIFromSelected();
+                            }
+                        })
+                        .catch(() => {});
+                    });
                 }
-
-                if (selectedProducts.has(productId)) {
-                    // hapus pilihan
-                    selectedProducts.delete(productId);
-                    delete productData[productId];
-                    btn.textContent = 'Tambah';
-                    btn.style.backgroundColor = ''; 
-                } else {
-                    // tambah pilihan
-                    selectedProducts.add(productId);
-                    productData[productId] = {
-                        id: productId,
-                        nama: productName,
-                        gambar: productImg,
-                        deskripsi: productDesc
-                    };
-                    btn.textContent = 'Hapus';
-                    btn.style.backgroundColor = '#f44336'; 
-
-                    // Animasi "terbang" ke bottom bar (jika CSS mendukung .fly-image)
-                    flyToCart(card.querySelector('img'));
-                }
-
-                selectedCountEl.textContent = `${selectedProducts.size} produk dipilih`;
-            });
+            }
+        })
+        .catch(() => {
+            // jika fetch gagal, fallback ke localStorage saja
+            const ls = JSON.parse(localStorage.getItem('selectedProducts') || '{}');
+            selectedProducts = ls;
+            restoreUIFromSelected();
         });
 
-        // fungsi animasi: clone gambar, terbang ke bottom bar, lalu remove
-        function flyToCart(imgElement) {
-            if (!imgElement) return;
-            const bottomBar = document.getElementById('bottom-bar');
-            const imgClone = imgElement.cloneNode(true);
-            const rect = imgElement.getBoundingClientRect();
-            const barRect = bottomBar.getBoundingClientRect();
+    // Event listener untuk tombol tambah/hapus
+    tambahButtons.forEach(btn => {
+        btn.addEventListener('click', function () {
+            const card = btn.closest('.produk-card');
+            const productId = card.dataset.id;
+            const stok = parseInt(card.dataset.stock);
+            const qty = parseInt(card.querySelector('.size-input')?.value || 1);
+            const sizeContainer = card.querySelector('.size-container');
 
-            imgClone.classList.add('fly-image');
-            imgClone.style.position = 'fixed';
-            imgClone.style.top = rect.top + 'px';
-            imgClone.style.left = rect.left + 'px';
-            imgClone.style.width = rect.width + 'px';
-            imgClone.style.height = rect.height + 'px';
-            imgClone.style.transition = 'all .6s ease-in-out';
-            imgClone.style.zIndex = 9999;
-            document.body.appendChild(imgClone);
+            if (stok === 0) { alert('Produk ini stoknya habis!'); return; }
 
-            // lakukan animasi ke posisi bottom bar
-            setTimeout(() => {
-                imgClone.style.top = (barRect.top + 8) + 'px';
-                imgClone.style.left = (barRect.left + barRect.width / 2 - 20) + 'px';
-                imgClone.style.width = '30px';
-                imgClone.style.height = '30px';
-                imgClone.style.opacity = '0.5';
-            }, 10);
-
-            setTimeout(() => {
-                if (imgClone && imgClone.parentNode) imgClone.parentNode.removeChild(imgClone);
-            }, 800);
-        }
-
-        // event checkout: jika kosong, alert; jika ada, encode data dan redirect
-        if (checkoutBtn) {
-            checkoutBtn.addEventListener('click', function () {
-                if (selectedProducts.size === 0) {
-                    alert('Pilih minimal 1 produk sebelum checkout.');
+            if (selectedProducts[productId]) {
+                // hapus item di server
+                fetch(removeUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrf,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ product_id: productId })
+                })
+                .then(res => res.json())
+                .then(resp => {
+                    if (resp.success) {
+                        delete selectedProducts[productId];
+                        btn.textContent = 'Tambah';
+                        btn.style.backgroundColor = '';
+                        if (sizeContainer) sizeContainer.style.display = 'none';
+                        updateSelectedCount();
+                    } else {
+                        alert(resp.error || 'Gagal menghapus item.');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Gagal menghapus item (network).');
+                });
+            } else {
+                // jika size picker belum terlihat, tampilkan dulu
+                if (sizeContainer && sizeContainer.style.display === 'none') {
+                    sizeContainer.style.display = 'block';
                     return;
                 }
 
-                // Encode data produk ke JSON & kirim via query string
-                const data = encodeURIComponent(JSON.stringify(Object.values(productData)));
-                window.location.href = `/co-detail?data=${data}`;
+                // tambah item ke server
+                fetch(addUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrf,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ waste_type_id: productId, quantity: qty })
+                })
+                .then(res => res.json())
+                .then(resp => {
+                    if (resp.success) {
+                        selectedProducts[productId] = qty;
+                        btn.textContent = 'Hapus';
+                        btn.style.backgroundColor = '#f44336';
+                        flyToCart(card.querySelector('img'));
+                        updateSelectedCount();
+                    } else {
+                        alert(resp.error || 'Gagal menambahkan item.');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Gagal menambahkan ke checkout (network).');
+                });
+            }
+        });
+    });
+
+    // Animasi terbang ke cart (tidak berubah)
+    function flyToCart(imgElement) {
+        if (!imgElement) return;
+        const bottomBar = document.getElementById('bottom-bar');
+        const imgClone = imgElement.cloneNode(true);
+        const rect = imgElement.getBoundingClientRect();
+        const barRect = bottomBar.getBoundingClientRect();
+
+        imgClone.style.position = 'fixed';
+        imgClone.style.top = rect.top + 'px';
+        imgClone.style.left = rect.left + 'px';
+        imgClone.style.width = rect.width + 'px';
+        imgClone.style.height = rect.height + 'px';
+        imgClone.style.transition = 'all .6s ease-in-out';
+        imgClone.style.zIndex = 9999;
+        document.body.appendChild(imgClone);
+
+        setTimeout(() => {
+            imgClone.style.top = (barRect.top + 8) + 'px';
+            imgClone.style.left = (barRect.left + barRect.width / 2 - 20) + 'px';
+            imgClone.style.width = '30px';
+            imgClone.style.height = '30px';
+            imgClone.style.opacity = '0.5';
+        }, 10);
+
+        setTimeout(() => imgClone.remove(), 800);
+    }
+
+    // checkout redirect
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', function () {
+            if (Object.keys(selectedProducts).length === 0) {
+                alert('Pilih minimal 1 produk sebelum checkout.');
+                return;
+            }
+            window.location.href = "{{ route('checkout.form') }}";
+        });
+    }
+
+    // size pickers
+    document.querySelectorAll('.produk-card').forEach(card => {
+        const inc = card.querySelector('.increase');
+        const dec = card.querySelector('.decrease');
+        const sizeInput = card.querySelector('.size-input');
+        if (inc && dec && sizeInput) {
+            inc.addEventListener('click', () => sizeInput.value = parseInt(sizeInput.value) + 1);
+            dec.addEventListener('click', () => {
+                if (parseInt(sizeInput.value) > 1) sizeInput.value = parseInt(sizeInput.value) - 1;
             });
         }
-
-        // toggle popup (tombol "Pilih Beberapa")
-        window.togglePopup = function () {
-            const popup = document.getElementById('popup-pilih');
-            if (!popup) return;
-            popup.style.display = (popup.style.display === 'flex' || popup.style.display === 'block') ? 'none' : 'flex';
-            // jika ingin posisikan tengah, biarkan CSS menangani; JS di sini hanya toggle display
-        };
-
-        // tambahan: pastikan popup close (jika ada tombol lain)
-        const popupClose = document.querySelectorAll('.popup-close');
-        popupClose.forEach(el => el.addEventListener('click', togglePopup));
     });
-    </script>
+
+    // modal detail (tidak berubah)
+    const wastesData = @json($wastes);
+
+    window.openDetailModal = function(id) {
+        const w = wastesData.find(x => x.id == id);
+        if(!w) return;
+        const modalHTML = `
+            <main class="detail-produk-container">
+                <div class="produk-gambar">
+                    <img src="${w.photo ? '/storage/' + w.photo : '/img/no-image.png'}" alt="${w.type_name}">
+                </div>
+                <div class="produk-info">
+                    <h1>${w.type_name}</h1>
+                    <p><strong>Kategori:</strong> ${w.category?.category_name ?? '-'}</p>
+                    <p><strong>Stok Tersedia:</strong> ${w.stock?.available_weight ?? 0} Kg</p>
+                    <p class="produk-deskripsi"><strong>Deskripsi:</strong> ${w.description ?? 'Tidak ada deskripsi'}</p>
+                    <p><strong>Harga:</strong> Rp ${(w.price_per_unit ?? 0).toLocaleString('id-ID')} /Kg</p>
+                    <div class="modal-bottom"><span id="modal-total">Rp ${(w.price_per_unit ?? 0).toLocaleString('id-ID')}</span></div>
+                </div>
+            </main>`;
+        document.getElementById('modalBody').innerHTML = modalHTML;
+        document.getElementById('detailModal').style.display = 'flex';
+    };
+
+    window.closeDetailModal = function() {
+        document.getElementById('detailModal').style.display = 'none';
+    };
+});
+
+// Modal handling
+const wastesData = @json($wastes);
+
+function openDetailModal(id){
+    const w = wastesData.find(x => x.id === id);
+    if(!w) return;
+
+    let photosHtml = '';
+    if(w.photo){
+        photosHtml += `<img src="/storage/${w.photo}" style="max-width:100%; border-radius:8px;">`;
+    } else {
+        photosHtml = '<em>Tidak ada foto</em>';
+    }
+    document.getElementById('modalPhotos').innerHTML = photosHtml;
+
+    document.getElementById('modalTypeName').innerText = w.type_name;
+    document.getElementById('modalCategory').innerText = w.category?.category_name ?? '-';
+    document.getElementById('modalStock').innerText = w.stock?.available_weight ?? 0;
+    document.getElementById('modalPrice').innerText = (w.price_per_unit ?? 0).toLocaleString('id-ID');
+    document.getElementById('modalTimesBought').innerText = w.times_bought;
+
+    const stars = Math.min(5, Math.ceil((w.times_bought || 0)/2));
+    document.getElementById('modalStars').innerHTML =
+        '★'.repeat(stars) + '☆'.repeat(5-stars);
+
+    document.getElementById('detailModal').style.display='flex';
+}
+function closeDetailModal(){
+    document.getElementById('detailModal').style.display='none';
+}
+</script>
 </body>
 </html>

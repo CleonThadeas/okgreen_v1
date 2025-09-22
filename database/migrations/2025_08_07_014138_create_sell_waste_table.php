@@ -12,13 +12,20 @@ return new class extends Migration {
             $table->foreignId('waste_category_id')->constrained('waste_categories')->onDelete('restrict')->onUpdate('cascade');
             $table->foreignId('waste_type_id')->constrained('waste_types')->onDelete('restrict')->onUpdate('cascade');
             $table->decimal('weight_kg', 10, 2);
-            $table->decimal('price_per_kg', 10, 2);
+            $table->decimal('price_per_kg', 12, 2);
             $table->decimal('total_price', 12, 2);
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
-            $table->string('photo_path')->nullable();
+            $table->enum('sell_method', ['drop_point','pickup'])->default('drop_point');
+            $table->text('description')->nullable();
+            $table->string('photo_path')->nullable(); // legacy single-photo: tetap ada untuk backward compatibility
+            $table->integer('points_awarded')->nullable();
             $table->timestamps();
+
+            // index sederhana untuk performa lookup staff
+            $table->index(['status','created_at']);
         });
     }
+
     public function down(): void {
         Schema::dropIfExists('sell_waste');
     }
