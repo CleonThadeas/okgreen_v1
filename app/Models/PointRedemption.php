@@ -6,19 +6,27 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
 
-class UserPoint extends Model
+class PointRedemption extends Model
 {
     use HasFactory, Notifiable;
 
-    protected $table = 'user_points';
+    protected $table = 'point_redemptions';
 
     protected $fillable = [
         'user_id',
-        'points',
+        'reward_id',
+        'redeemed_at',
     ];
+
+    public $timestamps = false;
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function reward()
+    {
+        return $this->belongsTo(PointReward::class, 'reward_id');
     }
 }
