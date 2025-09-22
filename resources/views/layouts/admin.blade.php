@@ -14,7 +14,6 @@
         .container { padding:20px; max-width:1100px; margin:0 auto; }
         .muted { color: rgba(255,255,255,0.85); font-weight:600; }
     </style>
-    {{-- Chart.js dari CDN --}}
 </head>
 <body>
     <nav class="topnav">
@@ -34,7 +33,6 @@
     </nav>
 
     <div class="main-container">
-        @yield('content')
         @if(session('success'))
             <div style="background:#e9f9ef;padding:10px;border-left:4px solid #0b5d39;margin-bottom:12px;">
                 {{ session('success') }}

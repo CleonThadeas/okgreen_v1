@@ -2,10 +2,6 @@
 
 @section('title','Dashboard Admin')
 
-@push('styles')
-<link rel="stylesheet" href="{{ asset('css/beranda-admin.css') }}">
-@endpush
-
 @section('content')
   <div class="container">
     <div class="header">
