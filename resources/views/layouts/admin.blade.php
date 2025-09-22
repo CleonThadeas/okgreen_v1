@@ -33,7 +33,8 @@
         </form>
     </nav>
 
-    <div class="container">
+    <div class="main-container">
+        @yield('content')
         @if(session('success'))
             <div style="background:#e9f9ef;padding:10px;border-left:4px solid #0b5d39;margin-bottom:12px;">
                 {{ session('success') }}

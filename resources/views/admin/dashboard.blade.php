@@ -2,10 +2,14 @@
 
 @section('title','Dashboard Admin')
 
+@push('styles')
+<link rel="stylesheet" href="{{ asset('css/beranda-admin.css') }}">
+@endpush
+
 @section('content')
-<div class="container">
+  <div class="container">
     <div class="header">
-      <h2>Beranda Admin</h2>
+      <h2>Beranda</h2>
       <input type="text" placeholder="Cari">
     </div>
 
@@ -39,7 +43,7 @@
           <h3>Status</h3>
           <span class="icon green">♻️</span>
         </div>
-         <h2><a href="{{ route('banyaksampah') }}">75%</a></h2>
+        <h2><a href="{{ route('banyaksampah') }}">75%</a></h2>
         <p><span class="text-green">25%</span> Belum Selesai</p>
       </div>
     </div>
@@ -78,30 +82,27 @@
     </table>
 
     <div class="statistik-card">
-      <h2>Statistik</h2>
+      <h3>Statistik</h3>
       <div class="stats-container">
         <div class="chart-container">
-          {{-- Canvas bawah --}}
-          <canvas id="progressChartCard" width="200" height="200"></canvas>
+          <canvas id="myChart"></canvas>
         </div>
         <div class="legend">
           <div class="legend-item">
-            <i class="done">✔</i>
-            <div class="percent">75%</div>
+            <span class="percent done">75%</span>
             <div>Selesai</div>
           </div>
           <div class="legend-item">
-            <i class="progress">↗</i>
-            <div class="percent">25%</div>
+            <span class="percent progress">25%</span>
             <div>Sedang Berlangsung</div>
           </div>
         </div>
       </div>
     </div>
-</div>
+  </div>
+@endsection
 
-{{-- Include JS --}}
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="{{ asset('js/statistik.js') }}"></script>
 @endpush
-@endsection
