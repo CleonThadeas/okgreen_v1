@@ -115,39 +115,38 @@
 
     {{-- Script AJAX load jenis sesuai kategori --}}
     <script>
-       const categorySelect = document.getElementById('categorySelect');
-const typeSelect = document.getElementById('typeSelect');
-const oldType = "{{ old('sell_waste_type_id') }}";
+        const categorySelect = document.getElementById('categorySelect');
+        const typeSelect = document.getElementById('typeSelect');
+        const oldType = "{{ old('sell_waste_type_id') }}";
 
-function loadTypes(catId, selectedType = null) {
-    typeSelect.innerHTML = '<option value="">Loading...</option>';
-    if(!catId) return;
+        function loadTypes(catId, selectedType = null) {
+            typeSelect.innerHTML = '<option value="">Loading...</option>';
+            if(!catId) return;
 
-    fetch('/sell-waste/types/' + catId)
-        .then(res => res.json())
-        .then(data => {
-            typeSelect.innerHTML = '<option value="">-- Pilih Jenis --</option>';
-            data.forEach(t => {
-                const selected = (t.id == selectedType) ? 'selected' : '';
-                typeSelect.innerHTML += `<option value="${t.id}" ${selected}>${t.type_name} (Poin/Kg: ${t.points_per_kg})</option>`;
-            });
-        })
-        .catch(err => {
-            console.error(err);
-            typeSelect.innerHTML = '<option value="">-- Gagal memuat --</option>';
+            fetch('/sell-waste/types/' + catId)
+                .then(res => res.json())
+                .then(data => {
+                    typeSelect.innerHTML = '<option value="">-- Pilih Jenis --</option>';
+                    data.forEach(t => {
+                        const selected = (t.id == selectedType) ? 'selected' : '';
+                        typeSelect.innerHTML += `<option value="${t.id}" ${selected}>${t.type_name} (Poin/Kg: ${t.points_per_kg})</option>`;
+                    });
+                })
+                .catch(err => {
+                    console.error(err);
+                    typeSelect.innerHTML = '<option value="">-- Gagal memuat --</option>';
+                });
+        }
+
+        // Event change kategori
+        categorySelect.addEventListener('change', function(){
+            loadTypes(this.value);
         });
-}
 
-// Event change kategori
-categorySelect.addEventListener('change', function(){
-    loadTypes(this.value);
-});
-
-// Restore old kategori + jenis
-if(categorySelect.value) {
-    loadTypes(categorySelect.value, oldType);
-}
-
+        // Restore old kategori + jenis
+        if(categorySelect.value) {
+            loadTypes(categorySelect.value, oldType);
+        }
     </script>
 </body>
 </html>

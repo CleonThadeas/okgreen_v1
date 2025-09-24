@@ -22,8 +22,7 @@ class UserPointController extends Controller
         $user = Auth::user();
 
         // ambil total poin user
-        $userPoints = UserPoint::where('user_id', $user->id)->first();
-
+        $userPoints = UserPoint::where('user_id', auth()->id())->value('points') ?? 0;
         // ambil riwayat
         $histories = PointHistory::where('user_id', $user->id)
             ->orderBy('created_at', 'desc')
