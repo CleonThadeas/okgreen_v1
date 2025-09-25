@@ -1,11 +1,8 @@
-@extends('layouts.form')
+@extends('layouts.staff')
 @section('title','Tambah Produk - Staff')
 
 @section('content')
-<div class="form-container">
-    <div class="product-header">
-        <h2>Tambah Produk Sampah</h2>
-    </div>
+<h2>Tambah Produk Sampah</h2>
 
 {{-- Tampilkan error validasi --}}
 @if($errors->any()) 
@@ -58,7 +55,6 @@
         <small>Format diperbolehkan: JPG, JPEG, PNG (maksimal 5MB)</small>
     </div>
 
-    <button type="submit" class="btn-confirm">Simpan Perubahan</button>
-    <button type="cancel" class="btn-cancel">Batalkan</button>
+    <button type="submit">Simpan Produk</button>
 </form>
 @endsection

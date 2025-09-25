@@ -18,7 +18,20 @@ class BuyTransaction extends Model
         'user_id',
         'total_amount',
         'status',
-        'transaction_date'
+        'transaction_date',
+        'payment_method',
+        'shipping_method',
+        'receiver_name',
+        'address',
+        'phone',
+        'shipping_cost',
+        'expired_at',   // ✅ tambahkan ini
+        'qr_text'
+    ];
+
+    protected $casts = [
+        'transaction_date' => 'datetime',
+        'expired_at' => 'datetime',   // ✅ otomatis jadi Carbon instance
     ];
 
     // Relasi ke item transaksi
@@ -27,18 +40,22 @@ class BuyTransaction extends Model
         return $this->hasMany(BuyCartItem::class, 'buy_transaction_id', 'id');
     }
 
-    // Relasi ke user (supaya bisa akses data user yang buat transaksi)
+    // Relasi ke user
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    // Cek apakah transaksi masih aktif (pending dan belum lewat 5 menit)
+    // Cek apakah transaksi masih aktif (pakai expired_at kalau ada)
     public function isActive()
     {
+        if ($this->expired_at) {
+            return $this->status === 'pending' && now()->lessThanOrEqualTo($this->expired_at);
+        }
+
+        // fallback kalau expired_at belum ada, pakai transaction_date + 5 menit
         return $this->status === 'pending'
-            && Carbon::now()->lessThanOrEqualTo(
-                Carbon::parse($this->transaction_date)->addMinutes(5)
-            );
+            && now()->lessThanOrEqualTo(Carbon::parse($this->transaction_date)->addMinutes(5));
     }
 }
+

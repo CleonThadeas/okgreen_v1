@@ -9,12 +9,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('sell_waste', function (Blueprint $table) {
-            $table->unsignedBigInteger('handled_by_staff_id')->nullable()->after('points_awarded');
-            $table->timestamp('handled_at')->nullable()->after('handled_by_staff_id');
+    if (Schema::hasColumn('sell_waste', 'points_awarded')) {
+        $table->unsignedBigInteger('handled_by_staff_id')->nullable()->after('points_awarded');
+        $table->timestamp('handled_at')->nullable()->after('handled_by_staff_id');
+    } else {
+        $table->unsignedBigInteger('handled_by_staff_id')->nullable();
+        $table->timestamp('handled_at')->nullable();
+    }
+});
 
-            // kalau ada relasi staff:
-            // $table->foreign('handled_by_staff_id')->references('id')->on('staff')->onDelete('set null');
-        });
     }
 
     public function down(): void
