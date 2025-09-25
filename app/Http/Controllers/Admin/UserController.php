@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Staff; // pastikan model Staff sudah ada
+use App\Models\Staff;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Log;
@@ -12,11 +12,21 @@ use Illuminate\Support\Facades\Log;
 class UserController extends Controller
 {
     /**
-     * List semua staff
+     * List semua staff dengan pagination dan search opsional
      */
-    public function index()
+    public function index(Request $r)
     {
-        $staffs = Staff::orderBy('created_at', 'desc')->paginate(20);
+        $staffs = Staff::query();
+
+        // Filter / search berdasarkan nama atau email
+        if ($r->filled('search')) {
+            $search = $r->search;
+            $staffs->where('name', 'like', "%{$search}%")
+                   ->orWhere('email', 'like', "%{$search}%");
+        }
+
+        $staffs = $staffs->orderBy('created_at', 'desc')->paginate(20);
+
         return view('admin.users.index', compact('staffs'));
     }
 
@@ -49,7 +59,10 @@ class UserController extends Controller
             return redirect()->route('admin.users.index')
                 ->with('success', 'Akun staff berhasil dibuat.');
         } catch (\Throwable $e) {
-            Log::error('Admin create staff error: '.$e->getMessage());
+            Log::error('Admin create staff error', [
+                'message' => $e->getMessage(),
+                'input'   => $r->all()
+            ]);
             return back()->with('error', 'Gagal membuat akun staff.')->withInput();
         }
     }
@@ -89,7 +102,11 @@ class UserController extends Controller
             return redirect()->route('admin.users.index')
                 ->with('success', 'Akun staff berhasil diperbarui.');
         } catch (\Throwable $e) {
-            Log::error('Admin update staff error: '.$e->getMessage());
+            Log::error('Admin update staff error', [
+                'id'      => $staff->id,
+                'message' => $e->getMessage(),
+                'input'   => $r->all()
+            ]);
             return back()->with('error', 'Gagal memperbarui akun staff.')->withInput();
         }
     }
@@ -102,11 +119,16 @@ class UserController extends Controller
         $staff = Staff::findOrFail($id);
 
         try {
-            $staff->delete(); // kalau mau suspend bisa pakai soft delete / flag status
+            // Soft delete jika Staff model pakai SoftDeletes
+            $staff->delete();
+
             return redirect()->route('admin.users.index')
                 ->with('success', 'Akun staff berhasil dihapus.');
         } catch (\Throwable $e) {
-            Log::error('Admin delete staff error: '.$e->getMessage());
+            Log::error('Admin delete staff error', [
+                'id'      => $staff->id,
+                'message' => $e->getMessage()
+            ]);
             return back()->with('error', 'Gagal menghapus akun staff.');
         }
     }

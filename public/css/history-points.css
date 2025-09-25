@@ -1,0 +1,142 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    background-color: #f4f6f8;
+    color: #333;
+}
+
+.points-container {
+    max-width: 950px;
+    margin: 90px auto 40px;
+    padding: 0 16px;
+}
+
+.title {
+    font-size: 1.7rem;
+    font-weight: 600;
+    margin: 0;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Header row */
+.header-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.menu-toggle {
+    background: #fff;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.menu-toggle i {
+    color: #2c3e50;
+}
+
+/* Total Poin */
+.total-card {
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    margin-bottom: 20px;
+}
+
+.total-points {
+    font-size: 20px;
+    font-weight: bold;
+    color: green;
+    margin-left: 10px;
+}
+
+/* Table */
+.table-wrapper {
+    overflow-x: auto;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.riwayat-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.riwayat-table th,
+.riwayat-table td {
+    padding: 12px 10px;
+    text-align: left;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.riwayat-table thead {
+    background: #5e8765;
+    color: #fff;
+}
+
+.riwayat-table th {
+    font-weight: 600;
+}
+
+.riwayat-table tr:last-child td {
+    border-bottom: none;
+}
+
+.riwayat-table tr:hover td {
+    background: #f9fbfc;
+}
+
+.no-data {
+    text-align: center;
+    color: #777;
+    padding: 20px 0;
+}
+
+.text-green {
+    color: #1e8449;
+    font-weight: bold;
+}
+
+.text-red {
+    color: #c0392b;
+    font-weight: bold;
+}
+
+/* Pagination */
+.pagination {
+    margin-top: 15px;
+}
+
+/* Animasi */
+.animate-card {
+    animation: fadeInUp 0.6s ease;
+}
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .riwayat-table th,
+    .riwayat-table td {
+        font-size: 0.85rem;
+        padding: 8px 6px;
+    }
+    .title {
+        font-size: 1.4rem;
+    }
+}

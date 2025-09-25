@@ -228,3 +228,17 @@ body {
 .dropdown-container a:hover {
   background: #7d927d;
 }
+
+.menu-toggle {
+    background: #fff;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.menu-toggle i {
+    color: #2c3e50;
+}

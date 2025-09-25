@@ -87,7 +87,7 @@ main {
 .kontak-form input,
 .kontak-form textarea {
   width: 100%;
-  padding: 12px 14px;
+  padding: 20px 14px;
   margin-bottom: 14px;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -105,7 +105,7 @@ main {
   background: #5f876b;
   color: #fff;
   border: none;
-  padding: 12px 18px;
+  padding: 12px 40px;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
@@ -128,7 +128,7 @@ main {
 }
 
 .image-section img {
-  max-width: 100%;
+  max-width: 80%;
   border-radius: 10px;
 }
 

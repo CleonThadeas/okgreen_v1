@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil Pengguna</title>
-    <link rel="stylesheet" href="{{ asset('css/profil.css') }}?v={{ time() }}">
-    <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}?v={{ time() }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kontak Kami</title>
+  <link rel="stylesheet" href="{{ asset('css/kontak.css') }}?v={{ time() }}">
+  <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-    @include('partials.header')
+ @include('partials.header')
 
     <!-- Overlay -->
     <div class="overlay" onclick="toggleSidebar()"></div>
@@ -21,37 +20,13 @@
     <!-- Main Content -->
     <div class="container">
         <main class="content">
-            <!-- Tombol untuk buka/tutup sidebar -->
-    <button class="menu-toggle" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </button>
-
-	<h3>Hubungi Kami</h3>
-        <form>
-            <div class="mb-3">
-                <label>Nama</label>
-                <input type="text" class="form-control">
-
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kontak Kami</title>
-  <link rel="stylesheet" href="{{ asset('css/kontak.css') }}?v={{ time() }}">
-</head>
-<body>
-  {{-- HEADER --}}
-  @include('partials.header')
-
-  <main>
-    <div class="kontak-wrapper d-flex">
-      
-      {{-- SIDEBAR PROFIL --}}
-      <aside class="sidebar">
-        @include('user.profile.sidebar')
-      </aside>
-
+        
       {{-- FORM KONTAK --}}
       <div class="kontak-container animate-card flex-grow-1">
         <div class="form-section">
+             <button class="menu-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
           <h2>Kami siap membantu dan menjawab pertanyaan Anda.</h2>
 
           {{-- Pesan sukses --}}
@@ -80,24 +55,12 @@
         </div>
 
         <div class="image-section">
-          <img src="{{ asset('img/recycle.png') }}" alt="Recycle" />
+          <img src="{{ asset('img/recycle.jpeg') }}" alt="Recycle" />
         </div>
       </div>
     </div>
 
     <script>
-        // Preview foto profil
-        document.getElementById("fileInput").addEventListener("change", function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById("profileImage").src = e.target.result;
-                }
-                reader.readAsDataURL(file);
-            }
-        });
-
         // Toggle sidebar
         function toggleSidebar() {
             document.querySelector('.sidebar').classList.toggle('active');
