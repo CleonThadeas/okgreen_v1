@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<<<<<<< HEAD
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil Pengguna</title>
@@ -31,7 +31,7 @@
             <div class="mb-3">
                 <label>Nama</label>
                 <input type="text" class="form-control">
-=======
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kontak Kami</title>
@@ -58,7 +58,6 @@
           @if(session('success'))
             <div class="alert alert-success animate-fade">
               {{ session('success') }}
->>>>>>> origin/backup-TRANSAKSISUKSES
             </div>
           @endif
 
@@ -85,7 +84,6 @@
         </div>
       </div>
     </div>
-<<<<<<< HEAD
 
     <script>
         // Preview foto profil
@@ -106,8 +104,6 @@
             document.querySelector('.overlay').classList.toggle('show');
         }
     </script>
-=======
   </main>
->>>>>>> origin/backup-TRANSAKSISUKSES
 </body>
 </html>
