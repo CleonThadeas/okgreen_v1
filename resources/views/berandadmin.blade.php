@@ -90,26 +90,27 @@
       </tbody>
     </table>
 <div class="statistik-card">
-      <h2>Statistik</h2>
-      <div class="stats-container">
-        <div class="chart-container">
-          <canvas id="progressChart"></canvas>
-        </div>
-        <div class="legend">
-          <div class="legend-item">
-            <i class="done">✔</i>
-            <div class="percent">75%</div>
-            <div>Selesai</div>
-          </div>
-          <div class="legend-item">
-            <i class="progress">↗</i>
-            <div class="percent">25%</div>
-            <div>Sedang Berlangsung</div>
-          </div>
-        </div>
+  <h3>Statistik</h3>
+  <div class="stats-container">
+    
+    <div class="chart-container">
+      <!-- kalau pakai chart.js -->
+      <canvas id="myChart"></canvas>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item">
+        <span class="percent done">75%</span>
+        <div>Selesai</div>
+      </div>
+      <div class="legend-item">
+        <span class="percent progress">25%</span>
+        <div>Sedang Berlangsung</div>
       </div>
     </div>
+
   </div>
+</div>
 </body>
   <script src="{{ asset('js/statistik.js') }}"></script>
 </html>

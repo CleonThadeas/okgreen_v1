@@ -3,16 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Profil</title>
+    <title>Profil Pengguna</title>
     <link rel="stylesheet" href="{{ asset('css/profil.css') }}?v={{ time() }}">
+    <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
     @include('partials.header')
 
+    <!-- Overlay -->
+    <div class="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    @include('partials.sidebar')
+
+    <!-- Main Content -->
     <div class="container">
         <main class="content">
+            <!-- Tombol untuk buka/tutup sidebar -->
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
             <h1>Informasi Pribadi</h1>
+            
+            {{-- Notifikasi sukses --}}
+            @if(session('success'))
+                <div class="alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
 
             <div class="profile-pic">
                 <img id="profileImage" src="{{ asset('img/ppUser.png') }}" alt="User">
@@ -27,56 +46,54 @@
 
                 <p class="name">{{ $user->name }}</p>
             </div>
-
-            <form action="{{ route('profile.update') }}" method="POST" id="profilForm">
+	
+	        <form action="{{ route('profile.update') }}" method="POST">
                 @csrf
                 @method('PATCH')
 
-                <div class="form-row">
-                    <div>
-                        <label>Nama Lengkap</label>
-                        <input type="text" name="name" value="{{ old('name', $user->name) }}" />
-                    </div>
-                </div>
+                <p>
+                    <label>Nama Lengkap:</label><br>
+                    <input type="text" name="name" value="{{ old('name', $user->name) }}">
+                </p>
 
-                <div>
-                    <label>Email (tidak bisa diubah)</label>
-                    <input type="email" value="{{ $user->email }}" disabled />
-                </div>
+                <p>
+                    <label>Email (tidak bisa diubah):</label><br>
+                    <input type="email" value="{{ $user->email }}" disabled>
+                </p>
 
-                <div>
-                    <label>Nomor Telepon</label>
-                    <input type="text" name="phone_number" value="{{ old('phone_number', $user->phone_number) }}" />
-                </div>
+                <p>
+                    <label>Nomor Telepon:</label><br>
+                    <input type="text" name="phone_number" value="{{ old('phone_number', $user->phone_number) }}">
+                </p>
 
-                <div>
-                    <label>Alamat</label>
+                <p>
+                    <label>Alamat:</label><br>
                     <textarea name="address">{{ old('address', $user->address) }}</textarea>
-                </div>
+                </p>
 
-                <div>
-                    <label>Tanggal Lahir</label>
-                    <input type="date" name="birth_date" value="{{ old('birth_date', $user->birth_date) }}" />
-                </div>
+                <p>
+                    <label>Tanggal Lahir:</label><br>
+                    <input type="date" name="birth_date" value="{{ old('birth_date', $user->birth_date) }}">
+                </p>
 
-                <div>
-                    <label>Jenis Kelamin</label>
+                <p>
+                    <label>Jenis Kelamin:</label><br>
                     <select name="gender">
-                        <option value="">Pilih</option>
+                        <option value="">-- Pilih --</option>
                         <option value="male" {{ $user->gender == 'male' ? 'selected' : '' }}>Laki-laki</option>
                         <option value="female" {{ $user->gender == 'female' ? 'selected' : '' }}>Perempuan</option>
                         <option value="other" {{ $user->gender == 'other' ? 'selected' : '' }}>Tidak ingin memberitahu</option>
                     </select>
-                </div>
-
-                <div>
-                    <label>Password Baru (opsional)</label>
+                </p>
+                
+                <p>
+                    <label>Password Baru (opsional):</label><br>
                     <input type="password" name="password">
-                </div>
+                </p>
 
                 <div class="form-actions">
-                    <button type="reset" class="btn cancel">Buang Perubahan</button>
                     <button type="submit" class="btn save">Simpan Perubahan</button>
+                    <button type="reset" class="btn cancel">Buang Perubahan</button>
                 </div>
             </form>
         </main>
@@ -94,6 +111,12 @@
                 reader.readAsDataURL(file);
             }
         });
+
+        // Toggle sidebar
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('active');
+            document.querySelector('.overlay').classList.toggle('show');
+        }
     </script>
 </body>
 </html>

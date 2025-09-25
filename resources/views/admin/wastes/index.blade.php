@@ -1,5 +1,3 @@
-
-
 @extends('layouts.staff')
 @section('title','Kelola Sampah - Staff')
 

@@ -1,30 +1,27 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const charts = [
-        { id: 'progressChartHeader', data: [75, 25] },
-        { id: 'progressChartCard', data: [75, 25] }
-    ];
-
-    charts.forEach(c => {
-        const ctx = document.getElementById(c.id);
-        if (ctx) {
-            new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Selesai', 'Sedang Berlangsung'],
-                    datasets: [{
-                        data: c.data,
-                        backgroundColor: ['#4CAF50', '#FF9800'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    cutout: '70%',
-                    responsive: true,
-                    plugins: { legend: { display: false } }
+    const ctx = document.getElementById('myChart');
+    if (ctx) {
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Selesai', 'Sedang Berlangsung'],
+                datasets: [{
+                    data: [75, 25], // data persentase
+                    backgroundColor: ['#4CAF50', '#FF9800'], // hijau & oranye
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                cutout: '70%', // bikin tengahnya bolong (donut)
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false // legend default disembunyiin (karena udah ada custom legend)
+                    }
                 }
-            });
-        } else {
-            console.error(`Canvas #${c.id} tidak ditemukan!`);
-        }
-    });
+            }
+        });
+    } else {
+        console.error("Canvas #myChart tidak ditemukan!");
+    }
 });

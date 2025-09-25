@@ -116,8 +116,8 @@ form select {
 
 /* Tombol */
 .form-actions {
-  display: flex;
-  justify-content: flex-end;
+  display: center;
+  justify-content:center;
   gap: 12px;
   margin-top: 15px;
 }
@@ -156,4 +156,19 @@ form select {
   .container {
     padding: 15px;
   }
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
 }
