@@ -27,9 +27,9 @@
           <a href="{{ route('staff.sell_requests.index') }}">Permintaan Jual</a>
         @endif
 
-        @if(Route::has('staff.edu.index'))
-          <a href="{{ route('staff.edu.index') }}">Edukasi</a>
-        @endif
+        <a href="{{ route('staff.notifications.index') }}">Notifikasi</a>
+
+        <a href="{{ route('staff.contacts.index') }}">Laporan</a>
 
         <div style="flex:1"></div>
 

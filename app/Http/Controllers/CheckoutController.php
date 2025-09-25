@@ -10,6 +10,9 @@ use App\Models\BuyTransaction;
 use App\Models\BuyCartItem;
 use App\Models\WasteType;
 use App\Models\WasteStock;
+use App\Models\Notification;
+use App\Models\Staff;
+use Illuminate\Support\Str;
 
 class CheckoutController extends Controller
 {
@@ -167,6 +170,19 @@ class CheckoutController extends Controller
             return redirect()->route('checkout.qr', $tx->id);
         } catch (\Throwable $e) {
             DB::rollBack();
+
+
+            $staffs = Staff::all();
+            foreach ($staffs as $st) {
+                Notification::create([
+                    'receiver_id'   => $st->id,
+                    'receiver_role' => 'staff',
+                    'title'         => 'Transaksi pembelian baru',
+                    'message'       => 'Transaksi #'. $tx->id .' dibuat oleh '. Auth::user()->name,
+                    'is_read'       => false,
+                ]);
+            }
+
             return back()->with('error','Gagal membuat transaksi: '.$e->getMessage());
         }
     }

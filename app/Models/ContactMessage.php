@@ -1,30 +1,26 @@
 <?php
-
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
 
 class ContactMessage extends Model
 {
-    use HasFactory;
-
-    protected $primaryKey = 'message_id'; 
+    protected $table = 'contact_messages';
+    protected $primaryKey = 'message_id';
+    public $incrementing = true;
+    public $timestamps = true;
 
     protected $fillable = [
-        'user_id',
-        'subject',
-        'message',
+        'user_id','subject','message','status'
     ];
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(\App\Models\User::class, 'user_id', 'id');
     }
 
     public function replies()
     {
-        return $this->hasMany(ContactReply::class, 'message_id', 'message_id');
+        return $this->hasMany(ContactReply::class, 'message_id', 'message_id')->orderBy('created_at','asc');
     }
 }

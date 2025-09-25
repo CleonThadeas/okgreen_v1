@@ -20,6 +20,10 @@ use App\Http\Controllers\Staff\SellTypeController;
 use App\Http\Controllers\UserPointController;
 use App\Models\SellWaste;
 use App\Http\Controllers\HistoryController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\Staff\ContactController as StaffContactController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\Staff\NotificationController as StaffNotificationController;
 
 // ================== HOME ==================
 Route::get('/', function () {
@@ -91,6 +95,18 @@ Route::get('/history/points', [HistoryController::class, 'points'])->name('histo
     // Reward (Tukar Point)// Tukarkan poin
 Route::get('/my-points', [UserPointController::class, 'index'])->name('user.points.index');
 
+//Notifikasi&Contact
+Route::get('/contact', [ContactController::class,'create'])->name('contact');
+    Route::post('/contact', [ContactController::class,'store'])->name('contact.store');
+
+
+       Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/{id}', [App\Http\Controllers\NotificationController::class, 'show'])->name('notifications.show');
+    Route::post('/notifications/{id}/read', [App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
+
+
+    
 });
 
 // ================== STAFF ==================
@@ -122,6 +138,16 @@ Route::prefix('staff')->name('staff.')->middleware('auth:staff')->group(function
     Route::get('/sell-types', [SellTypeController::class,'index'])->name('sell-types.index');
     Route::get('/sell-types/create', [SellTypeController::class,'create'])->name('sell-types.create');
     Route::post('/sell-types', [SellTypeController::class,'store'])->name('sell-types.store');
+
+    //Notifikasi&Contact
+    Route::get('/contacts', [StaffContactController::class,'index'])->name('contacts.index');
+    Route::get('/contacts/{id}', [StaffContactController::class,'show'])->name('contacts.show');
+    Route::post('/contacts/{id}/reply', [StaffContactController::class,'reply'])->name('contacts.reply');
+
+    Route::get('/notifications', [StaffNotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/{id}', [StaffNotificationController::class, 'show'])->name('notifications.show');
+    Route::post('/notifications/{id}/read', [StaffNotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [StaffNotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
 });
 
 // ================== ADMIN ==================
