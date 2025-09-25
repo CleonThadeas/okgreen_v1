@@ -1,0 +1,121 @@
+/* === Umum === */
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    background-color: #f4f6f8;
+    color: #333;
+}
+
+.jual-container {
+    max-width: 950px;
+    margin: 90px auto 40px;
+    padding: 0 16px;
+}
+
+.title {
+    font-size: 1.7rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+/* === Alert === */
+.alert {
+    padding: 10px 14px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+}
+.alert.success {
+    background: #e8f9f0;
+    color: #207a4a;
+    border: 1px solid #a8e6c2;
+}
+.alert.error {
+    background: #fceaea;
+    color: #c22a2a;
+    border: 1px solid #f5b1b1;
+}
+
+/* === Table === */
+.table-wrapper {
+    overflow-x: auto;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    padding: 18px;
+}
+
+.riwayat-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.riwayat-table th,
+.riwayat-table td {
+    padding: 12px 10px;
+    text-align: left;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.riwayat-table th {
+    background: #f8fafc;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.riwayat-table tr:hover {
+    background: #f9fbfc;
+}
+
+.no-data {
+    text-align: center;
+    color: #777;
+    padding: 20px 0;
+}
+
+/* === Badge status === */
+.badge {
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+.badge-pending {
+    background: #fff6e6;
+    color: #e67e22;
+    border: 1px solid #f5d8a5;
+}
+.badge-success {
+    background: #e9f9ef;
+    color: #1e8449;
+    border: 1px solid #b8e6c2;
+}
+.badge-danger {
+    background: #fdeaea;
+    color: #c0392b;
+    border: 1px solid #f5b1b1;
+}
+
+/* === Animasi card === */
+.animate-card {
+    animation: fadeInUp 0.6s ease;
+}
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* === Responsif === */
+@media (max-width: 768px) {
+    .riwayat-table th,
+    .riwayat-table td {
+        font-size: 0.85rem;
+        padding: 8px 6px;
+    }
+    .title {
+        font-size: 1.4rem;
+    }
+}

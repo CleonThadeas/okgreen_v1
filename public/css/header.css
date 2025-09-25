@@ -74,3 +74,38 @@ nav a.active::after {
     height: 35px;
     cursor: pointer;
 }
+
+/* Link profil berbentuk ikon */
+nav a.profile-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    padding: 0;
+    position: relative;
+}
+
+nav a.profile-link img {
+    height: 100%;
+    width: auto;
+    border-radius: 50%; /* opsional, biar lebih rapi */
+}
+
+/* Efek hover & active sama kayak teks */
+nav a.profile-link::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    background-color: #000000;
+    transition: width 0.3s ease;
+}
+
+nav a.profile-link:hover::after,
+nav a.profile-link.active::after {
+    width: 100%;
+}
+

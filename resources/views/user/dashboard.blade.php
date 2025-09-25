@@ -49,18 +49,22 @@
     <a href="{{ route('buy-waste.index') }}" class="section-btn">➔</a>
   </div>
   <div class="produk-list">
-    @forelse($wastes ?? [] as $waste)
+    @forelse($wastes as $waste)
       <div class="produk-card">
-        <img src="{{ isset($waste->image) ? asset('storage/' . $waste->image) : asset('img/no-image.png') }}" alt="{{ $waste->name ?? ($waste->type_name ?? 'Produk') }}">
-        <p>{{ $waste->name ?? $waste->type_name ?? 'Nama Produk' }}</p>
-        <span>Rp{{ number_format(optional($waste->stock)->price ?? $waste->price_per_unit ?? 0, 0, ',', '.') }}</span>
+        <img src="{{ $waste->photo 
+                      ? asset('storage/' . $waste->photo) 
+                      : asset('img/no-image.png') }}" 
+             alt="{{ $waste->type_name }}">
+        <p>{{ $waste->type_name }}</p>
+        <span>
+          Rp{{ number_format($waste->price_per_unit ?? 0, 0, ',', '.') }}
+        </span>
       </div>
     @empty
       <p>Tidak ada produk tersedia</p>
     @endforelse
-</div>
+  </div>
 </section>
-
 
   <!-- Edukasi Section -->
 <section class="edukasi">

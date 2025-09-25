@@ -256,3 +256,124 @@ main, .jual-container {
   from { opacity: 0; transform: scale(0.9); }
   to   { opacity: 1; transform: scale(1); }
 }
+
+/* Animasi fade-in */
+.animate-fade {
+  animation: fadeIn 0.6s ease;
+}
+
+/* Animasi card */
+.animate-card {
+  animation: slideUp 0.6s ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(25px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Tanda required */
+.required {
+  color: red;
+  font-weight: bold;
+  margin-left: 2px;
+}
+
+/* Preview foto */
+.preview-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.preview-container img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transition: transform 0.3s;
+}
+
+.preview-container img:hover {
+  transform: scale(1.1);
+}
+
+/* =========================
+   RIWAYAT TABLE MODERN
+========================= */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.riwayat-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+.riwayat-table thead {
+  background: #5f876b;
+  color: #fff;
+  text-align: left;
+}
+
+.riwayat-table thead th {
+  padding: 12px 15px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+.riwayat-table tbody tr {
+  border-bottom: 1px solid #eee;
+  transition: background 0.3s;
+}
+
+.riwayat-table tbody tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+.riwayat-table tbody tr:hover {
+  background: #eef6f0;
+}
+
+.riwayat-table td {
+  padding: 10px 15px;
+  color: #333;
+}
+
+.no-data {
+  text-align: center;
+  padding: 20px;
+  font-style: italic;
+  color: #777;
+}
+
+/* Badge Status */
+.badge {
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.badge-success {
+  background: #d4edda;
+  color: #155724;
+}
+
+.badge-pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.badge-danger {
+  background: #f8d7da;
+  color: #721c24;
+}
+

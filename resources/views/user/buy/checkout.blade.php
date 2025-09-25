@@ -36,9 +36,17 @@
         {{-- === Info Pengiriman === --}}
         <div class="delivery-info">
             <p>Delivery to</p>
-            <h3 id="deliveryName">{{ optional($addresses->first())->name ?? 'Nama Penerima' }}</h3>
-            <p id="deliveryAddress">{!! optional($addresses->first())->address ?? 'Alamat belum diatur' !!}</p>
-            <p><strong>Phone:</strong> <span id="deliveryPhone">{{ optional($addresses->first())->phone ?? '-' }}</span></p>
+            <h3 id="deliveryName">
+                {{ optional($addresses->first())->name ?? $user->name }}
+            </h3>
+            <p id="deliveryAddress">
+                {!! optional($addresses->first())->address ?? $user->address ?? 'Alamat belum diatur' !!}
+            </p>
+            <p><strong>Phone:</strong>
+                <span id="deliveryPhone">
+                    {{ optional($addresses->first())->phone ?? $user->phone_number ?? '-' }}
+                </span>
+            </p>
             <button class="btn save change-address-btn" onclick="toggleAddressModal(true)">Ganti Alamat</button>
         </div>
 
@@ -48,6 +56,13 @@
                 <span class="close" onclick="toggleAddressModal(false)">&times;</span>
                 <h3>Pilih Alamat</h3>
                 <ul id="addressList">
+                    {{-- Alamat profil --}}
+                    <li data-id="profile" class="address-item">
+                        <strong>{{ $user->name }}</strong><br>
+                        {!! $user->address ?? 'Alamat belum diatur' !!}<br>
+                        <small>📞 {{ $user->phone_number ?? '-' }}</small>
+                    </li>
+                    {{-- Alamat tambahan --}}
                     @foreach($addresses as $addr)
                         <li data-id="{{ $addr->id }}" class="address-item">
                             <strong>{{ $addr->name }}</strong><br>
@@ -134,7 +149,7 @@
             <img src="{{ asset('img/qris.png') }}" alt="QRIS" class="payment-method active">
         </div>
 
-        {{-- === Form Checkout (fetch + redirect) === --}}
+        {{-- === Form Checkout === --}}
         <form id="checkoutForm">
             @csrf
             @foreach($items as $it)
@@ -175,8 +190,11 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("deliveryName").textContent = name;
             document.getElementById("deliveryAddress").innerHTML = address;
             document.getElementById("deliveryPhone").textContent = phone.replace("📞 ","");
-            document.getElementById("address_id").value = id;
+
+            // kalau pilih alamat profil, address_id dikosongkan
+            document.getElementById("address_id").value = (id === "profile") ? "" : id;
             document.getElementById("address_type").value = "delivery";
+
             toggleAddressModal(false);
         });
     });

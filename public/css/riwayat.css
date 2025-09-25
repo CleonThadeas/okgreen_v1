@@ -1,4 +1,4 @@
-/* Umum */
+/* === Umum === */
 body {
     font-family: 'Segoe UI', sans-serif;
     margin: 0;
@@ -19,7 +19,7 @@ body {
     color: #2c3e50;
 }
 
-/* Alert */
+/* === Alert === */
 .alert {
     padding: 10px 14px;
     border-radius: 6px;
@@ -37,7 +37,7 @@ body {
     border: 1px solid #f5b1b1;
 }
 
-/* Card */
+/* === Card transaksi === */
 .card {
     background: #fff;
     border-radius: 14px;
@@ -56,7 +56,7 @@ body {
     color: #777;
 }
 
-/* Header transaksi */
+/* === Header transaksi === */
 .trx-header {
     display: flex;
     justify-content: space-between;
@@ -75,7 +75,7 @@ body {
     color: #2c3e50;
 }
 
-/* Status badge */
+/* === Status badge === */
 .status {
     padding: 4px 10px;
     border-radius: 8px;
@@ -99,7 +99,7 @@ body {
     border: 1px solid #f5b1b1;
 }
 
-/* Body transaksi */
+/* === Body transaksi === */
 .trx-body {
     margin-bottom: 12px;
 }
@@ -112,7 +112,7 @@ body {
     font-size: 0.9rem;
 }
 
-/* Item */
+/* === Item list === */
 .trx-items {
     margin-top: 12px;
 }
@@ -142,7 +142,7 @@ body {
     margin-top: 2px;
 }
 
-/* Footer transaksi */
+/* === Footer transaksi === */
 .trx-footer {
     border-top: 1px solid #f0f0f0;
     padding-top: 10px;
@@ -156,7 +156,7 @@ body {
     color: #222;
 }
 
-/* Responsif */
+/* === Responsif === */
 @media (max-width: 600px) {
     .trx-header {
         flex-direction: column;

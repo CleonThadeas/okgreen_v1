@@ -16,49 +16,52 @@ class CheckoutController extends Controller
 {
     // === Ringkasan keranjang ===
     public function show(Request $request)
-    {
-        $cart = session('buy_cart', []);
-        if (empty($cart) || !is_array($cart)) {
-            return redirect()->route('buy-waste.index')->with('error', 'Keranjang kosong.');
-        }
-
-        $items = [];
-        $subtotal = 0;
-
-        foreach ($cart as $row) {
-            if (!isset($row['waste_type_id'], $row['quantity'])) continue;
-
-            $type = WasteType::with('category')->find($row['waste_type_id']);
-            if (!$type) continue;
-
-            $qty  = (float) $row['quantity'];
-            $price= (float) $type->price_per_unit;
-            $sub  = $price * $qty;
-            $subtotal += $sub;
-
-            $items[] = [
-                'waste_type_id'  => $type->id,
-                'type_name'      => $type->type_name,
-                'category_name'  => optional($type->category)->category_name,
-                'quantity'       => $qty,
-                'price_per_unit' => $price,
-                'subtotal'       => $sub,
-                'image'          => $type->photo ?? null,
-            ];
-        }
-
-        return view('user.buy.checkout', [
-            'items'            => $items,
-            'subtotal'         => $subtotal,
-            'shipping'         => 0,
-            'total'            => $subtotal,
-            'shippingPickup'   => 0,
-            'shippingDelivery' => 10000,
-            'addresses'        => collect([]),
-            'pickupLocations'  => [],
-            'discount'         => 0,
-        ]);
+{
+    $cart = session('buy_cart', []);
+    if (empty($cart) || !is_array($cart)) {
+        return redirect()->route('buy-waste.index')->with('error', 'Keranjang kosong.');
     }
+
+    $items = [];
+    $subtotal = 0;
+
+    foreach ($cart as $row) {
+        if (!isset($row['waste_type_id'], $row['quantity'])) continue;
+
+        $type = WasteType::with('category')->find($row['waste_type_id']);
+        if (!$type) continue;
+
+        $qty  = (float) $row['quantity'];
+        $price= (float) $type->price_per_unit;
+        $sub  = $price * $qty;
+        $subtotal += $sub;
+
+        $items[] = [
+            'waste_type_id'  => $type->id,
+            'type_name'      => $type->type_name,
+            'category_name'  => optional($type->category)->category_name,
+            'quantity'       => $qty,
+            'price_per_unit' => $price,
+            'subtotal'       => $sub,
+            'image'          => $type->photo ?? null,
+        ];
+    }
+
+    $user = Auth::user();
+
+    return view('user.buy.checkout', [
+        'items'            => $items,
+        'subtotal'         => $subtotal,
+        'shipping'         => 0,
+        'total'            => $subtotal,
+        'shippingPickup'   => 0,
+        'shippingDelivery' => 10000,
+        'addresses'        => $user->addresses ?? collect([]), // kalau ada relasi Address
+        'pickupLocations'  => [],
+        'discount'         => 0,
+        'user'             => $user, // 🔥 ini penting
+    ]);
+}
 
     // === Simpan keranjang sementara ===
     public function prepare(Request $request)
@@ -156,17 +159,15 @@ public function confirm(Request $request)
 {
     $request->validate([
         'address_type'   => 'required|in:pickup,delivery',
-        'receiver_name'  => 'nullable|string|max:150',
-        'address'        => 'nullable|string|max:255',
-        'phone'          => 'nullable|string|max:30',
+        'address_id'     => 'nullable|integer|exists:addresses,id',
+        'pickup_location'=> 'nullable|string|max:255',
     ]);
 
     $cart = session('buy_cart', []);
     if (empty($cart)) {
-        if ($request->expectsJson()) {
-            return response()->json(['success' => false, 'message' => 'Keranjang kosong.'], 422);
-        }
-        return redirect()->route('buy-waste.index')->with('error', 'Keranjang kosong.');
+        return $request->expectsJson()
+            ? response()->json(['success' => false, 'message' => 'Keranjang kosong.'], 422)
+            : redirect()->route('buy-waste.index')->with('error', 'Keranjang kosong.');
     }
 
     DB::beginTransaction();
@@ -187,16 +188,42 @@ public function confirm(Request $request)
         $shipping_cost = $request->address_type === 'delivery' ? 10000 : 0;
         $total = $subtotal + $shipping_cost;
 
+        // === Handle alamat ===
+        $user = Auth::user();
+        $receiver_name = null;
+        $address = null;
+        $phone = null;
+
+        if ($request->address_type === 'pickup') {
+            $receiver_name = $user->name;
+            $address = $request->pickup_location ?? 'Ambil di lokasi OKGREEN';
+            $phone = $user->phone_number;
+        } else {
+            if ($request->address_id) {
+                $addr = \App\Models\Address::where('id', $request->address_id)
+                    ->where('user_id', $user->id)
+                    ->firstOrFail();
+                $receiver_name = $addr->name;
+                $address = $addr->address;
+                $phone = $addr->phone;
+            } else {
+                $receiver_name = $user->name;
+                $address = $user->address;
+                $phone = $user->phone_number;
+            }
+        }
+
+        // === Simpan transaksi ===
         $tx = new BuyTransaction();
-        $tx->user_id         = Auth::id();
+        $tx->user_id         = $user->id;
         $tx->total_amount    = $total;
         $tx->status          = 'pending';
         $tx->transaction_date= Carbon::now();
-        $tx->payment_method  = 'qris'; // fix hanya QRIS
+        $tx->payment_method  = 'qris';
         $tx->shipping_method = $request->address_type;
-        $tx->receiver_name   = $request->receiver_name;
-        $tx->address         = $request->address;
-        $tx->phone           = $request->phone;
+        $tx->receiver_name   = $receiver_name;
+        $tx->address         = $address;
+        $tx->phone           = $phone;
         $tx->shipping_cost   = $shipping_cost;
         $tx->expired_at      = Carbon::now()->addMinutes(10);
         $tx->qr_text         = 'okgreen-demo-static-qr-payload-' . $total;
@@ -211,7 +238,10 @@ public function confirm(Request $request)
                 'subtotal'           => $it['sub'],
             ]);
 
-            $stock = WasteStock::where('waste_type_id', $it['type']->id)->lockForUpdate()->first();
+            $stock = WasteStock::where('waste_type_id', $it['type']->id)
+                        ->lockForUpdate()
+                        ->first();
+
             if ($stock) {
                 if ($stock->available_weight < $it['qty']) {
                     DB::rollBack();
@@ -228,26 +258,15 @@ public function confirm(Request $request)
         DB::commit();
         session()->forget('buy_cart');
 
-        // kalau request AJAX → JSON
-        if ($request->expectsJson()) {
-            return response()->json([
-                'success' => true,
-                'redirect_url' => route('checkout.qr', $tx->id),
-            ]);
-        }
-
-        // fallback non-AJAX → redirect biasa
-        return redirect()->route('checkout.qr', $tx->id);
+        return $request->expectsJson()
+            ? response()->json(['success' => true, 'redirect_url' => route('checkout.qr', $tx->id)])
+            : redirect()->route('checkout.qr', $tx->id);
 
     } catch (\Throwable $e) {
         DB::rollBack();
-        if ($request->expectsJson()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal membuat transaksi: '.$e->getMessage(),
-            ], 500);
-        }
-        return back()->with('error', 'Gagal membuat transaksi: ' . $e->getMessage());
+        return $request->expectsJson()
+            ? response()->json(['success' => false, 'message' => 'Gagal: '.$e->getMessage()], 500)
+            : back()->with('error', 'Gagal membuat transaksi: '.$e->getMessage());
     }
 }
 
