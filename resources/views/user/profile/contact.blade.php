@@ -31,9 +31,9 @@
           @endif
 
           {{-- Pesan error --}}
-          @if(session('error'))
+          @if($errors->any())
             <div class="alert alert-danger animate-fade">
-              {{ session('error') }}
+              {{ implode(', ', $errors->all()) }}
             </div>
           @endif
 

@@ -1,36 +1,21 @@
 <?php
-
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ContactReply extends Model
 {
-    use HasFactory;
-
+    protected $table = 'contact_replies';
     protected $primaryKey = 'reply_id';
+    public $incrementing = true;
+    public $timestamps = true;
 
     protected $fillable = [
-        'message_id',
-        'staff_id',
-        'user_id',
-        'sender_type',
-        'reply',
+        'message_id','sender_id','sender_role','message'
     ];
 
-    public function message()
+    public function contact()
     {
         return $this->belongsTo(ContactMessage::class, 'message_id', 'message_id');
-    }
-
-    public function staff()
-    {
-        return $this->belongsTo(Staff::class, 'staff_id', 'id');
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }

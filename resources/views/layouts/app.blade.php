@@ -25,14 +25,6 @@
             <a href="{{ route('profile.edit') }}" style="margin-right:15px; background:blue; padding:5px 10px; color:white; border-radius:5px; text-decoration:none;">
                 Profile
             </a>
-
-            {{-- Tombol Logout --}}
-            <form action="{{ route('logout') }}" method="POST" style="display:inline;">
-                @csrf
-                <button type="submit" style="background:red; color:white; border:none; padding:5px 10px; cursor:pointer; border-radius:5px;">
-                    Logout
-                </button>
-            </form>
         </div>
     </nav>
 

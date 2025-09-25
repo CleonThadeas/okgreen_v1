@@ -22,12 +22,16 @@ use App\Http\Controllers\Staff\WasteManagementController as StaffWasteCtrl;
 use App\Http\Controllers\Staff\SellTypeController as StaffSellTypeCtrl;
 use App\Http\Controllers\Staff\StaffTransactionController as StaffTransactionCtrl;
 
-// === dari KURANGNOTIVIKASI ===
+// === dari KURANGNOTIVIKASI / tambahan BE ===
 use App\Http\Controllers\Staff\SellRequestController;
 use App\Http\Controllers\Staff\SellTypeController;
 use App\Http\Controllers\UserPointController;
 use App\Models\SellWaste;
 use App\Http\Controllers\HistoryController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\Staff\ContactController as StaffContactController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\Staff\NotificationController as StaffNotificationController;
 
 // ================== LANDING PAGE ==================
 Route::get('/', fn() => view('LandingPage'))->name('home');
@@ -58,7 +62,8 @@ Route::middleware('auth:web')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
     // Contact Us
-    Route::view('/contact', 'user.profile.contact')->name('contact');
+    Route::get('/contact', [ContactController::class,'create'])->name('contact');
+    Route::post('/contact', [ContactController::class,'store'])->name('contact.store');
 
     // Beli Sampah
     Route::get('/buy-waste', [WasteController::class, 'index'])->name('buy-waste.index');
@@ -68,7 +73,6 @@ Route::middleware('auth:web')->group(function () {
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 
-    // CheckoutController (alur QR)
     Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout.form');
     Route::post('/checkout/prepare', [CheckoutController::class, 'prepare'])->name('checkout.prepare');
     Route::post('/checkout/confirm', [CheckoutController::class, 'confirm'])->name('checkout.confirm');
@@ -100,6 +104,12 @@ Route::middleware('auth:web')->group(function () {
 
     // Reward / Poin
     Route::get('/my-points', [UserPointController::class, 'index'])->name('user.points.index');
+
+    // Notifikasi
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/{id}', [NotificationController::class, 'show'])->name('notifications.show');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
 });
 
 // ================== PRODUK ==================
@@ -131,9 +141,19 @@ Route::prefix('staff')->name('staff.')->middleware('auth:staff')->group(function
     Route::post('/sell-requests/{id}/update', [SellRequestController::class, 'updateStatus'])->name('sell_requests.update');
 
     // Sell Waste Types
-    Route::get('/sell-types', [StaffSellTypeCtrl::class, 'index'])->name('sell-types.index');
-    Route::get('/sell-types/create', [StaffSellTypeCtrl::class, 'create'])->name('sell-types.create');
-    Route::post('/sell-types', [StaffSellTypeCtrl::class, 'store'])->name('sell-types.store');
+    Route::get('/sell-types', [SellTypeController::class,'index'])->name('sell-types.index');
+    Route::get('/sell-types/create', [SellTypeController::class,'create'])->name('sell-types.create');
+    Route::post('/sell-types', [SellTypeController::class,'store'])->name('sell-types.store');
+
+    // Staff Contact & Notifications
+    Route::get('/contacts', [StaffContactController::class,'index'])->name('contacts.index');
+    Route::get('/contacts/{id}', [StaffContactController::class,'show'])->name('contacts.show');
+    Route::post('/contacts/{id}/reply', [StaffContactController::class,'reply'])->name('contacts.reply');
+
+    Route::get('/notifications', [StaffNotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/{id}', [StaffNotificationController::class, 'show'])->name('notifications.show');
+    Route::post('/notifications/{id}/read', [StaffNotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [StaffNotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
 });
 
 // ================== ADMIN (auth:admin) ==================

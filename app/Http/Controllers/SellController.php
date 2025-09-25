@@ -9,6 +9,9 @@ use App\Models\SellWaste;
 use App\Models\SellWastePhoto;
 use App\Models\SellWasteType;   // ✅ ini dipakai untuk harga poin/kg
 use App\Models\WasteCategory;
+use App\Models\Notification;
+use App\Models\Staff;
+use Illuminate\Support\Str;
 
 class SellController extends Controller
 {
@@ -82,6 +85,17 @@ class SellController extends Controller
         } catch (\Throwable $e) {
             DB::rollBack();
             Log::error('Sell store error: '.$e->getMessage());
+// Notification
+$staffs = Staff::all();
+foreach ($staffs as $st) {
+    Notification::create([
+        'receiver_id'   => $st->id,
+        'receiver_role' => 'staff',
+        'title'         => 'Permintaan jual sampah baru',
+        'message'       => 'User '. $user->name .' mengirim permintaan jual (ID: '.$sell->id.').',
+        'is_read'       => false,
+    ]);
+}
             return back()->with('error','Gagal mengirim permintaan jual sampah.')->withInput();
         }
     }

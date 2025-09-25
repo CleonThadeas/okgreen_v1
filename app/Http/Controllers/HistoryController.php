@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\UserPointHistory;
 use App\Models\Transaction;
 use App\Models\SellWaste;
+use App\Models\PointHistory;
+use App\Models\UserPoint;  
 
 class HistoryController extends Controller
 {
@@ -15,17 +17,17 @@ class HistoryController extends Controller
      */
     public function points()
     {
-        $user = Auth::user();   // ✅ benar
-        $userId = $user->id;    // ✅ ambil id dengan benar
+        $user = Auth::user();
 
-        $histories = UserPointHistory::where('user_id', $userId)
+        // total poin user
+        $totalPoints = UserPoint::where('user_id', $user->id)->value('points') ?? 0;
+
+        // history poin (pagination)
+        $histories = PointHistory::where('user_id', $user->id)
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        $totalPoints = UserPointHistory::where('user_id', $userId)
-            ->sum('points_change');
-
-        return view('user.points.historypoints', compact('histories', 'totalPoints'));
+        return view('user.points.historypoints', compact('totalPoints', 'histories'));
     }
 
     /**
