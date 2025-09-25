@@ -1,139 +1,198 @@
-/* Layout umum */
+/* === Umum === */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', sans-serif;
     margin: 0;
-    background-color: #F9F9F9;
+    background-color: #f4f6f8;
     color: #333;
 }
 
 .container-transaksi {
-    max-width: 900px;
-    margin: 80px auto 40px auto; /* ada jarak dari header */
+    max-width: 850px;
+    margin: 70px auto 40px;   /* lebih dekat ke navbar */
     padding: 0 16px;
 }
 
 .title {
-    font-size: 1.6rem;
-    margin-bottom: 20px;
+    font-size: 1.7rem;
+    font-weight: 600;
+    margin: 0; /* biar sejajar sama tombol */
+    color: #2c3e50;
 }
 
-/* Alert box */
+/* === Header row (judul + tombol menu) === */
+.header-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 22px;
+}
+
+.menu-toggle {
+    background: #fff;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.menu-toggle i {
+    color: #2c3e50;
+}
+
+/* === Alert === */
 .alert {
     padding: 10px 14px;
     border-radius: 6px;
     margin-bottom: 16px;
     font-size: 0.95rem;
 }
-
 .alert.success {
     background: #e8f9f0;
     color: #207a4a;
     border: 1px solid #a8e6c2;
 }
-
 .alert.error {
     background: #fceaea;
     color: #c22a2a;
     border: 1px solid #f5b1b1;
 }
 
-/* Card transaksi */
+/* === Card transaksi === */
 .card {
     background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    padding: 16px;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    margin-bottom: 20px;
+    padding: 18px 20px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+}
 .card.empty {
     text-align: center;
-    padding: 30px;
+    padding: 40px;
     color: #777;
 }
 
-.transaksi-card {
-    margin-bottom: 18px;
-}
-
-/* Header transaksi */
+/* === Header transaksi === */
 .trx-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 12px;
 }
-
+.trx-id {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.05rem;
+}
 .trx-amount {
-    text-align: right;
-}
-
-.trx-amount .total {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     font-weight: bold;
+    color: #2c3e50;
 }
 
-/* Table transaksi */
-.trx-items table {
-    width: 100%;
-    border-collapse: collapse;
+/* === Status badge === */
+.status {
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+.status.paid {
+    background: #e9f9ef;
+    color: #1e8449;
+    border: 1px solid #b8e6c2;
+}
+.status.pending {
+    background: #fff6e6;
+    color: #e67e22;
+    border: 1px solid #f5d8a5;
+}
+.status.cancelled {
+    background: #fdeaea;
+    color: #c0392b;
+    border: 1px solid #f5b1b1;
+}
+
+/* === Body transaksi === */
+.trx-body {
     margin-bottom: 12px;
 }
-
-.trx-items thead {
-    background: #f6f7f8;
-    font-weight: bold;
+.trx-body p {
+    margin: 4px 0;
+    font-size: 0.92rem;
 }
-
-.trx-items th, 
-.trx-items td {
-    padding: 10px 8px;
-    border-bottom: 1px solid #eee;
-    font-size: 0.95rem;
-}
-
-.trx-items td.center {
-    text-align: center;
-}
-
-.trx-items td.right {
-    text-align: right;
-}
-
-/* Footer transaksi */
-.trx-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 20px;
-    align-items: center;
-    font-size: 0.95rem;
-}
-
-.trx-footer .total {
-    font-weight: bold;
-    color: #222;
-}
-
-/* Text utilitas */
 .muted {
     color: #777;
     font-size: 0.9rem;
 }
 
-.small {
+/* === Item list === */
+.trx-items {
+    margin-top: 12px;
+}
+.item-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px dashed #eee;
+}
+.item-row:last-child {
+    border-bottom: none;
+}
+.item-name {
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+.item-category {
     font-size: 0.8rem;
+    color: #888;
+}
+.item-price {
+    text-align: right;
+    font-size: 0.9rem;
+}
+.subtotal {
+    font-weight: 600;
+    margin-top: 2px;
 }
 
-/* Responsif */
+/* === Footer transaksi === */
+.trx-footer {
+    border-top: 1px solid #f0f0f0;
+    padding-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
+    font-size: 0.9rem;
+}
+.trx-footer .grand-total {
+    font-weight: bold;
+    color: #222;
+}
+
+/* === Responsif === */
 @media (max-width: 600px) {
     .trx-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 6px;
     }
-
     .trx-footer {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: flex-end;
         gap: 6px;
+    }
+    .header-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
     }
 }

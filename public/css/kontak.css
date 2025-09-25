@@ -1,0 +1,174 @@
+/* ======================
+   GLOBAL STYLE
+====================== */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  background: #EAF6EB;
+  color: #333;
+}
+
+main {
+  margin: 30px auto;
+  max-width: 1200px;
+  padding: 0 20px;
+}
+
+/* ======================
+   SIDEBAR
+====================== */
+.sidebar {
+  width: 250px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  height: fit-content;
+}
+
+.sidebar h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #2c3e50;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar ul li {
+  margin-bottom: 12px;
+}
+
+.sidebar ul li a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  padding: 8px 12px;
+  display: block;
+  border-radius: 8px;
+  transition: 0.3s;
+}
+
+.sidebar ul li a:hover,
+.sidebar ul li a.active {
+  background: #5f876b;
+  color: #fff;
+}
+
+/* ======================
+   CONTACT CONTAINER
+====================== */
+.kontak-container {
+  display: flex;
+  gap: 30px;
+  align-items: stretch;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+  padding: 30px;
+  flex: 1;
+}
+
+.form-section {
+  flex: 1;
+}
+
+.form-section h2 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #2c3e50;
+}
+
+.kontak-form input,
+.kontak-form textarea {
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border 0.3s;
+}
+
+.kontak-form input:focus,
+.kontak-form textarea:focus {
+  border-color: #5f876b;
+  outline: none;
+}
+
+.btn-kirim {
+  background: #5f876b;
+  color: #fff;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-kirim:hover {
+  background: #4e7057;
+}
+
+/* ======================
+   IMAGE SECTION
+====================== */
+.image-section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-section img {
+  max-width: 100%;
+  border-radius: 10px;
+}
+
+/* ======================
+   LAYOUT FLEX (SIDEBAR + CONTENT)
+====================== */
+.page-wrapper {
+  display: flex;
+  gap: 25px;
+}
+
+/* ======================
+   ANIMASI
+====================== */
+.animate-card {
+  animation: slideUp 0.6s ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(25px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade {
+  animation: fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ======================
+   RESPONSIVE
+====================== */
+@media (max-width: 900px) {
+  .kontak-container {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+  }
+}

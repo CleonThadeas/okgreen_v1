@@ -74,50 +74,83 @@ html, body {
 .detail-produk-container {
     display: flex;
     flex-direction: row;
-    gap: 30px;
+    gap: 40px;
     padding: 30px;
     box-sizing: border-box;
+    background: linear-gradient(135deg, #ffffff, #f7f9f7);
+    border-radius: 12px;
 }
 
-/* Kolom kiri = Gambar */
 .detail-produk-container .produk-gambar {
     flex: 1;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 10px;
-    max-width: 400px;
+    justify-content: center;
+    align-items: flex-start;
 }
 
 .detail-produk-container .produk-gambar img {
     width: 100%;
-    max-width: 350px;
+    max-width: 320px;
     height: auto;
-    border-radius: 10px;
-    object-fit: contain;
-    border: 1px solid #eee;
-    background: #fafafa;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 2px solid #eaeaea;
+    background: #fff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease;
 }
 
-/* Kolom kanan = Info */
+.detail-produk-container .produk-gambar img:hover {
+    transform: scale(1.05);
+}
+
 .detail-produk-container .produk-info {
     flex: 2;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 10px;
 }
 
-.detail-produk-container h1 {
-    font-size: 22px;
-    margin-bottom: 10px;
-    color: #333;
+.detail-produk-container .produk-info h1 {
+    font-size: 24px;
+    margin-bottom: 12px;
+    color: #2d3a32;
+    font-weight: 700;
 }
 
-.detail-produk-container p {
-    font-size: 14px;
+.detail-produk-container .produk-info p {
+    font-size: 15px;
     margin: 6px 0;
-    color: #555;
+    color: #444;
+}
+
+.detail-produk-container .produk-info strong {
+    color: #222;
+}
+
+.produk-deskripsi {
+    font-style: italic;
+    color: #666;
+    background: #f2f5f2;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+/* Harga total lebih menonjol */
+.modal-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 25px;
+    padding-top: 18px;
+    border-top: 2px dashed #e0e0e0;
+}
+
+#modal-total {
+    font-size: 20px;
+    font-weight: bold;
+    color: #2c6e49;
 }
 
 /* Harga dan stok */

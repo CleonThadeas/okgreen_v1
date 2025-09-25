@@ -16,9 +16,13 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\SellController;
+
+// === dari HEAD ===
 use App\Http\Controllers\Staff\WasteManagementController as StaffWasteCtrl;
 use App\Http\Controllers\Staff\SellTypeController as StaffSellTypeCtrl;
 use App\Http\Controllers\Staff\StaffTransactionController as StaffTransactionCtrl;
+
+// === dari KURANGNOTIVIKASI ===
 use App\Http\Controllers\Staff\SellRequestController;
 use App\Http\Controllers\Staff\SellTypeController;
 use App\Http\Controllers\UserPointController;
@@ -46,32 +50,25 @@ Route::middleware('auth:web')->get('/dashboard', [UserDashboardController::class
 Route::middleware('auth:admin')->get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 Route::middleware('auth:staff')->get('/staff/dashboard', [StaffDashboardController::class, 'index'])->name('staff.dashboard');
 
-// ================== USER PROFILE ==================
-Route::middleware('auth:web')->group(function () {
-});
 // ================== USER (web guard) ==================
-Route::middleware('auth:web')->group(function(){
-});
+Route::middleware('auth:web')->group(function () {
+
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
-// ================== USER (web guard) - BELI & JUAL ==================
-Route::middleware('auth:web')->group(function () {
-
-    // Beli Sampah
-    // Contact Us (static)
+    // Contact Us
     Route::view('/contact', 'user.profile.contact')->name('contact');
 
-    // Beli sampah
+    // Beli Sampah
     Route::get('/buy-waste', [WasteController::class, 'index'])->name('buy-waste.index');
 
-    // Cart & Checkout (CartController lama tetap ada)
+    // Cart & Checkout
     Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 
-    // CheckoutController (ini yang kita pakai buat alur QR)
+    // CheckoutController (alur QR)
     Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout.form');
     Route::post('/checkout/prepare', [CheckoutController::class, 'prepare'])->name('checkout.prepare');
     Route::post('/checkout/confirm', [CheckoutController::class, 'confirm'])->name('checkout.confirm');
@@ -80,46 +77,29 @@ Route::middleware('auth:web')->group(function () {
     Route::get('/checkout/cart', [CheckoutController::class, 'cart'])->name('checkout.cart');
     Route::get('/checkout/qr/{id}', [CheckoutController::class, 'qrView'])->name('checkout.qr');
 
-
     // Transactions (User)
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
+    Route::get('/transactions/{id}', [TransactionController::class, 'show'])->name('transactions.show');
     Route::get('/transactions/{id}/status', [TransactionController::class, 'status'])->name('transactions.status');
 
     // Jual Sampah
     Route::get('/jual-barang', [SellController::class, 'index'])->name('jual-barang');
     Route::post('/jual-barang', [SellController::class, 'store'])->name('sell-waste.store');
-    Route::get('/sell-waste', fn () => redirect()->route('jual-barang'))->name('sell-waste.index');
+    Route::get('/sell-waste', [SellController::class, 'index'])->name('sell-waste.index');
+    Route::post('/sell-waste', [SellController::class, 'store'])->name('sell-waste.store');
     Route::get('/sell-waste/types/{catId}', [SellController::class, 'getTypes'])->name('sell-waste.types');
+    Route::get('/sell/create', [SellController::class, 'create'])->name('sell.create');
 
-    // Transactions (Pembelian)
-    Route::get('/transactions', [TransactionController::class,'index'])->name('transactions.index');
-    Route::get('/transactions/{id}', [TransactionController::class,'show'])->name('transactions.show');
-    Route::get('/transactions/{id}/status', [TransactionController::class,'status'])->name('transactions.status');
-
-    // SELL WASTE
-    Route::get('/sell-waste', [SellController::class,'index'])->name('sell-waste.index');
-    Route::post('/sell-waste', [SellController::class,'store'])->name('sell-waste.store');
-    Route::get('/sell-waste/types/{catId}', [SellController::class,'getTypes'])->name('sell-waste.types');
-    Route::get('/sell/create', [SellController::class,'create'])->name('sell.create');
-
-
-    // ================== HISTORY ==================
+    // History
     Route::get('/history/sell', [HistoryController::class, 'sell'])->name('history.sell');
-
-
-   // History Buy diarahkan ke TransactionController@index
-Route::get('/history/buy', [TransactionController::class, 'index'])->name('history.buy');
-
-Route::get('/history/points', [HistoryController::class, 'points'])->name('history.points');
+    Route::get('/history/buy', [TransactionController::class, 'index'])->name('history.buy');
+    Route::get('/history/points', [HistoryController::class, 'points'])->name('history.points');
 
     // Edukasi
     Route::view('/edu', 'user.edukasi.index')->name('edu.index');
 
-
-    // Reward (Tukar Point)// Tukarkan poin
-Route::get('/my-points', [UserPointController::class, 'index'])->name('user.points.index');
-
-
+    // Reward / Poin
+    Route::get('/my-points', [UserPointController::class, 'index'])->name('user.points.index');
 });
 
 // ================== PRODUK ==================
@@ -146,9 +126,9 @@ Route::prefix('staff')->name('staff.')->middleware('auth:staff')->group(function
     Route::post('/transactions/{id}/update', [StaffTransactionCtrl::class, 'updateStatus'])->name('transactions.update');
 
     // Sell Requests (Staff)
-    Route::get('/sell-requests', [\App\Http\Controllers\Staff\SellRequestController::class, 'index'])->name('sell_requests.index');
-    Route::get('/sell-requests/{id}', [\App\Http\Controllers\Staff\SellRequestController::class, 'show'])->name('sell_requests.show');
-    Route::post('/sell-requests/{id}/update', [\App\Http\Controllers\Staff\SellRequestController::class, 'updateStatus'])->name('sell_requests.update');
+    Route::get('/sell-requests', [SellRequestController::class, 'index'])->name('sell_requests.index');
+    Route::get('/sell-requests/{id}', [SellRequestController::class, 'show'])->name('sell_requests.show');
+    Route::post('/sell-requests/{id}/update', [SellRequestController::class, 'updateStatus'])->name('sell_requests.update');
 
     // Sell Waste Types
     Route::get('/sell-types', [StaffSellTypeCtrl::class, 'index'])->name('sell-types.index');
@@ -158,7 +138,6 @@ Route::prefix('staff')->name('staff.')->middleware('auth:staff')->group(function
 
 // ================== ADMIN (auth:admin) ==================
 Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function () {
-
     // Kelola sampah & produk
     Route::get('/wastes', [\App\Http\Controllers\Admin\WasteManagementController::class, 'index'])->name('wastes.index');
     Route::get('/wastes/category/create', [\App\Http\Controllers\Admin\WasteManagementController::class, 'createCategory'])->name('wastes.category.create');

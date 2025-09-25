@@ -1,28 +1,35 @@
-{{-- resources/views/user/riwayat.blade.php --}}
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Riwayat Transaksi</title>
-    <link rel="stylesheet" href="{{ asset('css/riwayat.css') }}?v={{ time() }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="stylesheet" href="{{ asset('css/riwayat.css') }}?v={{ time() }}">
+    <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}?v={{ time() }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
     {{-- Header --}}
     @include('partials.header')
 
-    <div class="container-transaksi">
-        <h2 class="title">Riwayat Transaksi</h2>
+    <!-- Overlay -->
+    <div class="overlay" onclick="toggleSidebar()"></div>
 
-@section('content')
-<div class="container">
-  {{-- Sidebar --}}
-  @include('user.profile.sidebar')
-  <h2>Riwayat Transaksi</h2>
+    <!-- Sidebar -->
+    @include('partials.sidebar')
 
+    <div class="container-transaksi animate-card">
+        <!-- Header row berisi tombol + judul -->
+        <div class="header-row">
+            <button class="menu-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h2 class="title">🧾 Riwayat Transaksi</h2>
+        </div>
 
+        {{-- Notifikasi --}}
         @if(session('success'))
             <div class="alert success">{{ session('success') }}</div>
         @endif
@@ -30,6 +37,7 @@
             <div class="alert error">{{ session('error') }}</div>
         @endif
 
+        {{-- Jika kosong --}}
         @if($transactions->isEmpty())
             <div class="card empty">
                 <p>Belum ada transaksi.</p>
@@ -37,63 +45,60 @@
         @else
             @foreach($transactions as $trx)
                 <div class="card transaksi-card">
+                    {{-- Header --}}
                     <div class="trx-header">
-                        <div>
-                            <strong>Transaksi #{{ $trx->id }}</strong>
-                            <div class="muted">
-                                Tanggal: {{ \Carbon\Carbon::parse($trx->transaction_date)->format('d M Y H:i') }}
-                            </div>
-                            <div class="muted">
-                                Metode Pembayaran: {{ strtoupper($trx->payment_method ?? '-') }}
-                            </div>
-                            <div class="muted">
-                                Pengiriman: {{ strtoupper($trx->shipping_method ?? 'pickup') }}
-                                @if($trx->shipping_method === 'delivery')
-                                    — {{ $trx->receiver_name }} | {{ $trx->phone }} | {{ $trx->address }}
-                                @endif
-                            </div>
+                        <div class="trx-id">
+                            <strong>#{{ $trx->id }}</strong>
+                            <span class="status {{ strtolower($trx->status) }}">
+                                {{ ucfirst($trx->status) }}
+                            </span>
                         </div>
                         <div class="trx-amount">
-                            <div class="total">Rp {{ number_format($trx->total_amount,0,',','.') }}</div>
-                            <div class="muted">Status: {{ ucfirst($trx->status) }}</div>
+                            Rp {{ number_format($trx->total_amount,0,',','.') }}
                         </div>
                     </div>
 
-                    <div class="trx-items">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Jenis Sampah</th>
-                                    <th class="center">Kategori</th>
-                                    <th class="center">Qty (Kg)</th>
-                                    <th class="right">Harga/kg</th>
-                                    <th class="right">Subtotal</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($trx->items as $item)
-                                    <tr>
-                                        <td>
+                    {{-- Detail utama --}}
+                    <div class="trx-body">
+                        <p class="muted">
+                            📅 {{ \Carbon\Carbon::parse($trx->transaction_date)->format('d M Y H:i') }}
+                        </p>
+                        <p class="muted">
+                            💳 {{ strtoupper($trx->payment_method ?? '-') }}
+                        </p>
+                        <p class="muted">
+                            🚚 {{ strtoupper($trx->shipping_method ?? 'pickup') }}
+                            @if($trx->shipping_method === 'delivery')
+                                — {{ $trx->receiver_name }} | {{ $trx->phone }} | {{ $trx->address }}
+                            @endif
+                        </p>
+
+                        {{-- Item list --}}
+                        <div class="trx-items">
+                            @foreach($trx->items as $item)
+                                <div class="item-row">
+                                    <div>
+                                        <div class="item-name">
                                             {{ optional($item->type)->type_name ?? 'Tipe (ID: '.$item->waste_type_id.')' }}
-                                        </td>
-                                        <td class="center">{{ optional(optional($item->type)->category)->category_name ?? '-' }}</td>
-                                        <td class="center">{{ $item->quantity }}</td>
-                                        <td class="right">Rp {{ number_format($item->price_per_unit,0,',','.') }}</td>
-                                        <td class="right">Rp {{ number_format($item->subtotal,0,',','.') }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                        </div>
+                                        <div class="item-category">
+                                            {{ optional(optional($item->type)->category)->category_name ?? '-' }}
+                                        </div>
+                                    </div>
+                                    <div class="item-price">
+                                        {{ $item->quantity }} Kg × Rp {{ number_format($item->price_per_unit,0,',','.') }}
+                                        <div class="subtotal">Rp {{ number_format($item->subtotal,0,',','.') }}</div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
 
+                    {{-- Footer --}}
                     <div class="trx-footer">
-                        <div class="muted">
-                            Subtotal: Rp {{ number_format(collect($trx->items)->sum('subtotal'),0,',','.') }}
-                        </div>
-                        <div class="muted">
-                            Ongkir: Rp {{ number_format($trx->shipping_cost ?? 0,0,',','.') }}
-                        </div>
-                        <div class="total">
+                        <div>Subtotal: Rp {{ number_format(collect($trx->items)->sum('subtotal'),0,',','.') }}</div>
+                        <div>Ongkir: Rp {{ number_format($trx->shipping_cost ?? 0,0,',','.') }}</div>
+                        <div class="grand-total">
                             Total: Rp {{ number_format($trx->total_amount,0,',','.') }}
                         </div>
                     </div>
@@ -102,5 +107,11 @@
         @endif
     </div>
 
+    <script>
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('active');
+            document.querySelector('.overlay').classList.toggle('show');
+        }
+    </script>
 </body>
 </html>
