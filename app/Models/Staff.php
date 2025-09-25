@@ -17,8 +17,13 @@ class Staff extends Authenticatable
     protected $keyType = 'int';
 
     protected $fillable = [
-        'name', 'email', 'password', 'phone_number', 'address'
+        'name',
+        'email',
+        'password',
+        'phone_number',
+        'gender',
     ];
+
 
     protected $hidden = [
         'password', 'remember_token',

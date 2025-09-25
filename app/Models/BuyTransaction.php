@@ -2,33 +2,43 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+use Carbon\Carbon;
 
 class BuyTransaction extends Model
 {
+    use HasApiTokens, HasFactory, Notifiable;
+
     protected $table = 'buy_transactions';
 
     protected $fillable = [
-        'user_id','total_amount','status','transaction_date',
-        'payment_method','shipping_method','receiver_name','address','phone','shipping_cost',
-        'qr_text','expired_at','handled_by_staff_id','handled_at'
+        'user_id',
+        'total_amount',
+        'status',
+        'transaction_date'
     ];
 
-    protected $casts = [
-        'transaction_date' => 'datetime',
-        'expired_at'       => 'datetime',
-        'handled_at'       => 'datetime',
-    ];
-
-    public function items(): HasMany
+    // Relasi ke item transaksi
+    public function items()
     {
-        return $this->hasMany(BuyCartItem::class, 'buy_transaction_id');
+        return $this->hasMany(BuyCartItem::class, 'buy_transaction_id', 'id');
     }
 
-    public function user(): BelongsTo
+    // Relasi ke user (supaya bisa akses data user yang buat transaksi)
+    public function user()
     {
-        return $this->belongsTo(User::class,'user_id');
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    // Cek apakah transaksi masih aktif (pending dan belum lewat 5 menit)
+    public function isActive()
+    {
+        return $this->status === 'pending'
+            && Carbon::now()->lessThanOrEqualTo(
+                Carbon::parse($this->transaction_date)->addMinutes(5)
+            );
     }
 }

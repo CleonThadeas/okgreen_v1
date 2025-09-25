@@ -8,18 +8,40 @@ return [
 ],
 
     'guards' => [
-    'web' => [
-        'driver' => 'session',
-        'provider' => 'users',
-    ],
+
+        'web' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
+
+        'api' => [
+            'driver' => 'sanctum',
+            'provider' => 'users',
+        ],
+
+        'sanctum' => [
+            'driver' => 'sanctum',
+            'provider' => 'users',
+        ],
+
+        'admin' => [
+            'driver' => 'sanctum',
+            'provider' => 'admins',
+        ],
+
+        'staff' => [
+            'driver' => 'sanctum',
+            'provider' => 'staff',
+        ],
+
 
     'admin' => [
-        'driver' => 'session',   // ubah dari sanctum → session
+        'driver' => 'session',   
         'provider' => 'admins',
     ],
 
     'staff' => [
-        'driver' => 'session',   // ubah dari sanctum → session
+        'driver' => 'session',   
         'provider' => 'staff',
     ],
 
