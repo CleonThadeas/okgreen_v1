@@ -6,14 +6,28 @@
     <title>Riwayat Transaksi</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="{{ asset('css/riwayat.css') }}?v={{ time() }}">
+    <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}?v={{ time() }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
     {{-- Header --}}
     @include('partials.header')
 
-    <div class="container-transaksi">
-        <h2 class="title">🧾 Riwayat Transaksi</h2>
+    <!-- Overlay -->
+    <div class="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    @include('partials.sidebar')
+
+    <div class="container-transaksi animate-card">
+        <!-- Header row berisi tombol + judul -->
+        <div class="header-row">
+            <button class="menu-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h2 class="title">🧾 Riwayat Transaksi</h2>
+        </div>
 
         {{-- Notifikasi --}}
         @if(session('success'))
@@ -93,5 +107,11 @@
         @endif
     </div>
 
+    <script>
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('active');
+            document.querySelector('.overlay').classList.toggle('show');
+        }
+    </script>
 </body>
 </html>

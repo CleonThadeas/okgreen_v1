@@ -8,14 +8,36 @@ body {
 
 .container-transaksi {
     max-width: 850px;
-    margin: 90px auto 40px;
+    margin: 70px auto 40px;   /* lebih dekat ke navbar */
     padding: 0 16px;
 }
 
 .title {
     font-size: 1.7rem;
     font-weight: 600;
-    margin-bottom: 20px;
+    margin: 0; /* biar sejajar sama tombol */
+    color: #2c3e50;
+}
+
+/* === Header row (judul + tombol menu) === */
+.header-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 22px;
+}
+
+.menu-toggle {
+    background: #fff;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.menu-toggle i {
     color: #2c3e50;
 }
 
@@ -167,5 +189,10 @@ body {
         flex-direction: column;
         align-items: flex-end;
         gap: 6px;
+    }
+    .header-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
     }
 }

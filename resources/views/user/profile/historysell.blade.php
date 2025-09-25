@@ -5,14 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Riwayat Penjualan</title>
     <link rel="stylesheet" href="{{ asset('css/sell-history.css') }}?v={{ time() }}">
+    <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}?v={{ time() }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
     {{-- Header --}}
     @include('partials.header')
 
+    <!-- Overlay -->
+    <div class="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    @include('partials.sidebar')
+
     <div class="jual-container animate-card">
-        <h2 class="title">Riwayat Penjualan Saya</h2>
+        <!-- Header row berisi tombol + judul -->
+        <div class="header-row">
+            <button class="menu-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h2 class="title">Riwayat Penjualan Saya</h2>
+        </div>
 
         {{-- Notifikasi --}}
         @if(session('success'))
@@ -65,5 +79,11 @@
         </div>
     </div>
 
+    <script>
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('active');
+            document.querySelector('.overlay').classList.toggle('show');
+        }
+    </script>
 </body>
 </html>
