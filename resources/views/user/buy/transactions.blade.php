@@ -16,6 +16,13 @@
     <div class="container-transaksi">
         <h2 class="title">Riwayat Transaksi</h2>
 
+@section('content')
+<div class="container">
+  {{-- Sidebar --}}
+  @include('user.profile.sidebar')
+  <h2>Riwayat Transaksi</h2>
+
+
         @if(session('success'))
             <div class="alert success">{{ session('success') }}</div>
         @endif

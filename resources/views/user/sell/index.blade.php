@@ -67,7 +67,9 @@
                 <div class="upload-box">
                     <input type="file" name="photo[]" multiple>
                 </div>
-
+        <button type="submit">Kirim Permintaan Jual</button>
+    </form>
+</div>
                 <label>Deskripsi:</label>
                 <textarea name="description" rows="3">{{ old('description') }}</textarea>
 

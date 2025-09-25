@@ -1,0 +1,232 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+}
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -280px; /* awalnya tersembunyi */
+  width: 260px;
+  background-color: #c7d8cb; /* hijau muda */
+  height: 100vh;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.2);
+  transition: left 0.3s ease;
+  z-index: 1000;
+}
+
+.sidebar.active {
+  left: 0; /* muncul */
+}
+
+/* Header */
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sidebar-header h2 {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+  color: #2c3e50;
+}
+
+.sidebar-close {
+  background: #9fb8a4;
+  border: none;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #000;
+}
+
+/* Menu */
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+  flex-grow: 1;
+}
+
+.sidebar-menu li {
+  margin-bottom: 12px;
+}
+
+.sidebar-menu a,
+.sidebar-menu button {
+  text-decoration: none;
+  color: #2c3e50;
+  font-size: 15px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  padding: 6px 8px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.sidebar-menu a:hover,
+.sidebar-menu button:hover {
+  background: #b0c4b1;
+}
+
+/* Dropdown */
+.dropdown {
+  border-radius: 8px;
+  padding: 5px;
+}
+
+.dropdown-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  list-style: none;
+  padding: 0;
+  margin-top: 8px;
+}
+
+.dropdown.open .dropdown-content {
+  max-height: 300px; /* cukup tinggi buat isi */
+}
+
+.dropdown-content li {
+  margin: 6px 0;
+  padding-left: 10px;
+}
+
+.dropdown-content a {
+  color: #000;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.dropdown-content a:hover {
+  text-decoration: underline;
+}
+
+/* Divider */
+.sidebar-divider {
+  border: none;
+  border-top: 2px solid #666;
+  margin: 20px 0;
+}
+
+/* Footer */
+.sidebar-footer {
+  font-size: 13px;
+  color: #000;
+}
+
+.sidebar-footer a {
+  color: #000;
+  text-decoration: underline;
+}
+
+.sidebar-footer .copyright {
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+/* Overlay */
+.overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.4);
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.3s;
+  z-index: 900;
+}
+.overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Menu toggle button */
+.menu-toggle {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  margin: 10px;
+  color: #2c3e50;
+}
+
+.submenu {
+  max-height: 0;
+  overflow: hidden;
+  margin-left: 15px;
+  transition: max-height 0.3s ease;
+}
+
+.submenu.show {
+  max-height: 500px; /* cukup buat isi submenu */
+}
+
+.arrow {
+  float: right;
+  transition: transform 0.3s ease;
+}
+
+.arrow.rotate {
+  transform: rotate(180deg);
+}
+
+.menu-item {
+  background: #95ab95; /* hijau kalem */
+  border-radius: 8px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.dropdown-btn {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 12px;
+  text-align: left;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dropdown-btn .arrow {
+  transition: transform 0.3s;
+}
+
+.dropdown-btn.active .arrow {
+  transform: rotate(180deg);
+}
+
+.dropdown-container {
+  display: none;
+  flex-direction: column;
+}
+
+.dropdown-container a {
+  padding: 12px;
+  display: block;
+  text-decoration: none;
+  color: black;
+  transition: background 0.2s;
+}
+
+.dropdown-container a:hover {
+  background: #7d927d;
+}

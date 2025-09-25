@@ -2,59 +2,63 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
-    public function edit(Request $request): View
+    public function edit()
     {
-        return view('profile.edit', [
-            'user' => $request->user(),
-        ]);
-    }
-
-    /**
-     * Update the user's profile information.
-     */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
-    {
-        $request->user()->fill($request->validated());
-
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        // Ambil user dari auth, fallback ke model jika perlu
+        $user = Auth::user();
+        if (! $user instanceof User) {
+            $user = User::find(Auth::id());
         }
 
-        $request->user()->save();
+        if (! $user) {
+            abort(404, 'User not found.');
+        }
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        return view('user.profile.edit', compact('user'));
     }
 
-    /**
-     * Delete the user's account.
-     */
-    public function destroy(Request $request): RedirectResponse
+    public function update(Request $request)
     {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
+        // Pastikan $user adalah Eloquent model
+        $user = Auth::user();
+        if (! $user instanceof User) {
+            $user = User::find(Auth::id());
+        }
+        if (! $user) {
+            return redirect()->back()->withErrors('User tidak ditemukan.');
+        }
+
+        $validated = $request->validate([
+            'name'          => 'required|string|max:100',
+            // email tidak diubah
+            'phone_number'  => 'nullable|string|max:20',
+            // DB enum hanya 'laki-laki' / 'perempuan' -> pilihan "tidak ingin memberitahu" disimpan sebagai NULL
+            'gender'        => 'nullable|in:laki-laki,perempuan',
+            'date_of_birth' => 'nullable|date',
+            'address'       => 'nullable|string',
+            'password'      => 'nullable|string|min:8|confirmed',
         ]);
 
-        $user = $request->user();
+        // assign satu-per-satu (hindari masalah fillable)
+        $user->name = $validated['name'];
+        $user->phone_number = $validated['phone_number'] ?? null;
+        $user->gender = $validated['gender'] ?? null; // kosong => null
+        $user->date_of_birth = $validated['date_of_birth'] ?? null;
+        $user->address = $validated['address'] ?? null;
 
-        Auth::logout();
+        if (! empty($validated['password'])) {
+            $user->password = Hash::make($validated['password']);
+        }
 
-        $user->delete();
+        $user->save();
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return Redirect::to('/');
+        return redirect()->route('profile.edit')->with('success', 'Profil berhasil diperbarui.');
     }
 }

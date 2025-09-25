@@ -23,7 +23,6 @@
 </nav>
 
     </nav>
-    {{-- 
 <div class="icons">
     <a href="{{ route('transactions.index') }}">
         <img src="{{ asset('img/bell.png') }}" alt="Notifikasi">
@@ -32,6 +31,4 @@
         <img src="{{ asset('img/user.png') }}" alt="Profil">
     </a>
 </div>
---}}
-
 </header>

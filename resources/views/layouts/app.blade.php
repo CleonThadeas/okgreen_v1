@@ -4,18 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OkGreen - @yield('title')</title>
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/profil.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/header.css') }}?v={{ time() }}">
 </head>
 <body>
-    <nav style="background:#4CAF50; padding:10px; color:white;">
-        <a href="{{ route('dashboard') }}" style="margin-right:15px;">Dashboard</a>
-        <a href="{{ route('sell-waste.index') }}" style="margin-right:15px;">Jual Sampah</a>
-        <a href="{{ route('buy-waste.index') }}" style="margin-right:15px;">Beli Sampah</a>
-        <a href="{{ route('edu.index') }}" style="margin-right:15px;">Edukasi</a>
-        <form action="{{ route('logout') }}" method="POST" style="display:inline;">
-            @csrf
-            <button type="submit" style="background:red; color:white; border:none; padding:5px 10px; cursor:pointer;">Logout</button>
-        </form>
+    <nav style="background:#4CAF50; padding:10px; color:white; display:flex; justify-content:space-between; align-items:center;">
+        <div>
+            <a href="{{ route('dashboard') }}" style="margin-right:15px;">Dashboard</a>
+            <a href="{{ route('sell-waste.index') }}" style="margin-right:15px;">Jual Sampah</a>
+            <a href="{{ route('buy-waste.index') }}" style="margin-right:15px;">Beli Sampah</a>
+            <a href="{{ route('edu.index') }}" style="margin-right:15px;">Edukasi</a>
+        </div>
+        <div>
+            {{-- Tombol Notifikasi --}}
+            <a href="{{ url('/notifications') }}" style="margin-right:15px; background:orange; padding:5px 10px; color:white; border-radius:5px; text-decoration:none;">
+                Notifikasi
+            </a>
+
+            {{-- Tombol Profile --}}
+            <a href="{{ route('profile.edit') }}" style="margin-right:15px; background:blue; padding:5px 10px; color:white; border-radius:5px; text-decoration:none;">
+                Profile
+            </a>
+
+            {{-- Tombol Logout --}}
+            <form action="{{ route('logout') }}" method="POST" style="display:inline;">
+                @csrf
+                <button type="submit" style="background:red; color:white; border:none; padding:5px 10px; cursor:pointer; border-radius:5px;">
+                    Logout
+                </button>
+            </form>
+        </div>
     </nav>
 
     <div class="container" style="padding:20px;">
@@ -23,3 +41,4 @@
     </div>
 </body>
 </html>
+
