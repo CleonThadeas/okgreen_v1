@@ -10,8 +10,9 @@ return new class extends Migration {
         Schema::create('point_history', function (Blueprint $table) {
             $table->id('history_id');
             $table->foreignId('user_id')
-                  ->constrained('users','user_id')
-                  ->onDelete('cascade');
+                  ->constrained('users', 'id') // FK ke users.id
+                  ->onDelete('cascade')
+                  ->onUpdate('cascade');
             $table->enum('source', ['penjualan','pembelian','penukaran','giveaway']);
             $table->unsignedBigInteger('reference_id')->nullable();
             $table->integer('points_change');

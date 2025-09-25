@@ -2,15 +2,25 @@
 
 namespace App\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
 
 class Staff extends Authenticatable
 {
-    use Notifiable;
-    protected $guard = 'staff'; // untuk Staff.php
+    use HasApiTokens, HasFactory, Notifiable;
 
-    protected $fillable = ['name', 'email', 'password'];
+    protected $table = 'staff';
+    protected $primaryKey = 'id'; 
+    public $incrementing = true;
+    protected $keyType = 'int';
 
-    protected $hidden = ['password', 'remember_token'];
+    protected $fillable = [
+        'name', 'email', 'password', 'phone_number', 'address'
+    ];
+
+    protected $hidden = [
+        'password', 'remember_token',
+    ];
 }

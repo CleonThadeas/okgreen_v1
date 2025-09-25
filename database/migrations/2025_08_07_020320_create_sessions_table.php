@@ -9,15 +9,19 @@ return new class extends Migration {
     {
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
-            $table->foreignId('user_id')
-                  ->nullable()
-                  ->constrained('users','user_id')
-                  ->onDelete('cascade');
+        
+            // ID user (tanpa FK langsung, supaya fleksibel)
+            $table->unsignedBigInteger('user_id')->nullable();
+            
+            // Guard/type untuk membedakan sumber user
+            $table->string('guard')->nullable();
+        
             $table->string('ip_address', 45)->nullable();
             $table->text('user_agent')->nullable();
             $table->text('payload');
             $table->integer('last_activity')->index();
         });
+        
     }
 
     public function down()
