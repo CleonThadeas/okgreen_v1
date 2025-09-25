@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Riwayat Poin</title>
-    <link rel="stylesheet" href="{{ asset('css/history-points.css') }}?v={{ time() }}">
+    <title>Riwayat Penjualan</title>
+    <link rel="stylesheet" href="{{ asset('css/sell-history.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -25,59 +25,57 @@
             <button class="menu-toggle" onclick="toggleSidebar()">
                 <i class="fas fa-bars"></i>
             </button>
-            <h2 class="title">Riwayat Poin Saya</h2>
+            <h2 class="title">Riwayat Penjualan Saya</h2>
         </div>
 
-        {{-- Total Poin --}}
-        <div class="total-card">
-            <strong>Total Poin:</strong>
-            <span class="total-points">
-                {{ number_format($totalPoints ?? 0, 0, ',', '.') }}
-            </span>
-        </div>
+        {{-- Notifikasi --}}
+        @if(session('success'))
+            <div class="alert success">{{ session('success') }}</div>
+        @endif
+        @if(session('error'))
+            <div class="alert error">{{ session('error') }}</div>
+        @endif
 
         <div class="table-wrapper">
             <table class="riwayat-table">
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Sumber</th>
-                        <th>Referensi</th>
-                        <th>Perubahan</th>
-                        <th>Deskripsi</th>
+                        <th>Kategori</th>
+                        <th>Jenis</th>
+                        <th>Berat (Kg)</th>
+                        <th>Poin / Kg</th>
+                        <th>Total Poin</th>
+                        <th>Status</th>
                         <th>Tanggal</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($histories as $h)
+                    @forelse($sells as $s)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
+                            <td>{{ $s->category->category_name ?? '-' }}</td>
+                            <td>{{ $s->sellType->type_name ?? '-' }}</td>
+                            <td>{{ $s->weight_kg }}</td>
+                            <td>{{ $s->price_per_kg }}</td>
+                            <td>{{ $s->points_awarded ?? 0 }}</td>
                             <td>
-                                @if($h->source === 'sell_waste')
-                                    ♻️ Penjualan Sampah
-                                @else
-                                    {{ ucfirst($h->source) }}
-                                @endif
+                                <span class="badge 
+                                    {{ $s->status == 'pending' ? 'badge-pending' : '' }}
+                                    {{ $s->status == 'approved' ? 'badge-success' : '' }}
+                                    {{ $s->status == 'rejected' ? 'badge-danger' : '' }}">
+                                    {{ ucfirst($s->status) }}
+                                </span>
                             </td>
-                            <td>#{{ $h->reference_id }}</td>
-                            <td class="{{ $h->points_change >= 0 ? 'text-success' : 'text-danger' }}">
-                                {{ $h->points_change >= 0 ? '+' : '' }}{{ number_format($h->points_change, 0, ',', '.') }}
-                            </td>
-                            <td>{{ $h->description }}</td>
-                            <td>{{ $h->created_at->format('d M Y H:i') }}</td>
+                            <td>{{ $s->created_at->format('d M Y H:i') }}</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="no-data">Belum ada riwayat poin.</td>
+                            <td colspan="8" class="no-data">Belum ada penjualan.</td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
-        </div>
-
-        {{-- Pagination --}}
-        <div class="pagination-wrapper">
-            {{ $histories->links() }}
         </div>
     </div>
 

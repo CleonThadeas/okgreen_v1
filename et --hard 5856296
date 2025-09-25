@@ -1,0 +1,98 @@
+[33me0d517f[m[33m ([m[1;36mHEAD -> [m[1;32mbackup-TRANSAKSISUKSES[m[33m)[m Merge branch 'lastest' of https://github.com/CleonThadeas/okgreen_v1 into backup-TRANSAKSISUKSES
+[33mff35bc5[m[33m ([m[1;31morigin/lastest[m[33m)[m Merge branch 'main' into lastest
+[33m5856296[m ALLDONE
+[33m5b08116[m Merge pull request #7 from CleonThadeas/TRANSAKSISUKSES
+[33mba57ce1[m Merge pull request #11 from CleonThadeas/KURANGNOTIVIKASI
+[33mf5a75cc[m notifikasiandcontactdone
+[33mcbea0a9[m Merge branch 'transaksisukses2' of https://github.com/CleonThadeas/okgreen_v1 into backup-TRANSAKSISUKSES
+[33ma71ac90[m[33m ([m[1;31morigin/backup-TRANSAKSISUKSES[m[33m)[m sidebar riwayat pembelian, riwayat penjualan
+[33m4d10afb[m[33m ([m[1;31morigin/transaksisukses2[m[33m)[m fitur tukar poin dan contact us
+[33m23a00f9[m Merge branch 'transaksisukses2' of https://github.com/CleonThadeas/okgreen_v1 into backup-TRANSAKSISUKSES
+[33me9f2f2a[m update
+[33m88d5eeb[m fitur profile sama sidebar
+[33mbd32b5b[m TINGGALNOTIFALAMATDANCONTAK
+[33m8814d2c[m beli barang bisa, jualbarang bisa
+[33m670e56b[m Merge branch 'KURANGNOTIVIKASI' into backup-TRANSAKSISUKSES
+[33md51f9f4[m coba
+[33mbe6d9ca[m Merge remote-tracking branch 'origin/backup-TRANSAKSISUKSES' into transaksisukses2
+[33m6d8e903[m save progress lokal sebelum pull
+[33me083dcf[m benerin beranda admin
+[33m10d15bb[m[33m ([m[1;31morigin/KURANGNOTIVIKASI[m[33m, [m[1;32mKURANGNOTIVIKASI[m[33m)[m Add contact_replies migration
+[33m9638c4a[m Merge remote-tracking branch 'origin/TRANSAKSISUKSES' into backup-TRANSAKSISUKSES
+[33me55e01e[m Progress sementara sebelum pindah branch
+[33m17ce9f0[m Merge remote-tracking branch 'origin/TRANSAKSISUKSES' into backup-TRANSAKSISUKSES
+[33me96e3eb[m tinggalnotivikasi
+[33m13a5a49[m[33m ([m[1;31morigin/TRANSAKSISUKSES[m[33m)[m Merge branch 'dev' into TRANSAKSISUKSES
+[33me4a4261[m updatee
+[33m6cccb7d[m user,staff,admin
+[33m50d8def[m[33m ([m[1;32mTRANSAKSISUKSES[m[33m)[m jualbelidoneee
+[33m3495692[m Merge branch 'transaksisukses2' of https://github.com/CleonThadeas/okgreen_v1 into backup-TRANSAKSISUKSES
+[33mb645f30[m update
+[33mc648980[m fitur staff
+[33m660c143[m Merge pull request #9 from CleonThadeas/feat/transaction
+[33m576388b[m[33m ([m[1;31morigin/feat/transaction[m[33m)[m Merge branch 'dev' into feat/transaction
+[33mb1fabf3[m api transaction
+[33m7d7c665[m menggabungkan dan merapihkan be+fe
+[33m72d197d[m pull be
+[33m6eda135[m Merge pull request #8 from CleonThadeas/feature/api-auth-profile-waste
+[33m9ee8ea0[m JUALBELIDONE
+[33ma6f09d6[m[33m ([m[1;31morigin/feature/api-auth-profile-waste[m[33m)[m Merge branch 'dev' into feature/api-auth-profile-waste
+[33mf5da9e8[m perbaikan api contact message
+[33mf92d603[m Backup sebelum checkout backend dari TRANSAKSISUKSES
+[33m1aea4c2[m auth untuk auth-profile-waste
+[33m4d8a865[m[33m ([m[1;31morigin/front-end2[m[33m, [m[1;32mfront-end2[m[33m)[m tambahkanpopupdetail
+[33md55b512[m[33m ([m[1;32mfront-end[m[33m)[m mulai memasukan back end ke front-end
+[33m414c451[m tambahkanpopupdetail
+[33md369e7e[m Merge branch 'dev' into front-end
+[33md635fbf[m[33m ([m[1;31morigin/front-end[m[33m)[m resolve conflict
+[33ma2995d4[m update & revisi staff
+[33me9b2f9a[m TRANSAKSISUKSES
+[33m8c16cea[m backup sebelum perbaikan kernel/ide
+[33mdf70a21[m mulai memasukkan back end
+[33me33e0f0[m jangan ilang, full code
+[33m286a7e6[m Merge branch 'admin-front-end' into front-end
+[33mafa1a07[m[33m ([m[1;32mfront-end-backup[m[33m)[m add profil, rapihkan coding, sidebar add profil page, rapihkan coding, dan sidebar
+[33m7ecafd4[m update: perbaikan tampilan beranda
+[33m73f14f1[m scroll faq,register + css
+[33m9fd6191[m front-end tambahan
+[33m908a4a2[m tampilan Landing page header,hero, tentang kami, faq
+[33ma46c413[m halam login
+[33m57cf87b[m scroll faq,register + css
+[33me0cc49e[m front-end tambahan
+[33m13152c6[m tampilan Landing page header,hero, tentang kami, faq
+[33m81e407b[m[33m ([m[1;31morigin/PAYMENTGATEWAY[m[33m)[m -APIPAYMENTGATEWAY
+[33md94ba01[m[33m ([m[1;32madmin-front-end[m[33m)[m membenarkan konflik pull dari branch LOGINREGISTERDONE
+[33m7ddd76a[m add profil, rapihkan coding, sidebar add profil page, rapihkan coding, dan sidebar
+[33mc379ab8[m Merge pull request #6 from CleonThadeas/LOGINREGISTERDONE
+[33m32077f6[m[33m ([m[1;31morigin/LOGINREGISTERDONE[m[33m)[m Merge branch 'dev' into LOGINREGISTERDONE
+[33m806f879[m Merge pull request #5 from CleonThadeas/auth/allrole
+[33m39f48c4[m[33m ([m[1;31morigin/auth/allrole[m[33m)[m can authenfication all role
+[33md3045fa[m fitur admin
+[33m43f43b5[m all fitur khusus admin
+[33m06299ba[m update: perbaikan tampilan beranda
+[33m0342eb6[m tampilan user, jual beli barang, co,notif, dashboard,detail barang, payment dll
+[33m9900796[m Merge branch 'login' of https://github.com/CleonThadeas/okgreen_v1 into front-end
+[33m81aa8e9[m PEMBELIAN PRODUK DONE SISA API PAYMENT
+[33me078d8b[m Merge pull request #3 from CleonThadeas/auth/user
+[33m023ebb0[m[33m ([m[1;31morigin/auth/user[m[33m)[m authentification user get detail
+[33m3865620[m Merge pull request #2 from CleonThadeas/LOGINREGISTERDONE
+[33m5541812[m Feature API Auth User
+[33mcb88f03[m LOGIN REGISTER DONE
+[33m931d5f4[m[33m ([m[1;31morigin/databasesfix[m[33m)[m migrationv1
+[33m67be061[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/jangandipakedulu[m[33m, [m[1;31morigin/feat/auth-user[m[33m)[m selesai conflict:
+[33m8be2a73[m[33m ([m[1;31morigin/api-auth[m[33m)[m authentification api
+[33m62fbded[m LOGIN USER, ADMIN&STAFF(PROSES)
+[33mc66b17e[m[33m ([m[1;31morigin/login[m[33m, [m[mrefs/original/refs/remotes/origin/login[m[33m, [m[mrefs/original/refs/heads/login[m[33m)[m halam login
+[33m0a51e88[m[33m ([m[1;32mlogin[m[33m)[m halam login
+[33m525e0d5[m[33m ([m[mrefs/original/refs/remotes/origin/front-end[m[33m)[m scroll faq,register + css
+[33m8377f92[m scroll faq,register + css
+[33m595da0a[m Update file
+[33m990326c[m LANDING PAGE & LOGIN/REGIS(PROSES)
+[33m2ec042e[m MIDDLEWARE & MIGRATION
+[33m25a587e[m Perubahan
+[33mac1d392[m front-end tambahan
+[33m73f3a11[m front-end tambahan
+[33m9e2416b[m tampilan Landing page header,hero, tentang kami, faq
+[33m7e0e9ec[m tampilan Landing page header,hero, tentang kami, faq
+[33m5f42509[m MIGRATION V2
+[33m1a9929f[m MIGRATION SUKSES
