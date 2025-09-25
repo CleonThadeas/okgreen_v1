@@ -9,11 +9,13 @@ use App\Http\Controllers\Api\StaffController;
 use App\Http\Controllers\Api\WasteTypeController;
 use App\Http\Controllers\Api\WasteStockController;
 use App\Http\Controllers\Api\WasteCategoryController;
+use App\Http\Controllers\Api\AdminWasteCategoryController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\UserTokenController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ContactController;
-use App\Http\Controllers\Api\TransactionController; 
+use App\Http\Controllers\Api\CartController;
+use App\Http\Controllers\Api\TransactionController;
 use App\Http\Controllers\Api\PointController; 
 
 
@@ -52,12 +54,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/contact/{messageId}', [ContactController::class, 'show']); 
     Route::post('/contact/{messageId}/reply', [ContactController::class, 'reply']); 
 
+    // Cart dan checkout sampah
+    Route::post('/cart/add', [CartController::class, 'add']); 
+    Route::post('/cart/checkout', [CartController::class, 'checkout']); 
+    Route::get('/cart/transactions', [CartController::class, 'myTransactions']); 
+    Route::get('/cart/transactions/{id}', [CartController::class, 'show']); 
+
     // Transactions
-    Route::post('/transactions', [TransactionController::class, 'create']); 
-    Route::post('/transactions/{id}/items', [TransactionController::class, 'addItem']); 
-    Route::post('/transactions/{id}/pay', [TransactionController::class, 'pay']); 
-    Route::get('/transactions/{id}/status', [TransactionController::class, 'status']); 
-    Route::get('/transactions/my', [TransactionController::class, 'myTransactions']); 
+    Route::get('/transactions', [TransactionController::class, 'myTransactions']);
+    Route::get('/transactions/{id}', [TransactionController::class, 'show']);
+    Route::get('/transactions/{id}/status', [TransactionController::class, 'status']);
 
     // Point rewerd
     Route::get('/points', [PointController::class, 'myPoints']);
@@ -125,11 +131,11 @@ Route::middleware(['auth:admin', 'is_admin'])->prefix('admin')->group(function (
     Route::delete('/waste-types/{id}', [WasteTypeController::class, 'destroy']);
 
     // Manage Waste Categories
-    Route::get('/waste-categories', [WasteCategoryController::class, 'index']);
-    Route::get('/waste-categories/{id}', [WasteCategoryController::class, 'show']);
-    Route::post('/waste-categories', [WasteCategoryController::class, 'store']);
-    Route::put('/waste-categories/{id}', [WasteCategoryController::class, 'update']);
-    Route::delete('/waste-categories/{id}', [WasteCategoryController::class, 'destroy']);
+    Route::get('/waste-categories', [AdminWasteCategoryController::class, 'index']);
+    Route::get('/waste-categories/{id}', [AdminWasteCategoryController::class, 'show']);
+    Route::post('/waste-categories', [AdminWasteCategoryController::class, 'store']);
+    Route::put('/waste-categories/{id}', [AdminWasteCategoryController::class, 'update']);
+    Route::delete('/waste-categories/{id}', [AdminWasteCategoryController::class, 'destroy']);
 
     // Manage Waste Stock
     Route::get('/waste-stock', [WasteStockController::class, 'index']);

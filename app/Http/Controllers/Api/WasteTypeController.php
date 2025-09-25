@@ -34,31 +34,5 @@ class WasteTypeController extends Controller
         return response()->json($wasteType);
     }
 
-    public function update(Request $request, $id)
-    {
-        $wasteType = WasteType::find($id);
-        if (!$wasteType) {
-            return response()->json(['message' => 'Tidak ditemukan'], 404);
-        }
-
-        $request->validate([
-            'waste_category_id' => 'sometimes|exists:waste_categories,id',
-            'type_name' => 'sometimes|string|max:100',
-            'description' => 'nullable|string',
-        ]);
-
-        $wasteType->update($request->all());
-        return response()->json($wasteType);
-    }
-
-    public function destroy($id)
-    {
-        $wasteType = WasteType::find($id);
-        if (!$wasteType) {
-            return response()->json(['message' => 'Tidak ditemukan'], 404);
-        }
-
-        $wasteType->delete();
-        return response()->json(['message' => 'Tipe sampah berhasil dihapus']);
-    }
+    
 }
