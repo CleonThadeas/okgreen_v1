@@ -1,5 +1,6 @@
 <!-- resources/views/partials/header.blade.php -->
 <link rel="stylesheet" href="{{ asset('css/header.css') }}?v={{ time() }}">
+    
 
 <header class="header">
     <div class="logo">
