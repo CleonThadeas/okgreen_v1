@@ -1,27 +1,20 @@
 @extends('layouts.app')
-@section('title','Contact Us')
-
+@section('title','Contact Staff')
 @section('content')
-<div class="d-flex">
+<div class="container">
     @include('user.profile.sidebar')
+    <h2>Hubungi Staff</h2>
 
-    <div class="flex-grow-1 p-4">
-        <h3>Hubungi Kami</h3>
-        <form>
-            <div class="mb-3">
-                <label>Nama</label>
-                <input type="text" class="form-control">
-            </div>
-            <div class="mb-3">
-                <label>Email</label>
-                <input type="email" class="form-control">
-            </div>
-            <div class="mb-3">
-                <label>Pesan</label>
-                <textarea class="form-control" rows="4"></textarea>
-            </div>
-            <button type="submit" class="btn btn-success">Kirim</button>
-        </form>
-    </div>
+    @if(session('success')) <div style="color:green">{{ session('success') }}</div> @endif
+    @if($errors->any()) <div style="color:red">{{ implode(', ', $errors->all()) }}</div> @endif
+
+    <form action="{{ route('contact.store') }}" method="POST">
+        @csrf
+        <p><label>Subject</label><br>
+            <input type="text" name="subject" value="{{ old('subject') }}" required></p>
+        <p><label>Message</label><br>
+            <textarea name="message" rows="6" required>{{ old('message') }}</textarea></p>
+        <button type="submit">Kirim</button>
+    </form>
 </div>
 @endsection

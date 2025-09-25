@@ -3,19 +3,35 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class Notification extends Model
 {
     protected $table = 'notifications';
-    public $timestamps = true;
 
-    protected $fillable = ['user_id','message','status']; // status: unread|read
+    protected $fillable = [
+        'receiver_id',
+        'receiver_role',
+        'title',
+        'message',
+        'is_read',
+        'meta',
+    ];
 
-    public const STATUS_UNREAD = 'unread';
-    public const STATUS_READ   = 'read';
+    protected $casts = [
+        'is_read' => 'boolean',
+        'meta'    => 'array',
+    ];
 
-    public function user()
+    public function scopeForReceiver(Builder $q, string $role, $id)
     {
-        return $this->belongsTo(User::class,'user_id');
+        return $q->where('receiver_role', $role)
+                 ->where('receiver_id', $id);
+    }
+
+    public function markRead()
+    {
+        $this->is_read = true;
+        $this->save();
     }
 }
