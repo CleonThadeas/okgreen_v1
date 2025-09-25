@@ -12,27 +12,6 @@
     {{-- Header --}}
     @include('partials.header')
 
-    <!-- Tombol Pilih Beberapa -->
-    <div class="pilih-beberapa-btn" onclick="togglePopup()">
-        <img src="{{ asset('img/info.png') }}" alt="Pilih" class="icon-pilih">
-        Pilih Beberapa
-    </div>
-
-    <!-- Popup Tutorial -->
-    <div id="popup-pilih" class="popup" style="display:none;">
-        <div class="popup-content">
-            <span class="popup-close" onclick="togglePopup()">&times;</span>
-            <h2>Pelajari !</h2>
-            <p>Cara memilih beberapa barang untuk checkout:</p>
-            <ol>
-                <li>Klik button "Tambah" di bawah produk.</li>
-                <li>Produk yang dipilih akan muncul hitungannya di bawah.</li>
-                <li>Klik "Checkout" untuk melanjutkan.</li>
-            </ol>
-            <button class="popup-button" onclick="togglePopup()">Mengerti</button>
-        </div>
-    </div>
-
     {{-- Daftar Produk --}}
     <section class="produk-section">
         <h2>Produk Kami</h2>

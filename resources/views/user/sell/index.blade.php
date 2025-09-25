@@ -26,7 +26,8 @@
                             <p>{{ session('success') }}</p>
                         </div>
                         <div class="popup-footer">
-                            <button class="btn-accept" onclick="closePopup()">OK</button>
+                            <button class="btn-accept" onclick="closePopup()">Abaikan</button>
+                            <a href="{{ route('history.sell') }}" class="btn-cek">Cek Riwayat</a>
                         </div>
                     </div>
                 </div>
@@ -82,114 +83,113 @@
                 <button type="submit" class="jual-btn">Kirim Permintaan Jual</button>
             </form>
         </div>
+    </main>
 
-        {{-- RIWAYAT --}}
-        <div class="jual-container animate-card">
-    <h2>Riwayat Penjualan Saya</h2>
-    <div class="table-wrapper">
-        <table class="riwayat-table">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Kategori</th>
-                    <th>Jenis</th>
-                    <th>Berat</th>
-                    <th>Poin / Kg</th>
-                    <th>Total Poin</th>
-                    <th>Status</th>
-                    <th>Tanggal</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($sells as $s)
-                    <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $s->category->category_name ?? '-' }}</td>
-                        <td>{{ $s->sellType->type_name ?? '-' }}</td>
-                        <td>{{ $s->weight_kg }}</td>
-                        <td>{{ $s->price_per_kg }}</td>
-                        <td>{{ $s->points_awarded ?? 0 }}</td>
-                        <td>
-                            <span class="badge 
-                                {{ $s->status == 'pending' ? 'badge-pending' : '' }}
-                                {{ $s->status == 'approved' ? 'badge-success' : '' }}
-                                {{ $s->status == 'rejected' ? 'badge-danger' : '' }}">
-                                {{ ucfirst($s->status) }}
-                            </span>
-                        </td>
-                        <td>{{ $s->created_at->format('d M Y H:i') }}</td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="8" class="no-data">Belum ada penjualan.</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
+    <!-- Modal Preview -->
+    <div id="imgModal" class="img-modal">
+    <span class="close-modal" onclick="closeImgModal()">&times;</span>
+    <img class="modal-content-img" id="imgPreviewLarge">
     </div>
-</div>
 
     {{-- Script --}}
-    <script>
-        // Load jenis sampah by kategori
-const categorySelect = document.getElementById('categorySelect');
-const typeSelect = document.getElementById('typeSelect');
-const oldType = document.querySelector('input[name="sell_waste_type_id"]')?.value || "";
+<script>
+    // === Load jenis sampah by kategori ===
+    const categorySelect = document.getElementById('categorySelect');
+    const typeSelect = document.getElementById('typeSelect');
+    const oldType = document.querySelector('input[name="sell_waste_type_id"]')?.value || "";
 
-function loadTypes(catId, selectedType = null) {
-    typeSelect.innerHTML = '<option value="">Loading...</option>';
-    if(!catId) return;
+    function loadTypes(catId, selectedType = null) {
+        typeSelect.innerHTML = '<option value="">Loading...</option>';
+        if(!catId) return;
 
-    fetch('/sell-waste/types/' + catId)
-        .then(res => res.json())
-        .then(data => {
-            typeSelect.innerHTML = '<option value="">-- Pilih Jenis --</option>';
-            data.forEach(t => {
-                const selected = (t.id == selectedType) ? 'selected' : '';
-                typeSelect.innerHTML += `<option value="${t.id}" ${selected}>${t.type_name} (Poin/Kg: ${t.points_per_kg})</option>`;
+        fetch('/sell-waste/types/' + catId)
+            .then(res => res.json())
+            .then(data => {
+                typeSelect.innerHTML = '<option value="">-- Pilih Jenis --</option>';
+                data.forEach(t => {
+                    const selected = (t.id == selectedType) ? 'selected' : '';
+                    typeSelect.innerHTML += `<option value="${t.id}" ${selected}>${t.type_name} (Poin/Kg: ${t.points_per_kg})</option>`;
+                });
+            })
+            .catch(() => {
+                typeSelect.innerHTML = '<option value="">-- Gagal memuat --</option>';
             });
-        })
-        .catch(() => {
-            typeSelect.innerHTML = '<option value="">-- Gagal memuat --</option>';
+    }
+    if(categorySelect){
+        categorySelect.addEventListener('change', () => loadTypes(categorySelect.value));
+        if(categorySelect.value) loadTypes(categorySelect.value, oldType);
+    }
+
+    // === Upload box trigger ===
+    function triggerFile() {
+        document.getElementById('fileInput').click();
+    }
+
+    // === Preview Foto + Hapus Foto + Zoom Modal ===
+    const fileInput = document.getElementById('fileInput');
+    const previewContainer = document.getElementById('previewContainer');
+    let selectedFiles = []; // simpan file di array
+
+    if(fileInput){
+        fileInput.addEventListener('change', function(){
+            selectedFiles = Array.from(this.files);
+            renderPreviews();
         });
-}
-if(categorySelect){
-    categorySelect.addEventListener('change', () => loadTypes(categorySelect.value));
-    if(categorySelect.value) loadTypes(categorySelect.value, oldType);
-}
+    }
 
-// Upload box
-function triggerFile() {
-    document.getElementById('fileInput').click();
-}
-
-// Preview Foto
-const fileInput = document.getElementById('fileInput');
-const previewContainer = document.getElementById('previewContainer');
-
-if(fileInput){
-    fileInput.addEventListener('change', function(){
+    function renderPreviews() {
         previewContainer.innerHTML = "";
-        const files = this.files;
-        if(files){
-            Array.from(files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    const img = document.createElement("img");
-                    img.src = e.target.result;
-                    previewContainer.appendChild(img);
+
+        selectedFiles.forEach((file, index) => {
+            const reader = new FileReader();
+            reader.onload = e => {
+                const wrapper = document.createElement("div");
+                wrapper.classList.add("preview-item");
+
+                const img = document.createElement("img");
+                img.src = e.target.result;
+                img.onclick = () => openImgModal(img.src);
+
+                const removeBtn = document.createElement("span");
+                removeBtn.innerHTML = "&times;";
+                removeBtn.classList.add("remove-btn");
+                removeBtn.onclick = () => {
+                    selectedFiles.splice(index, 1); // hapus dari array
+                    updateFileInput();
+                    renderPreviews();
                 };
-                reader.readAsDataURL(file);
-            });
-        }
-    });
-}
 
-// Popup close
-function closePopup() {
-    document.getElementById('popup').classList.remove('active');
-}
+                wrapper.appendChild(img);
+                wrapper.appendChild(removeBtn);
+                previewContainer.appendChild(wrapper);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
 
-    </script>
+    function updateFileInput() {
+        const dataTransfer = new DataTransfer();
+        selectedFiles.forEach(file => dataTransfer.items.add(file));
+        fileInput.files = dataTransfer.files;
+    }
+
+    // === Popup close ===
+    function closePopup() {
+        document.getElementById('popup').classList.remove('active');
+    }
+
+    // === Modal Zoom Gambar ===
+    function openImgModal(src) {
+        const modal = document.getElementById("imgModal");
+        const modalImg = document.getElementById("imgPreviewLarge");
+        modal.style.display = "block";
+        modalImg.src = src;
+    }
+
+    function closeImgModal() {
+        document.getElementById("imgModal").style.display = "none";
+    }
+</script>
+
 </body>
 </html>

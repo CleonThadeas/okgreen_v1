@@ -377,3 +377,29 @@ main, .jual-container {
   color: #721c24;
 }
 
+.popup-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.btn-accept,
+.btn-cek {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-accept {
+    background: #aaa;
+    color: white;
+}
+
+.btn-cek {
+    background: #28a745;
+    color: white;
+    text-decoration: none;
+}
+

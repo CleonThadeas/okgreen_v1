@@ -57,73 +57,120 @@ body {
   opacity: 1;
 }
 
-
-
 /* ================== PRODUK SECTION ================== */
-.produk {
-  padding: 60px 80px;
-}
-
+/* ===== Produk Section ===== */
+/* Header Produk Kami */
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 25px;
 }
 
-.section-icon-right {
-  width: 40px;  /* agak lebih besar */
-  height: 40px;
+.section-header h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2f4f2f;
+  border-left: 6px solid #618264;
+  padding-left: 12px;
+  margin: 0;
 }
 
-.section-icon {
-  width: 24px;
-  height: 24px;
-}
-
+/* Panah kanan */
 .section-btn {
   font-size: 24px;
   text-decoration: none;
   color: #618264;
+  transition: transform 0.2s, color 0.2s;
 }
 
+.section-btn:hover {
+  transform: translateX(4px);
+  color: #2e7d32;
+}
+
+
+.produk {
+  padding: 50px 30px;
+  background: #f9faf9;
+}
+
+.produk h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2f4f2f;
+  margin-bottom: 30px;
+  border-left: 6px solid #618264;
+  padding-left: 12px;
+}
+
+/* Grid produk */
 .produk-list {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 25px;
-  margin-top: 30px;
 }
 
 /* Card produk */
 .produk-card {
   background: #fff;
-  border-radius: 12px;
-  padding: 20px;
+  border-radius: 14px;
+  padding: 18px;
   text-align: center;
-  transition: transform 0.3s, box-shadow 0.3s;
+  transition: all 0.3s ease;
   cursor: pointer;
-  box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  position: relative;
 }
 
+/* Badge stok habis */
+.badge-stok {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #e53935;
+  color: #fff;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+/* Gambar produk */
 .produk-card img {
   width: 100%;
-  border-radius: 8px;
+  height: 180px;
+  object-fit: contain;
+  border-radius: 10px;
+  transition: transform 0.3s ease;
 }
 
+.produk-card:hover img {
+  transform: scale(1.05);
+}
+
+/* Nama produk */
 .produk-card p {
-  font-size: 16px;
-  margin: 10px 0;
+  font-size: 15px;
+  font-weight: 500;
+  margin: 14px 0 6px;
+  color: #333;
 }
 
+/* Harga */
 .produk-card span {
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 16px;
+  font-weight: 700;
+  color: #2e7d32;
 }
 
 /* Hover effect */
 .produk-card:hover {
-  transform: translateY(-8px) scale(1.03);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+  border: 1px solid #dce9dc;
 }
+
 
 /* ================== SCROLL REVEAL ================== */
 .produk-card, .reveal {

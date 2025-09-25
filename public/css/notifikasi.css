@@ -31,7 +31,7 @@ h2 {
 }
 
 .tab.active {
-    background: #4CAF50;
+    background: #597a5a;
     color: white;
 }
 
@@ -60,7 +60,7 @@ h2 {
 
 .notifikasi-item.highlight {
     background: #f9fff7;
-    border-left: 4px solid #4CAF50;
+    border-left: 4px solid #678a68;
 }
 
 .notifikasi-icon {
@@ -75,7 +75,7 @@ h2 {
 .notifikasi-icon.circle {
     width: 40px;
     height: 40px;
-    background: #4CAF50;
+    background: #475a48;
     color: white;
     display: flex;
     align-items: center;
@@ -95,7 +95,7 @@ h2 {
 }
 
 .btn-primary {
-    background: #4CAF50;
+    background: #212c21;
     color: white;
     padding: 6px 12px;
     border: none;

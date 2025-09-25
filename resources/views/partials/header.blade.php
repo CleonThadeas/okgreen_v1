@@ -24,7 +24,7 @@
     </form>
 
     <div class="icons">
-        <a href="{{ route('transactions.index') }}">
+        <a href="{{ route('notifications.index') }}">
             <img src="{{ asset('img/bell.png') }}" alt="Notifikasi">
         </a>
         <a href="{{ route('profile.edit') }}">
