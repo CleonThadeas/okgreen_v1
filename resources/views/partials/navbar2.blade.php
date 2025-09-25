@@ -3,7 +3,7 @@
 
 <header class="header-navbar">
     <div class="logo">
-        <img src="{{ asset('img/logo-greenleaf.png') }}" alt="Logo">
+        <img src="{{ asset('img/logo2.png') }}" alt="Logo">
     </div>
     <nav>
         <a href="{{ route('detailstokstaff') }}" class="{{ Route::is('detailstokstaff') ? 'active' : '' }}">Beranda</a>

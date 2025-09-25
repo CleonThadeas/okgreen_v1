@@ -91,6 +91,7 @@ body {
 .card {
   background: #E7F4E8;
   border-radius: 16px;
+  margin-top: 40px;
   padding: 20px;
   text-align: center;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
