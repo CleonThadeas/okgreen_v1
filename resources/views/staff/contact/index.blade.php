@@ -10,7 +10,7 @@
 <table border="0" width="100%" cellpadding="8">
     <thead>
         <tr>
-            <th>#</th>
+            <th></th>
             <th>User</th>
             <th>Subject</th>
             <th>Status</th>

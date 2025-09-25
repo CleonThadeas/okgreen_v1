@@ -43,7 +43,7 @@
         </form>
     </nav>
 
-    <div class="container">
+    <div class="container" class="w-full">
         @if(session('success')) <div style="background:#eaf7f1;padding:10px;border-left:4px solid #156d4a;margin-bottom:12px;">{{ session('success') }}</div> @endif
         @if(session('error')) <div style="background:#fff5f5;padding:10px;border-left:4px solid #b03a2e;margin-bottom:12px;">{{ session('error') }}</div> @endif
 
