@@ -27,59 +27,78 @@ class ProfileController extends Controller
      * Proses update profil
      */
     public function update(Request $request)
-{
-    $user = User::find(Auth::id()); // ✅ pastikan ini model User
-    if (! $user) {
-        return redirect()->back()->withErrors('User tidak ditemukan.');
+    {
+        $user = User::find(Auth::id());
+        if (! $user) {
+            if ($request->ajax()) {
+                return response()->json(['error' => 'User tidak ditemukan.'], 404);
+            }
+            return redirect()->back()->withErrors('User tidak ditemukan.');
+        }
+
+        $validated = $request->validate([
+            'name'          => 'required|string|max:100',
+            'phone_number'  => 'nullable|string|max:30',
+            'gender'        => 'nullable|in:male,female,other',
+            'date_of_birth' => 'nullable|date',
+            'address'       => 'nullable|string|max:1000',
+            'password'      => 'nullable|string|min:8',
+        ]);
+
+        $genderMap = [
+            'male'   => 'laki-laki',
+            'female' => 'perempuan',
+            'other'  => null,
+        ];
+
+        $incomingGender = $validated['gender'] ?? null;
+        $dbGender = $genderMap[$incomingGender] ?? null;
+
+        $phone = $validated['phone_number'] ?? null;
+        if ($phone !== null) {
+            $phone = preg_replace('/[^\d\+]/', '', trim($phone));
+        }
+
+        // ✅ Assign ke model
+        $user->name = $validated['name'];
+        $user->phone_number = $phone;
+        $user->gender = $dbGender;
+        $user->date_of_birth = $validated['date_of_birth'] ?? null;
+        $user->address = $validated['address'] ?? null;
+
+        if (! empty($validated['password'])) {
+            $user->password = Hash::make($validated['password']);
+        }
+
+        $user->save();
+
+        // ✅ Simpan notifikasi
+        Notification::create([
+            'receiver_id'   => $user->id,
+            'receiver_role' => 'user',
+            'title'         => 'Profil berhasil diperbarui',
+            'message'       => 'Profil Anda berhasil diperbarui pada '. now()->format('d M Y H:i'),
+            'is_read'       => false,
+        ]);
+
+        // ✅ Jika request AJAX → balikin JSON
+        if ($request->ajax()) {
+            return response()->json([
+                'user' => [
+                    'id'            => $user->id,
+                    'name'          => $user->name,
+                    'email'         => $user->email,
+                    'phone_number'  => $user->phone_number,
+                    'gender'        => $user->gender,
+                    'date_of_birth' => $user->date_of_birth,
+                    'address'       => $user->address,
+                    'avatar_url'    => $user->avatar_url ?? asset('img/ppUser.png'),
+                ],
+                'message' => 'Profil berhasil diperbarui',
+            ]);
+        }
+
+        // ✅ Jika bukan AJAX → fallback redirect
+        return redirect()->route('profile.edit')->with('success', 'Profil berhasil diperbarui!');
     }
-
-    $validated = $request->validate([
-        'name'          => 'required|string|max:100',
-        'phone_number'  => 'nullable|string|max:30',
-        'gender'        => 'nullable|in:male,female,other',
-        'date_of_birth' => 'nullable|date',
-        'address'       => 'nullable|string|max:1000',
-        'password'      => 'nullable|string|min:8',
-    ]);
-
-    $genderMap = [
-        'male'   => 'laki-laki',
-        'female' => 'perempuan',
-        'other'  => null,
-    ];
-
-    $incomingGender = $validated['gender'] ?? null;
-    $dbGender = $genderMap[$incomingGender] ?? null;
-
-    $phone = $validated['phone_number'] ?? null;
-    if ($phone !== null) {
-        $phone = preg_replace('/[^\d\+]/', '', trim($phone));
-    }
-
-    // Assign ke model
-    $user->name = $validated['name'];
-    $user->phone_number = $phone;
-    $user->gender = $dbGender;
-    $user->date_of_birth = $validated['date_of_birth'] ?? null;
-    $user->address = $validated['address'] ?? null;
-
-    if (! empty($validated['password'])) {
-        $user->password = Hash::make($validated['password']);
-    }
-
-    // ✅ Simpan ke DB
-    $user->save();
-
-    // Buat notifikasi
-    Notification::create([
-        'receiver_id'   => $user->id,
-        'receiver_role' => 'user',
-        'title'         => 'Profil berhasil diperbarui',
-        'message'       => 'Profil Anda berhasil diperbarui pada '. now()->format('d M Y H:i'),
-        'is_read'       => false,
-    ]);
-
-    return redirect()->route('profile.edit')->with('success', 'Profil berhasil diperbarui!');
-}
-
 }
