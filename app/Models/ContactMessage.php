@@ -7,7 +7,8 @@ class ContactMessage extends Model
 {
     protected $table = 'contact_messages';
     protected $primaryKey = 'message_id';
-    public $incrementing = true;
+    public $incrementing = true; // true kalau INT auto increment
+    protected $keyType = 'int';  // ganti 'string' kalau UUID
     public $timestamps = true;
 
     protected $fillable = [

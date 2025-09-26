@@ -120,6 +120,10 @@ Route::get('/detail-barang/{id}', [ProductController::class, 'detailBarang'])->n
 Route::prefix('staff')->name('staff.')->middleware('auth:staff')->group(function () {
 
     // Kelola produk & sampah
+// ================== STAFF ==================
+Route::prefix('staff')->name('staff.')->middleware('auth:staff')->group(function(){
+
+    // Kelola produk
     Route::get('/wastes', [StaffWasteCtrl::class, 'index'])->name('wastes.index');
     Route::get('/wastes/category/create', [StaffWasteCtrl::class, 'createCategory'])->name('wastes.category.create');
     Route::post('/wastes/category', [StaffWasteCtrl::class, 'storeCategory'])->name('wastes.category.store');
@@ -141,19 +145,27 @@ Route::prefix('staff')->name('staff.')->middleware('auth:staff')->group(function
     Route::post('/sell-requests/{id}/update', [SellRequestController::class, 'updateStatus'])->name('sell_requests.update');
 
     // Sell Waste Types
+    // Sell waste types (jenis sampah)
+
     Route::get('/sell-types', [SellTypeController::class,'index'])->name('sell-types.index');
     Route::get('/sell-types/create', [SellTypeController::class,'create'])->name('sell-types.create');
     Route::post('/sell-types', [SellTypeController::class,'store'])->name('sell-types.store');
+
 
     // Staff Contact & Notifications
     Route::get('/contacts', [StaffContactController::class,'index'])->name('contacts.index');
     Route::get('/contacts/{id}', [StaffContactController::class,'show'])->name('contacts.show');
     Route::post('/contacts/{id}/reply', [StaffContactController::class,'reply'])->name('contacts.reply');
 
-    Route::get('/notifications', [StaffNotificationController::class, 'index'])->name('notifications.index');
-    Route::get('/notifications/{id}', [StaffNotificationController::class, 'show'])->name('notifications.show');
-    Route::post('/notifications/{id}/read', [StaffNotificationController::class, 'markAsRead'])->name('notifications.read');
-    Route::post('/notifications/read-all', [StaffNotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
+// ================== STAFF CONTACTS ==================
+// CONTACTS
+Route::prefix('contacts')->name('contacts.')->group(function () {
+    Route::get('/', [StaffContactController::class, 'index'])->name('index'); // staff.contacts.index
+    Route::get('/{message_id}', [StaffContactController::class, 'show'])->name('show'); // staff.contacts.show
+    Route::post('/{message_id}/reply', [StaffContactController::class, 'reply'])->name('reply'); // staff.contacts.reply
+    Route::put('/{message_id}/reply/{replyId}', [StaffContactController::class, 'updateReply'])->name('reply.update'); // staff.contacts.reply.update
+});
+
 });
 
 // ================== ADMIN (auth:admin) ==================
@@ -217,3 +229,4 @@ Route::view('/berandavoucher', 'berandavoucher')->name('berandavoucher');
 Route::view('/tukarvoucher', 'tukarvoucher')->name('tukarvoucher');
 Route::view('/profileadmin', 'profileadmin')->name('profileadmin');
 Route::view('/detailstokstaff', 'detailstokstaff')->name('detailstokstaff');
+});
