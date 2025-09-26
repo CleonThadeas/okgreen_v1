@@ -1,6 +1,6 @@
 <div class="sidebar">
     <div class="sidebar-header">
-        <h2>OkGreen</h2>
+        <img src="{{ asset('img/logo1.png') }}" alt="OkGreen Logo" class="sidebar-logo">
         <button class="sidebar-close" onclick="toggleSidebar()">
             <i class="fas fa-arrow-left"></i>
         </button>

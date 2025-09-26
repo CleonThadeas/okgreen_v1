@@ -6,16 +6,10 @@
         <img src="{{ asset('img/logo2.png') }}" alt="Logo">
     </div>
     <nav>
-        <a href="{{ route('dashboard') }}" class="{{ Route::is('dashboard') ? 'active' : '' }}">beranda</a>
-        <a href="{{ route('sell-waste.index') }}" class="{{ Route::is('sell-waste.index') ? 'active' : '' }}">jual barang</a>
-        <a href="{{ route('buy-waste.index') }}" class="{{ Route::is('buy-waste.index') ? 'active' : '' }}">beli barang</a>
-
-        {{-- Link logout, tetap styled seperti menu lain --}}
-        <a href="{{ route('logout') }}"
-           class="{{ Route::is('logout') ? 'active' : '' }}"
-           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-           logout
-        </a>
+        <a href="{{ route('dashboard') }}" class="{{ Route::is('dashboard') ? 'active' : '' }}">Beranda</a>
+        <a href="{{ route('sell-waste.index') }}" class="{{ Route::is('sell-waste.index') ? 'active' : '' }}">Jual Barang</a>
+        <a href="{{ route('buy-waste.index') }}" class="{{ Route::is('buy-waste.index') ? 'active' : '' }}">Beli Barang</a>
+        <a>Edukasi</a>
     </nav>
 
     {{-- hidden form untuk logout --}}

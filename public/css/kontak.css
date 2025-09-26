@@ -4,13 +4,13 @@
 body {
   font-family: 'Segoe UI', sans-serif;
   margin: 0;
-  background: #EAF6EB;
+  background: #ffffff;
   color: #333;
 }
 
 main {
   margin: 30px auto;
-  max-width: 1200px;
+  max-width: 1400px;
   padding: 0 20px;
 }
 
@@ -172,3 +172,5 @@ main {
     width: 100%;
   }
 }
+
+
