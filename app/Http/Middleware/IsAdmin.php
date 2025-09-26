@@ -10,9 +10,7 @@ class IsAdmin
     
     public function handle($request, Closure $next)
     {
-        $admin = Auth::guard('admin')->user();
-
-        if ($admin) {
+        if (auth('admin')->check()) {
             return $next($request);
         }
 
