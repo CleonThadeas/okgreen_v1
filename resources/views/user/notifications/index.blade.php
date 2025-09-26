@@ -8,93 +8,57 @@
 </head>
 <body>
 
-    {{-- Header --}}
-    @include('partials.header')
+@section('title','Notifikasi')
+@vite('resources/css/app.css')
+@vite('resources/js/app.js')
 
-    <div class="container notifikasi-container">
-        <h2>Notifikasi Saya</h2>
-
-        {{-- Tombol tandai semua dibaca --}}
-        <form method="POST" action="{{ route('notifications.readAll') }}" style="margin-bottom:15px;">
+@section('content')
+<div class="w-full px-6 py-6 bg-gray-50">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Notifikasi</h2>
+        <form method="POST" action="{{ route('notifications.readAll') }}">
             @csrf
-            <button type="submit">Tandai Semua Dibaca</button>
+            <button type="submit" 
+                class="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition">
+                Tandai semua sebagai dibaca
+            </button>
         </form>
-
-        {{-- Tabs --}}
-        <div class="notifikasi-tabs" style="margin-bottom:10px;">
-            <button class="tab active" data-tab="semua">Semua <span class="badge">{{ $notifications->count() }}</span></button>
-            <button class="tab" data-tab="produk">Informasi Produk <span class="badge">{{ $notifications->where('type','product')->count() }}</span></button>
-            <button class="tab" data-tab="balasan">Replies <span class="badge">{{ $notifications->where('type','reply')->count() }}</span></button>
-        </div>
-
-        {{-- Daftar Notifikasi --}}
-        <div class="notifikasi-list">
-            @forelse($notifications as $notif)
-                <div class="notifikasi-item tab-content semua {{ $notif->type }}">
-                    <div class="notifikasi-icon" style="margin-right:10px;">
-                        @if($notif->icon)
-                            <img src="{{ asset($notif->icon) }}" alt="icon">
-                        @else
-                            <div class="circle">OG</div>
-                        @endif
-                    </div>
-                    <div class="notifikasi-content">
-                        <a href="{{ route('notifications.show', $notif->id) }}" style="text-decoration:none; color:#333;">
-                            <p><strong>{{ $notif->title }}</strong></p>
-                            <small>{{ $notif->created_at->format('d M Y H:i') }}</small>
-                            <p>{{ $notif->message }}</p>
-                        </a>
-                    </div>
-                </div>
-            @empty
-                <p>Tidak ada notifikasi.</p>
-            @endforelse
-        </div>
-
-        {{-- Pagination --}}
-        <div style="margin-top:10px;">
-            {{ $notifications->links() }}
-        </div>
     </div>
 
-    {{-- Script tab --}}
-    <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const tabs = document.querySelectorAll(".tab");
-        const contents = document.querySelectorAll(".tab-content");
+    @if($notifications->isEmpty())
+        <div class="bg-white text-gray-500 text-center py-10 rounded-lg border shadow-sm">
+            Tidak ada notifikasi saat ini.
+        </div>
+    @else
+        <div class="space-y-4">
+            @foreach($notifications as $notif)
+            <a href="{{ route('notifications.show', $notif->id) }}" 
+               class="block rounded-lg border p-5 shadow-sm hover:shadow-md transition
+                      {{ $notif->is_read ? 'bg-white border-gray-200' : 'bg-green-50 border-green-300' }}">
+                <div class="flex items-start gap-4">
+                    <!-- Avatar -->
+                    <div class="flex-shrink-0 w-12 h-12 rounded-full bg-green-600 text-white flex items-center justify-center font-semibold">
+                        {{ strtoupper(substr($notif->title,0,1)) }}
+                    </div>
+                    
+                    <!-- Konten -->
+                    <div class="flex-1">
+                        <h3 class="font-semibold text-gray-800">{{ $notif->title }}</h3>
+                        <p class="text-gray-600 text-sm">{{ Str::limit($notif->message, 200) }}</p>
+                        <span class="text-xs text-gray-400">{{ $notif->created_at->diffForHumans() }}</span>
+                    </div>
 
-        function hideAll() {
-            contents.forEach(content => {
-                content.style.display = "none";
-                content.classList.remove("fade-in");
-            });
-        }
-
-        // tampilkan semua awal
-        hideAll();
-        contents.forEach(content => {
-            if (content.classList.contains("semua")) {
-                content.style.display = "flex";
-            }
-        });
-
-        tabs.forEach(tab => {
-            tab.addEventListener("click", function () {
-                tabs.forEach(t => t.classList.remove("active"));
-                this.classList.add("active");
-
-                let target = this.dataset.tab;
-                hideAll();
-                contents.forEach(content => {
-                    if (content.classList.contains(target) || target === "semua") {
-                        content.style.display = "flex";
-                        setTimeout(() => content.classList.add("fade-in"), 10);
-                    }
-                });
-            });
-        });
-    });
-    </script>
-
-</body>
-</html>
+                    <!-- Status -->
+                    @if(!$notif->is_read)
+                        <span class="w-3 h-3 bg-green-600 rounded-full mt-2"></span>
+                    @endif
+                </div>
+            </a>
+            @endforeach
+        </div>
+        <div class="mt-6">
+            {{ $notifications->links() }}
+        </div>
+    @endif
+</div>
+@endsection

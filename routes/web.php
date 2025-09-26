@@ -150,10 +150,6 @@ Route::prefix('staff')->name('staff.')->middleware('auth:staff')->group(function
     Route::get('/contacts/{id}', [StaffContactController::class,'show'])->name('contacts.show');
     Route::post('/contacts/{id}/reply', [StaffContactController::class,'reply'])->name('contacts.reply');
 
-    Route::get('/notifications', [StaffNotificationController::class, 'index'])->name('notifications.index');
-    Route::get('/notifications/{id}', [StaffNotificationController::class, 'show'])->name('notifications.show');
-    Route::post('/notifications/{id}/read', [StaffNotificationController::class, 'markAsRead'])->name('notifications.read');
-    Route::post('/notifications/read-all', [StaffNotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
 });
 
 // ================== ADMIN (auth:admin) ==================
