@@ -11,7 +11,6 @@
 <body>
     @include('partials.header')
 
-    <!-- Overlay -->
     <div class="overlay" onclick="toggleSidebar()"></div>
 
     <!-- Sidebar -->
@@ -23,6 +22,11 @@
         <div class="profile-cover">
             <img src="{{ asset('img/1.png') }}" alt="Cover">
         </div>
+
+        <!-- Sidebar Toggle Button -->
+        <button id="sidebarToggle" class="sidebar-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
 
         <!-- Profile Card -->
         <div class="profile-card">
@@ -127,6 +131,24 @@
         window.onclick = function(event) {
             if (event.target === modal) closeModal();
         }
+
+    
+    // Sidebar toggle
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.overlay');
+        const body = document.body;
+
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('show');
+        body.classList.toggle('sidebar-open'); // ini penting biar CSS auto-hide jalan
+    }
+
+    // Tombol toggle
+    document.getElementById('sidebarToggle').addEventListener('click', toggleSidebar);
+
+    // Klik overlay untuk nutup sidebar
+    document.querySelector('.overlay').addEventListener('click', toggleSidebar);
     </script>
 </body>
 </html>
