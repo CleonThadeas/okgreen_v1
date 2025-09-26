@@ -1,0 +1,100 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #f8f8f8;
+  color: #333;
+  text-align: center;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #4b774f;
+  padding: 10px 30px;
+  color: #fff;
+}
+
+.navbar .nav-links {
+  list-style: none;
+  display: flex;
+  gap: 25px;
+}
+
+.navbar .nav-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.navbar .icons {
+  font-size: 20px;
+  display: flex;
+  gap: 15px;
+}
+
+.container {
+  margin-top: 40px;
+}
+
+h1 {
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.success-icon {
+  font-size: 70px;
+  color: green;
+  margin: 20px 0;
+}
+
+.buttons {
+  margin: 20px 0;
+}
+
+.btn {
+  padding: 8px 18px;
+  margin: 5px;
+  border: none;
+  border-radius: 5px;
+  background: #ddd;
+  cursor: pointer;
+  text-decoration: none;
+  color: black;
+}
+
+.btn-success {
+  background: #4b774f;
+  color: white;
+}
+
+.products {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 30px;
+}
+
+.card {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  width: 180px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.card img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.card p {
+  margin: 10px 0 5px;
+  font-size: 14px;
+}
+
+.card span {
+  font-weight: bold;
+}

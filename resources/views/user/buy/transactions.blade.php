@@ -1,82 +1,117 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riwayat Transaksi</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="stylesheet" href="{{ asset('css/riwayat.css') }}?v={{ time() }}">
+    <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}?v={{ time() }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
 
-@section('title','Riwayat Transaksi')
+    {{-- Header --}}
+    @include('partials.header')
 
-@section('content')
-<div class="container">
-  {{-- Sidebar --}}
-  @include('user.profile.sidebar')
-  <h2>Riwayat Transaksi</h2>
+    <!-- Overlay -->
+    <div class="overlay" onclick="toggleSidebar()"></div>
 
-  @if(session('success')) <div style="color:green">{{ session('success') }}</div> @endif
-  @if(session('error')) <div style="color:red">{{ session('error') }}</div> @endif
+    <!-- Sidebar -->
+    @include('partials.sidebar')
 
-  @if($transactions->isEmpty())
-    <div class="card">
-      <p>Belum ada transaksi.</p>
-    </div>
-  @else
-    @foreach($transactions as $trx)
-      <div class="card" style="margin-bottom:14px;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <div>
-            <strong>Transaksi #{{ $trx->id }}</strong><br>
-            <span>User: {{ optional($trx->user)->name }} ({{ optional($trx->user)->email }})</span><br>
-            <div class="muted">Tanggal: {{ \Carbon\Carbon::parse($trx->transaction_date)->format('d M Y H:i') }}</div>
-            <div class="muted">Metode Pembayaran: {{ strtoupper($trx->payment_method ?? '-') }}</div>
-            <div class="muted">Pengiriman: {{ strtoupper($trx->shipping_method ?? 'pickup') }}
-              @if($trx->shipping_method === 'delivery')
-                — {{ $trx->receiver_name }} | {{ $trx->phone }} | {{ $trx->address }}
-              @endif
+    <div class="container-transaksi animate-card">
+        <!-- Header row berisi tombol + judul -->
+        <div class="header-row">
+            <button class="menu-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h2 class="title">🧾 Riwayat Transaksi</h2>
+        </div>
+
+        {{-- Notifikasi --}}
+        @if(session('success'))
+            <div class="alert success">{{ session('success') }}</div>
+        @endif
+        @if(session('error'))
+            <div class="alert error">{{ session('error') }}</div>
+        @endif
+
+        {{-- Jika kosong --}}
+        @if($transactions->isEmpty())
+            <div class="card empty">
+                <p>Belum ada transaksi.</p>
             </div>
-          </div>
+        @else
+            @foreach($transactions as $trx)
+                <div class="card transaksi-card">
+                    {{-- Header --}}
+                    <div class="trx-header">
+                        <div class="trx-id">
+                            <strong>#{{ $trx->id }}</strong>
+                            <span class="status {{ strtolower($trx->status) }}">
+                                {{ ucfirst($trx->status) }}
+                            </span>
+                        </div>
+                        <div class="trx-amount">
+                            Rp {{ number_format($trx->total_amount,0,',','.') }}
+                        </div>
+                    </div>
 
-          <div style="text-align:right;">
-            <div style="font-size:1.1rem;"><strong>Rp {{ number_format($trx->total_amount,0,',','.') }}</strong></div>
-            <div class="muted">Status: {{ ucfirst($trx->status) }}</div>
-          </div>
-        </div>
+                    {{-- Detail utama --}}
+                    <div class="trx-body">
+                        <p class="muted">
+                            📅 {{ \Carbon\Carbon::parse($trx->transaction_date)->format('d M Y H:i') }}
+                        </p>
+                        <p class="muted">
+                            💳 {{ strtoupper($trx->payment_method ?? '-') }}
+                        </p>
+                        <p class="muted">
+                            🚚 {{ strtoupper($trx->shipping_method ?? 'pickup') }}
+                            @if($trx->shipping_method === 'delivery')
+                                — {{ $trx->receiver_name }} | {{ $trx->phone }} | {{ $trx->address }}
+                            @endif
+                        </p>
 
-        <hr style="margin:12px 0; border:none; border-top:1px solid #eee;">
+                        {{-- Item list --}}
+                        <div class="trx-items">
+                            @foreach($trx->items as $item)
+                                <div class="item-row">
+                                    <div>
+                                        <div class="item-name">
+                                            {{ optional($item->type)->type_name ?? 'Tipe (ID: '.$item->waste_type_id.')' }}
+                                        </div>
+                                        <div class="item-category">
+                                            {{ optional(optional($item->type)->category)->category_name ?? '-' }}
+                                        </div>
+                                    </div>
+                                    <div class="item-price">
+                                        {{ $item->quantity }} Kg × Rp {{ number_format($item->price_per_unit,0,',','.') }}
+                                        <div class="subtotal">Rp {{ number_format($item->subtotal,0,',','.') }}</div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
 
-        {{-- Daftar item transaksi --}}
-        <div style="overflow-x:auto;">
-          <table border="0" cellpadding="8" cellspacing="0" width="100%">
-            <thead style="background:#f6f7f8;">
-              <tr>
-                <th align="left">Jenis Sampah</th>
-                <th align="center">Kategori</th>
-                <th align="center">Qty (Kg)</th>
-                <th align="right">Harga/kg</th>
-                <th align="right">Subtotal</th>
-              </tr>
-            </thead>
-            <tbody>
-              @foreach($trx->items as $item)
-                <tr>
-                  <td>{{ optional($item->type)->type_name ?? 'Tipe (ID: '.$item->waste_type_id.')' }}</td>
-                  <td align="center">{{ optional(optional($item->type)->category)->category_name ?? '-' }}</td>
-                  <td align="center">{{ $item->quantity }}</td>
-                  <td align="right">Rp {{ number_format($item->price_per_unit,0,',','.') }}</td>
-                  <td align="right">Rp {{ number_format($item->subtotal,0,',','.') }}</td>
-                </tr>
-              @endforeach
-            </tbody>
-          </table>
-        </div>
+                    {{-- Footer --}}
+                    <div class="trx-footer">
+                        <div>Subtotal: Rp {{ number_format(collect($trx->items)->sum('subtotal'),0,',','.') }}</div>
+                        <div>Ongkir: Rp {{ number_format($trx->shipping_cost ?? 0,0,',','.') }}</div>
+                        <div class="grand-total">
+                            Total: Rp {{ number_format($trx->total_amount,0,',','.') }}
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        @endif
+    </div>
 
-        {{-- Ringkasan --}}
-        @php
-          $itemsSubtotal = collect($trx->items)->sum('subtotal');
-        @endphp
-        <div style="margin-top:10px; display:flex; justify-content:flex-end; gap:20px; align-items:center;">
-          <div class="muted">Subtotal: Rp {{ number_format($itemsSubtotal,0,',','.') }}</div>
-          <div class="muted">Ongkir: Rp {{ number_format($trx->shipping_cost ?? 0,0,',','.') }}</div>
-          <div><strong>Total: Rp {{ number_format($trx->total_amount,0,',','.') }}</strong></div>
-        </div>
-
-      </div>
-    @endforeach
-  @endif
-</div>
-@endsection
+    <script>
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('active');
+            document.querySelector('.overlay').classList.toggle('show');
+        }
+    </script>
+</body>
+</html>

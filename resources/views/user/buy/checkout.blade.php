@@ -1,111 +1,304 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <link rel="stylesheet" href="{{ asset('css/payment.css') }}?v={{ time() }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <style>
+        .shipping-btn.active {
+            border: 2px solid #28a745;
+            background-color: #e6ffee;
+            color: #28a745;
+        }
+        .payment-method {
+            border: 2px solid #28a745;
+            background-color: #e6ffee;
+            padding: 5px;
+            max-width: 120px;
+        }
+        .shipping-btn {
+            margin: 5px;
+            transition: background-color 0.3s, border 0.3s;
+        }
+        .back-btn {
+            font-size: 20px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+        .address-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .address-item:hover {
+            background: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
 
-@section('title','Checkout')
+@include('partials.header')
 
-@section('content')
 <div class="container">
-  <h2>Checkout</h2>
+    <div class="content">
+        <h1 style="text-align:center;">Checkout</h1>
+        <div class="back-btn" onclick="history.back()">&#8592; Kembali</div>
 
-  @if(session('error')) <div style="color:red">{{ session('error') }}</div> @endif
-  @if(session('success')) <div style="color:green">{{ session('success') }}</div> @endif
-
-  <form action="{{ route('checkout.confirm') }}" method="POST" id="checkoutForm">
-    @csrf
-
-    <div class="card" style="margin-bottom:12px;">
-      <h3>Alamat</h3>
-      <label><input type="radio" name="address_type" value="pickup" checked> Ambil di Tempat (Gratis)</label>
-      <label style="margin-left:12px;"><input type="radio" name="address_type" value="delivery"> Diantar (Berbayar)</label>
-
-      <div id="deliveryBlock" style="margin-top:12px; display:none;">
-        <!-- dummy address fields -->
-        <div>
-          <label>Nama Penerima</label>
-          <input type="text" name="receiver_name" value="Nama Dummy">
+        {{-- === Info Pengiriman === --}}
+        <div class="delivery-info">
+            <p>Delivery to</p>
+            <h3 id="deliveryName">
+                {{ optional($addresses->first())->name ?? $user->name }}
+            </h3>
+            <p id="deliveryAddress">
+                {!! optional($addresses->first())->address ?? $user->address ?? 'Alamat belum diatur' !!}
+            </p>
+            <p><strong>Phone:</strong>
+                <span id="deliveryPhone">
+                    {{ optional($addresses->first())->phone ?? $user->phone_number ?? '-' }}
+                </span>
+            </p>
+            <button class="btn save change-address-btn" onclick="toggleAddressModal(true)">Ganti Alamat</button>
         </div>
-        <div>
-          <label>Alamat Lengkap</label>
-          <input type="text" name="address" value="Jalan Contoh No.123">
+
+        {{-- Modal Pilih Alamat --}}
+        <div id="addressModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="toggleAddressModal(false)">&times;</span>
+                <h3>Pilih Alamat</h3>
+                <ul id="addressList">
+                    {{-- Alamat profil --}}
+                    <li data-id="profile" class="address-item">
+                        <strong>{{ $user->name }}</strong><br>
+                        {!! $user->address ?? 'Alamat belum diatur' !!}<br>
+                        <small>📞 {{ $user->phone_number ?? '-' }}</small>
+                    </li>
+                    {{-- Alamat tambahan --}}
+                    @foreach($addresses as $addr)
+                        <li data-id="{{ $addr->id }}" class="address-item">
+                            <strong>{{ $addr->name }}</strong><br>
+                            {!! $addr->address !!}<br>
+                            <small>📞 {{ $addr->phone }}</small>
+                        </li>
+                    @endforeach
+                </ul>
+                <button class="btn save" onclick="toggleAddAddressModal(true)">+ Tambah Alamat Baru</button>
+                <button class="btn cancel" onclick="toggleAddressModal(false)">Batalkan</button>
+            </div>
         </div>
-        <div>
-          <label>Nomor HP</label>
-          <input type="text" name="phone" value="081234567890">
+
+        {{-- Modal Tambah Alamat --}}
+        <div id="addAddressModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="toggleAddAddressModal(false)">&times;</span>
+                <h3>Tambah Alamat Baru</h3>
+                <form id="addAddressForm">
+                    @csrf
+                    <div class="form-group">
+                        <label for="addressName">Nama Penerima</label>
+                        <input type="text" id="addressName" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="addressPhone">Nomor Telepon</label>
+                        <input type="text" id="addressPhone" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="addressDetail">Alamat Lengkap</label>
+                        <textarea id="addressDetail" name="address" required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn save">Simpan</button>
+                        <button type="button" class="btn cancel" onclick="toggleAddAddressModal(false)">Batal</button>
+                    </div>
+                </form>
+            </div>
         </div>
-      </div>
+
+        {{-- === Metode Pengiriman === --}}
+        <h2 class="section-title">Metode Pengiriman</h2>
+        <div class="shipping-options">
+            <button type="button" class="shipping-btn btn save" data-type="delivery">Antar ke Alamat</button>
+            <button type="button" class="shipping-btn btn save" data-type="pickup">Ambil Barang di Tempat</button>
+        </div>
+        <p id="selectedLocation" style="display:none; margin-top:10px;"></p>
+        <hr>
+
+        {{-- === Daftar Produk === --}}
+        <div class="product-list">
+            @foreach($items as $it)
+                <div class="product-card">
+                    <img src="{{ !empty($it['image']) ? asset('storage/'.$it['image']) : asset('img/no-image.png') }}" alt="{{ $it['type_name'] }}">
+                    <p>{{ $it['type_name'] }} ({{ $it['quantity'] }} kg)</p>
+                    <strong>Rp {{ number_format($it['subtotal'],0,',','.') }}</strong>
+                </div>
+            @endforeach
+        </div>
+
+        {{-- === Rincian Harga === --}}
+        <div class="payment-details">
+            <div>
+                <span>Price ({{ count($items) }} items)</span>
+                <span id="basePrice">Rp {{ number_format($subtotal,0,',','.') }}</span>
+            </div>
+            <div class="discount">
+                <span>Discount</span>
+                <span id="discountAmount">Rp -{{ number_format($discount ?? 0,0,',','.') }}</span>
+            </div>
+            <div>
+                <span>Delivery Charges</span>
+                <span id="deliveryCharge">{{ $shipping == 0 ? 'FREE' : 'Rp '.number_format($shipping,0,',','.') }}</span>
+            </div>
+            <div class="total">
+                <span>Total Amount</span>
+                <span id="totalAmount">Rp {{ number_format($total,0,',','.') }}</span>
+            </div>
+        </div>
+
+        {{-- === Metode Pembayaran === --}}
+        <h2 class="section-title">Metode Pembayaran</h2>
+        <div class="payment-options">
+            <img src="{{ asset('img/qris.png') }}" alt="QRIS" class="payment-method active">
+        </div>
+
+        {{-- === Form Checkout === --}}
+        <form id="checkoutForm">
+            @csrf
+            @foreach($items as $it)
+                <input type="hidden" name="items[{{ $it['waste_type_id'] }}][selected]" value="1">
+                <input type="hidden" name="items[{{ $it['waste_type_id'] }}][quantity]" value="{{ $it['quantity'] }}">
+            @endforeach
+            <input type="hidden" name="address_type" id="address_type" value="pickup">
+            <input type="hidden" name="pickup_location" id="pickup_location" value="OKGREEN Office - Jl. Lingkungan Hijau No.88, Bandung">
+            <input type="hidden" name="address_id" id="address_id" value="">
+            <input type="hidden" name="payment_method" id="payment_method" value="qris">
+
+            <button type="submit" class="btn btn-success">Buat Pesanan</button>
+        </form>
+
     </div>
-
-    <div class="card" style="margin-bottom:12px;">
-      <h3>Metode Pembayaran</h3>
-      <label style="margin-left:12px;"><input type="radio" name="payment_method" value="qris"> QRIS
-      </label>
-    </div>
-
-    <div class="card">
-      <h3>Ringkasan Pesanan</h3>
-      <table border="1" cellpadding="8" width="100%">
-        <thead><tr><th>Jenis</th><th>Qty (Kg)</th><th>Harga/kg</th><th>Subtotal</th></tr></thead>
-        <tbody>
-          @foreach($items as $it)
-            <tr>
-              <td>{{ $it['type_name'] }}</td>
-              <td>{{ $it['quantity'] }}</td>
-              <td>Rp {{ number_format($it['price_per_unit'],0,',','.') }}</td>
-              <td>Rp {{ number_format($it['subtotal'],0,',','.') }}</td>
-            </tr>
-          @endforeach
-        </tbody>
-      </table>
-
-      <p style="margin-top:10px;">Subtotal: <strong id="subtotalText">Rp {{ number_format($subtotal,0,',','.') }}</strong></p>
-      <p>Ongkir: <strong id="shippingText">Rp {{ number_format($shipping,0,',','.') }}</strong></p>
-      <p>Total: <strong id="totalText">Rp {{ number_format($total,0,',','.') }}</strong></p>
-
-      <div style="margin-top:12px;">
-        <button type="submit" class="btn">Konfirmasi & Bayar (Simulasi Paid)</button>
-        <a href="{{ route('buy-waste.index') }}" style="margin-left:12px;">Kembali Pilih Produk</a>
-      </div>
-    </div>
-  </form>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function(){
-  // server-supplied values
-  const shippingPickup = Number(@json($shippingPickup));      // e.g. 0
-  const shippingDelivery = Number(@json($shippingDelivery));  // e.g. 10000
-  const subtotal = Number(@json($subtotal));                  // subtotal in number
+document.addEventListener("DOMContentLoaded", () => {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
-  const radios = document.querySelectorAll('input[name="address_type"]');
-  const deliveryBlock = document.getElementById('deliveryBlock');
-  const shippingText = document.getElementById('shippingText');
-  const totalText = document.getElementById('totalText');
+    // === Modal Alamat ===
+    window.toggleAddressModal = (show = true) => {
+        document.getElementById("addressModal").style.display = show ? "flex" : "none";
+    };
+    window.toggleAddAddressModal = (show = true) => {
+        document.getElementById("addAddressModal").style.display = show ? "flex" : "none";
+    };
 
-  function formatRupiah(num) {
-    return num.toLocaleString('id-ID');
-  }
+    // Pilih alamat
+    document.querySelectorAll(".address-item").forEach(item => {
+        item.addEventListener("click", () => {
+            const id = item.dataset.id;
+            const name = item.querySelector("strong").textContent;
+            const address = item.innerHTML.split("<br>")[1];
+            const phone = item.querySelector("small").textContent;
 
-  function updateTotals() {
-    const selected = document.querySelector('input[name="address_type"]:checked').value;
-    const shipping = (selected === 'delivery') ? shippingDelivery : shippingPickup;
-    const total = subtotal + shipping;
+            document.getElementById("deliveryName").textContent = name;
+            document.getElementById("deliveryAddress").innerHTML = address;
+            document.getElementById("deliveryPhone").textContent = phone.replace("📞 ","");
 
-    shippingText.innerText = 'Rp ' + formatRupiah(shipping);
-    totalText.innerText = 'Rp ' + formatRupiah(total);
-  }
+            document.getElementById("address_id").value = (id === "profile") ? "" : id;
+            document.getElementById("address_type").value = "delivery";
 
-  function toggleDeliveryBlock() {
-    const selected = document.querySelector('input[name="address_type"]:checked').value;
-    if (selected === 'delivery') {
-      deliveryBlock.style.display = 'block';
-    } else {
-      deliveryBlock.style.display = 'none';
+            toggleAddressModal(false);
+        });
+    });
+
+    // Tambah alamat baru
+    const addForm = document.getElementById("addAddressForm");
+    if (addForm) {
+        addForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const formData = new FormData(addForm);
+            const res = await fetch("/checkout/address", {
+                method: "POST",
+                headers: { "X-CSRF-TOKEN": csrfToken },
+                body: formData
+            });
+            const data = await res.json();
+            if (data.success) location.reload();
+            else alert("Gagal menambah alamat");
+        });
     }
-    updateTotals();
-  }
 
-  radios.forEach(r => r.addEventListener('change', toggleDeliveryBlock));
-  // init
-  toggleDeliveryBlock();
+    // === Perhitungan total ===
+    let basePrice    = {{ $subtotal }};
+    let discount     = {{ $discount ?? 0 }};
+    let shipPickup   = {{ $shippingPickup }};
+    let shipDelivery = {{ $shippingDelivery }};
+    let shipping     = {{ $shipping }};
+
+    function updateTotal() {
+        let total = basePrice - discount + shipping;
+        document.getElementById("deliveryCharge").textContent =
+            shipping === 0 ? "FREE" : "Rp " + shipping.toLocaleString("id-ID");
+        document.getElementById("totalAmount").textContent = "Rp " + total.toLocaleString("id-ID");
+    }
+
+    // Event pilih metode pengiriman
+    document.querySelectorAll(".shipping-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            document.querySelectorAll(".shipping-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+
+            if (btn.dataset.type === "delivery") {
+                document.getElementById("address_type").value = "delivery";
+                document.getElementById("selectedLocation").style.display = "none";
+                document.getElementById("pickup_location").value = "";
+                shipping = shipDelivery;
+            } else {
+                document.getElementById("address_type").value = "pickup";
+                const lokasi = "OKGREEN Office - Jl. Lingkungan Hijau No.88, Bandung";
+                document.getElementById("pickup_location").value = lokasi;
+                document.getElementById("selectedLocation").style.display = "block";
+                document.getElementById("selectedLocation").textContent = "📍 " + lokasi;
+                shipping = shipPickup;
+            }
+            updateTotal();
+        });
+    });
+
+    // === Checkout fetch + redirect ===
+    document.getElementById('checkoutForm').addEventListener('submit', function(e){
+        e.preventDefault();
+        let formData = new FormData(this);
+
+        fetch("{{ route('checkout.confirm') }}", {
+            method: "POST",
+            headers: {
+                "X-CSRF-TOKEN": csrfToken,
+                "Accept": "application/json"
+            },
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success){
+                window.location.href = data.redirect_url;
+            } else {
+                alert(data.message || "Terjadi kesalahan.");
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Terjadi kesalahan. Coba lagi.");
+        });
+    });
+
+    updateTotal();
 });
 </script>
-@endsection
+
+</body>
+</html>

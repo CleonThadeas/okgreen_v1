@@ -1,0 +1,228 @@
+body {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  background-color: #fff;
+  color: #2f3e46;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 20px auto;
+  padding: 0 20px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 20px;
+}
+
+.header h2 {
+  flex: 1;
+}
+
+.header input {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.back-btn {
+  background: #B0D9B1;
+  border: none;
+  font-size: 18px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.card {
+  background-color: #a8d5a8;
+  padding: 20px;
+  border-radius: 10px;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card h2 {
+  margin: 10px 0 5px;
+  font-size: 28px;
+}
+
+.header-admin {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.btn-tambah {
+  background-color: #86A789;
+  color: white;
+  padding: 8px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 14px;
+  transition: background 0.3s ease;
+}
+
+.btn-tambah:hover {
+  background-color: #6d876e;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.admin-card {
+  background: #f0efef;
+  padding: 10px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+
+.admin-card:hover {
+  transform: scale(1.02);
+}
+
+.admin-card img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+}
+
+.icon {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  text-align: center;
+  border-radius: 8px;
+  font-size: 18px;
+  line-height: 32px;
+  background-color: rgba(255,255,255,0.5);
+}
+
+.icon.purple { color: purple; }
+.icon.blue { color: dodgerblue; }
+.icon.red { color: crimson; }
+.icon.green { color: green; }
+
+.text-bold {
+  font-weight: bold;
+}
+
+.text-green {
+  color: green;
+}
+
+.section-title {
+  margin: 30px 0 10px;
+}
+
+.header-admin {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;            
+    margin-bottom: 20px;
+}
+
+.btn-tambah {
+    background-color: #86A789;
+    color: rgb(255, 255, 255);
+    padding: 6px 25px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.btn-tambah:hover {
+    background-color: #6d876e;
+}
+.admin-card img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.card a {
+  color: #333;         
+  text-decoration: none;   
+  transition: color 0.3s ease;
+}
+
+.card a:hover {
+  color: #86A789;         
+  text-decoration: underline;
+}
+
+.admin-info {
+  flex: 1;
+}
+
+.status {
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  color: white;
+  display: inline-block;
+}
+
+.status.active {
+  background: #4CAF50;
+}
+
+.status.offline {
+  background: #E53935;
+}
+
+.admin-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #2f3e46;
+  transition: color 0.3s ease;
+}
+
+.admin-actions button:hover {
+  color: #41644A;
+}
+
+.edit, .delete {
+    padding: 6px 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.edit {
+    background: #f1f1f1;
+}
+
+.delete {
+    background: #fef2f2;
+    color: red;
+}

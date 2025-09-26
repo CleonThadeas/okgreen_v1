@@ -1,0 +1,519 @@
+/* =========================
+   GLOBAL STYLE
+========================= */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;  
+  background: #EAF6EB;
+}
+
+main, .jual-container {
+  margin-top: 10px; /* jarak dari header */
+}
+
+/* =========================
+   FORM CONTAINER AS CARD
+========================= */
+.jual-container {
+  background: #fff;
+  padding: 30px 40px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 980px;       /* form jadi tidak kepanjangan */
+  margin: 30px auto;      /* center di tengah layar */
+  box-sizing: border-box;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12); /* efek card */
+}
+
+
+.jual-container h2 {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.jual-container label {
+  font-weight: 600;
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 5px;
+}
+
+.jual-container select,
+.jual-container input,
+.jual-container textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.berat-container {
+  display: flex;
+  gap: 10px;
+}
+
+.berat-container input {
+  flex: 2;
+}
+
+.berat-container select {
+  flex: 1;
+}
+
+.upload-box {
+  border: 1px dashed #aaa;
+  text-align: center;
+  padding: 40px;
+  cursor: pointer;
+  border-radius: 6px;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.upload-box:hover {
+  background: #f9f9f9;
+}
+
+.jual-btn {
+  background: #5f876b;
+  color: #fff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.jual-btn:hover {
+  background: #4e7057;
+}
+
+/* =========================
+   USER GREETING (HEADER)
+========================= */
+.user-greeting {
+  width: 100%;
+  height: 70px;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.user-greeting .logo {
+  height: 45px;
+  margin-right: 10px;
+}
+
+.user-greeting .brand {
+  font-weight: bold;
+  font-size: 20px;
+  color: #3B755F;
+}
+
+.user-greeting .welcome {
+  font-size: 16px;
+  color: #333;
+}
+
+/* =========================
+   POPUP OVERLAY
+========================= */
+.popup-overlay {
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.popup-overlay.active {
+  pointer-events: auto;
+  opacity: 1;
+}
+
+/* =========================
+   POPUP CARD
+========================= */
+.popup-card {
+  background: #fff;
+  border-radius: 16px;
+  max-width: 360px;
+  width: 90%;
+  text-align: center;
+  transform: translateY(25px);
+  opacity: 0;
+  transition: all 0.35s ease-in-out;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15),
+              0 2px 6px rgba(0,0,0,0.1);
+  overflow: hidden; /* biar header ikut radius */
+}
+
+.popup-overlay.active .popup-card {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* =========================
+   POPUP HEADER
+========================= */
+.popup-header {
+  height: 96px;
+  background: #EAF6EB;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+}
+
+.popup-header img {
+  max-height: 70px;
+}
+
+/* =========================
+   POPUP BODY
+========================= */
+.popup-body {
+  text-align: center;
+  padding: 20px;
+}
+
+.popup-body h3 {
+  color: #2e5d43;
+  font-size: 20px;
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+
+.popup-body p {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.4;
+  margin: 0 auto 10px;
+}
+
+/* =========================
+   POPUP FOOTER
+========================= */
+.popup-footer {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 20px 20px;
+}
+
+.popup-footer button,
+.popup-footer a {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}
+
+/* Tombol Ignore */
+.btn-ignore {
+  background: #fff;
+  border: 1px solid #D9DBE9;
+  color: #514F6E;
+}
+
+/* Tombol Accept */
+.btn-accept {
+  background: linear-gradient(180deg, #79AC78 0%, #618264 100%);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Hover efek */
+.popup-footer button:hover,
+.popup-footer a:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 5px 12px rgba(0,0,0,0.18);
+}
+
+/* =========================
+   ANIMASI
+========================= */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Animasi fade-in */
+.animate-fade {
+  animation: fadeIn 0.6s ease;
+}
+
+/* Animasi card */
+.animate-card {
+  animation: slideUp 0.6s ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(25px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Tanda required */
+.required {
+  color: red;
+  font-weight: bold;
+  margin-left: 2px;
+}
+
+/* Preview foto */
+.preview-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.preview-container img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transition: transform 0.3s;
+}
+
+.preview-container img:hover {
+  transform: scale(1.1);
+}
+
+/* =========================
+   RIWAYAT TABLE MODERN
+========================= */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.riwayat-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+.riwayat-table thead {
+  background: #5f876b;
+  color: #fff;
+  text-align: left;
+}
+
+.riwayat-table thead th {
+  padding: 12px 15px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+.riwayat-table tbody tr {
+  border-bottom: 1px solid #eee;
+  transition: background 0.3s;
+}
+
+.riwayat-table tbody tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+.riwayat-table tbody tr:hover {
+  background: #eef6f0;
+}
+
+.riwayat-table td {
+  padding: 10px 15px;
+  color: #333;
+}
+
+.no-data {
+  text-align: center;
+  padding: 20px;
+  font-style: italic;
+  color: #777;
+}
+
+/* Badge Status */
+.badge {
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.badge-success {
+  background: #d4edda;
+  color: #155724;
+}
+
+.badge-pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.badge-danger {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.popup-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.btn-accept,
+.btn-cek {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-accept {
+    background: #aaa;
+    color: white;
+}
+
+.btn-cek {
+    background: #28a745;
+    color: white;
+    text-decoration: none;
+}
+
+/* ===========================
+   MODAL DETAIL PRODUK
+=========================== */
+.modal {
+    display: none; /* default hidden */
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    max-width: 700px;
+    width: 100%;
+    position: relative;
+    animation: fadeInUp 0.3s ease;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
+.modal-content h1, 
+.modal-content h2, 
+.modal-content h3 {
+    margin-bottom: 15px;
+    color: #2c3e50;
+}
+
+.modal-content p {
+    margin-bottom: 10px;
+    font-size: 15px;
+    color: #444;
+}
+
+/* Tombol close */
+.modal-content .close {
+    position: absolute;
+    top: 12px;
+    right: 18px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #555;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.modal-content .close:hover {
+    color: #e74c3c;
+}
+
+/* Gambar produk di modal */
+.detail-produk-container {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.detail-produk-container .produk-gambar {
+    flex: 1 1 250px;
+    text-align: center;
+}
+
+.detail-produk-container .produk-gambar img {
+    max-width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.detail-produk-container .produk-info {
+    flex: 2 1 350px;
+}
+
+.detail-produk-container .produk-info h1 {
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.detail-produk-container .produk-info p {
+    margin: 6px 0;
+    font-size: 15px;
+}
+
+.detail-produk-container .produk-deskripsi {
+    margin-top: 10px;
+    font-style: italic;
+    color: #555;
+}
+
+/* Bawah modal */
+.modal-bottom {
+    margin-top: 15px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #27ae60;
+}
+
+/* Animasi modal */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

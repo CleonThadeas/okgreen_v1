@@ -1,0 +1,220 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #F9F9F9;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;  /* cegah scroll horizontal */
+    overflow-y: hidden;  /* cegah scroll vertical kosong */
+}
+
+
+/* Layout utama */
+.detail-produk-container {
+    display: flex;
+    gap: 40px;
+    padding: 50px 70px;
+    max-width: 1200px;
+    margin: auto;
+    background-color: #fff;
+    border-radius: 10px;
+
+    /* Biar full ke bawah */
+    min-height: 100vh;
+    box-sizing: border-box;
+
+    /* Biar tidak ketutup bottom bar */
+    padding-bottom: 120px;
+}
+
+/* Gambar produk */
+.produk-gambar {
+    flex: 1;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px; /* kasih ruang biar ga nempel ke tepi */
+}
+
+.produk-gambar img {
+    width: 100%;          
+    max-width: 380px;     
+    height: 300px;        
+    border-radius: 12px;
+    object-fit: contain;  
+    cursor: pointer;
+}
+
+/* Tombol kembali */
+.btn-kembali {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    color: #333;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+/* Info produk */
+.produk-info {
+    flex: 1;
+    font-size: 1.05rem;
+}
+
+.tag-hotsale {
+    background-color: #ff4d4f;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.kategori-rating {
+    margin: 10px 0;
+    font-size: 14px;
+}
+.kategori {
+    color: #5E7C65;
+    margin-right: 10px;
+}
+.rating-score {
+    font-weight: bold;
+}
+
+.deskripsi-label {
+    margin-top: 20px;
+    font-weight: bold;
+}
+.deskripsi {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.thumb-produk {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+}
+
+/* Pilihan ukuran */
+/* Pilihan ukuran */
+.size-container {
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.size {
+    border: 2px solid #5E7C65;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    color: #5E7C65;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.size:hover {
+    background: #f1f6f3;
+    transform: translateY(-2px);
+}
+
+.size.active {
+    background: #5E7C65;
+    color: #fff;
+    border-color: #5E7C65;
+    box-shadow: 0 3px 8px rgba(94,124,101,0.3);
+}
+
+
+.bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-top: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;   /* biar semua konten sejajar tengah */
+    padding: 10px 20px;
+    z-index: 1000;
+}
+
+.bottom-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.thumb-bottom {
+    width: 40px;
+    height: auto;
+    border-radius: 4px;
+}
+
+.bottom-nama {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.bottom-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;  /* kasih jarak antara qty dan tombol beli */
+}
+
+.qty-control {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.qty-control input {
+    width: 40px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+.qty-btn {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    background: #fff;
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.btn-beli {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #5E7C65;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;   /* hilangin underline */
+    transition: background 0.2s ease;
+}
+
+.btn-beli:hover {
+    background-color: #4d6654;
+}
+

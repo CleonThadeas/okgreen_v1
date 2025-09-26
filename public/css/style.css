@@ -1,0 +1,381 @@
+/* Umum */
+body {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4fdf5;
+  color: #2f3e46;
+}
+
+/* Navbar */
+.navbar {
+  background-color: #41644A;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  color: white;
+}
+
+.navbar .logo-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.navbar .logo-wrapper img {
+  width: 40px;
+  height: 40px;
+}
+
+.navbar .logo {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.navbar nav ul {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar nav ul li a {
+  color: white;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.btn-masuk {
+  background-color: #86A789;
+  padding: 0.4rem 0.8rem;
+  border-radius: 5px;
+}
+
+/* Hero */
+.hero-slider {
+  position: relative;
+  width: 100%;
+  height: 580px;
+  overflow: hidden;
+}
+
+.carousel-slide {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.6s ease-in-out;
+}
+
+.carousel-slide.active {
+  opacity: 1;
+  z-index: 1;
+}
+
+.carousel-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.carousel-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 1rem;
+}
+
+.indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #ccc;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.indicator.active {
+  background-color: #41644A;
+}
+
+/* Tentang dan FAQ Section */
+.tentang,
+.faq {
+  padding: 2rem;
+  background-color: #fdfdfd;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.section-title h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1e3a1e;
+}
+
+.section-title img {
+  width: 50px;
+  height: 50px;
+}
+
+
+/* Tentang Kami Detail - SUDAH DIBENARKAN */
+.tentang-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1.5rem;
+  background-color: #e6f4e9;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  gap: 2rem;
+}
+
+.tentang-text {
+  flex: 2;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.tentang-logo {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tentang-logo img {
+  max-width: 300PX;
+  height: auto;
+}
+
+/* FAQ */
+.faq-item {
+  background-color: white;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.faq-item h3 {
+  cursor: pointer;
+  position: relative;
+  padding-right: 1.5rem;
+}
+
+.faq-item h3::after {
+  content: '+';
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.faq-item.open h3::after {
+  content: '-';
+}
+
+.faq-item p {
+  display: none;
+  margin-top: 0.5rem;
+}
+
+.faq-item.open p {
+  display: block;
+}
+
+/* FAQ Active State */
+.faq-item.open {
+  background-color: #d4edda;
+  transition: background-color 0.3s ease;
+}
+
+
+.custom-body {
+    background-color: white;
+    color: #1f2937; /* Tailwind: text-gray-800 */
+    font-family: sans-serif;
+}
+
+.section-header {
+    text-align: center;
+    padding: 2.5rem 0;
+}
+
+.section-title {
+    font-size: 1.875rem;
+    font-weight: 600;
+}
+
+/* SERVICE GRID */
+.service-grid {
+    max-width: 80rem;
+    margin: 0 auto 5rem auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 0 2rem;
+}
+
+.service-card {
+     border: 1px solid #ccc;
+    background-color: #ecfdf5; /* hijau muda */
+    padding: 2rem; /* Gedein padding */
+    border-radius: 0.75rem;
+    text-align: center;
+    transition: box-shadow 0.3s ease;
+    min-height: 260px; /* Tambahan biar tinggi konsisten */
+}
+
+.service-card:hover {
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+}
+
+.service-icon {
+    font-size: 2.25rem; /* Gedein ikon */
+    margin-bottom: 1rem;
+}
+
+.service-title {
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.service-desc {
+    font-size: 1rem;
+    color: #4b5563;
+}
+
+.section-subtitle {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.section-subdesc {
+    color: #4b5563;
+}
+
+.types-grid {
+    max-width: 80rem;
+    margin: 0 auto 5rem auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem; /* tidak terlalu renggang */
+    padding: 0 1.5rem;
+}
+
+.type-card {
+    border: 1px solid #ccc;
+    background-color: #ecfdf5; /* hijau muda */
+    padding: 1rem;
+    border-radius: 0.20rem;
+    text-align: center;
+    transition: box-shadow 0.3s ease;
+    min-height: 100px;
+}
+
+.type-card:hover {
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.08);
+}
+
+.type-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+}
+
+.type-name {
+    font-weight: 700;
+    font-size: 1.125rem;
+}
+
+
+.footer {
+  background-color: #5E7C65; /* Tailwind: bg-green-800 */
+  color: #fff;
+  font-size: 0.875rem;
+  padding: 2.5rem 0;
+}
+
+.footer-grid {
+  max-width: 72rem;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 2rem; /* jarak antar kolom */
+  padding: 0 2rem;
+}
+
+.footer-brand {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.footer-heading {
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.footer-grid ul {
+  list-style: none;   /* hapus bullet */
+  padding: 0;
+  margin: 0;
+}
+
+.footer-grid li {
+  margin-bottom: 0.5rem;
+}
+
+.footer-grid a {
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-grid a:hover {
+  color: #bbf7d0; /* hijau muda saat hover */
+}
+
+.email-link {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.footer-bottom {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: #bbf7d0; /* Tailwind: text-green-200 */
+}
+
+.faq-scroll-container {
+    max-height: 400px; /* Bisa disesuaikan */
+    overflow-y: auto;
+    padding-right: 0.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: #9ED29E #f0f0f0;
+}
+
+
+.faq-scroll-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.faq-scroll-container::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 5px;
+}
+
+.faq-scroll-container::-webkit-scrollbar-thumb {
+  background-color: #9ED29E;
+  border-radius: 5px;
+}
+

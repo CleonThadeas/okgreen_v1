@@ -1,0 +1,309 @@
+/* ===========================
+   GLOBAL STYLE
+=========================== */
+body {
+    font-family: 'Poppins', Arial, sans-serif;
+    margin: 0;
+    background-color: #f8f9fa;
+    color: #333;
+    line-height: 1.6;
+    padding-bottom: 90px;
+}
+
+h1, h2, h3, h4 {
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Link reset */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* ===========================
+   PRODUK SECTION
+=========================== */
+.produk-section {
+    padding: 40px 60px;
+    padding-bottom: 130px;
+}
+
+.produk-section h2 {
+    margin-bottom: 25px;
+    font-size: 26px;
+    font-weight: 700;
+    color: #2c3e50;
+    border-left: 6px solid #5E7C65;
+    padding-left: 10px;
+}
+
+/* Grid produk */
+.produk-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 30px;
+}
+
+/* Card produk */
+.produk-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.produk-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+}
+
+/* Gambar produk */
+.produk-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: contain;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    transition: transform 0.3s ease;
+}
+
+.produk-card:hover img {
+    transform: scale(1.07);
+}
+
+/* Nama produk */
+.produk-desc {
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 5px;
+    color: #2c3e50;
+}
+
+/* Harga */
+.produk-price {
+    font-size: 16px;
+    font-weight: bold;
+    color: #27ae60;
+    margin: 6px 0;
+}
+
+/* Stok */
+.produk-stock {
+    font-size: 13px;
+    color: #7f8c8d;
+}
+
+/* Tombol */
+.tambah-btn {
+    background: #5E7C65;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 25px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.25s ease;
+}
+
+.tambah-btn:hover {
+    background: #4a5f4f;
+    transform: scale(1.05);
+}
+
+.tambah-btn.disabled {
+    background: #bdc3c7;
+    cursor: not-allowed;
+}
+
+/* Label stok habis */
+.stok-habis-label {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: #e74c3c;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+}
+
+/* ===========================
+   BOTTOM BAR
+=========================== */
+.bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-top: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.08);
+    z-index: 1000;
+}
+
+.bottom-bar #selected-count {
+    font-size: 15px;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.bottom-bar button {
+    background: #2c6e49;
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.bottom-bar button:hover {
+    background: #1f4d34;
+    transform: scale(1.05);
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+@media (max-width: 768px) {
+    .produk-section {
+        padding: 20px;
+    }
+    .produk-container {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 20px;
+    }
+    .produk-card img {
+        height: 160px;
+    }
+}
+
+/* ===========================
+   MODAL DETAIL PRODUK
+=========================== */
+.modal {
+    display: none; /* default hidden */
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    max-width: 700px;
+    width: 100%;
+    position: relative;
+    animation: fadeInUp 0.3s ease;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
+.modal-content h1, 
+.modal-content h2, 
+.modal-content h3 {
+    margin-bottom: 15px;
+    color: #2c3e50;
+}
+
+.modal-content p {
+    margin-bottom: 10px;
+    font-size: 15px;
+    color: #444;
+}
+
+/* Tombol close */
+.modal-content .close {
+    position: absolute;
+    top: 12px;
+    right: 18px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #555;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.modal-content .close:hover {
+    color: #e74c3c;
+}
+
+/* Gambar produk di modal */
+.detail-produk-container {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.detail-produk-container .produk-gambar {
+    flex: 1 1 250px;
+    text-align: center;
+}
+
+.detail-produk-container .produk-gambar img {
+    max-width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.detail-produk-container .produk-info {
+    flex: 2 1 350px;
+}
+
+.detail-produk-container .produk-info h1 {
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.detail-produk-container .produk-info p {
+    margin: 6px 0;
+    font-size: 15px;
+}
+
+.detail-produk-container .produk-deskripsi {
+    margin-top: 10px;
+    font-style: italic;
+    color: #555;
+}
+
+/* Bawah modal */
+.modal-bottom {
+    margin-top: 15px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #27ae60;
+}
+
+/* Animasi modal */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+

@@ -2,7 +2,12 @@
 @section('title','Kelola Sampah - Staff')
 
 @section('content')
-<h2>Kelola Sampah (Staff)</h2>
+@if(session('success')) 
+    <div style="color:green">{{ session('success') }}</div> 
+@endif
+@if(session('error')) 
+    <div style="color:red">{{ session('error') }}</div> 
+@endif
 
 {{-- Notifikasi --}}
 @if(session('success')) 

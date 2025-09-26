@@ -66,7 +66,7 @@ class SellController extends Controller
                 $files = $r->file('photo');
                 $sort = 0;
                 foreach ($files as $f) {
-                    $path = $f->store('sell_wastes','public');
+                    $path = $f->store('sel_wastes', 'public');
                     SellWastePhoto::create([
                         'sell_id'    => $sell->id,
                         'photo_path' => $path,

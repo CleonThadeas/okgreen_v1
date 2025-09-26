@@ -1,0 +1,336 @@
+/* RESET */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #f4f6f9;
+  color: #333;
+  height: 100%;
+  overflow-x: hidden;
+}
+body.modal-open {
+  overflow: hidden; /* kunci scroll semua arah saat modal terbuka */
+}
+
+/* Profile Container */
+.profile-container {
+  min-height: calc(100vh - 60px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin-bottom: 0; /* hapus spacing bawah */
+}
+
+/* Cover */
+.profile-cover {
+  width: 100%;
+  height: 250px;
+  position: relative;
+  overflow: hidden;
+}
+.profile-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+.edit-cover {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  background: rgba(0,0,0,0.5);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.edit-cover:hover {
+  background: rgba(0,0,0,0.7);
+}
+
+/* Profile Card */
+.profile-card {
+  margin-top: -70px;
+  z-index: 10;
+  position: relative;
+  background: #fff;
+  padding: 80px 40px 30px 20px; /* kanan lebih lega */
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  width: calc(100% - 40px);
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  margin-bottom: 0;
+}
+
+/* Avatar */
+.profile-avatar {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 120px;
+}
+.profile-avatar img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 5px solid #fff;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.edit-pic {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  background: #4a6b52;
+  border: none;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.edit-pic:hover {
+  background: #365a3f;
+}
+
+/* Info */
+.profile-info h2 {
+  margin: 10px 0 5px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #2c3e50;
+}
+.profile-info .email {
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 20px;
+}
+
+/* Details */
+.profile-details {
+  margin-top: 15px;
+  text-align: left;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+  padding-bottom: 10px;
+}
+.profile-details p {
+  margin: 12px 0;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.profile-details strong {
+  min-width: 120px;
+  display: inline-block;
+}
+.profile-details i {
+  color: #4a6b52;
+}
+
+/* Button Edit */
+.btn-edit {
+  background: #4a6b52;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+.btn-edit:hover {
+  background: #365a3f;
+}
+
+/* ============================= */
+/* ========= MODAL EDIT ========= */
+/* ============================= */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.55);
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 14px;
+  padding: 25px;
+  width: 100%;
+  max-width: 900px; /* lebih lebar */
+  position: relative;
+  text-align: left;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  transform: scale(0.85);
+  opacity: 0;
+  transition: all 0.25s ease-in-out;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-content.show {
+  transform: scale(1);
+  opacity: 1;
+}
+
+/* Tombol close */
+.modal-content .close {
+  position: absolute;
+  top: 12px;
+  right: 15px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.modal-content .close:hover {
+  color: red;
+}
+
+/* Judul modal */
+.modal-content h3 {
+  margin: 0 0 15px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #2d2d2d;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Form styling */
+.modal-content label {
+  display: block;
+  margin: 10px 0 5px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #444;
+}
+
+.modal-content input,
+.modal-content textarea,
+.modal-content select {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.modal-content input:focus,
+.modal-content textarea:focus,
+.modal-content select:focus {
+  border-color: #4a6b52;
+  outline: none;
+}
+
+/* Action buttons */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.form-actions .btn {
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.form-actions .btn.cancel {
+  background: #ccc;
+  color: #333;
+}
+.form-actions .btn.cancel:hover {
+  background: #b3b3b3;
+}
+
+.form-actions .btn.save {
+  background: #4a6b52;
+  color: #fff;
+}
+.form-actions .btn.save:hover {
+  background: #3b5642;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .profile-card {
+    width: calc(100% - 20px);
+    padding: 70px 20px 20px; /* kanan tetap agak lega */
+  }
+  .profile-avatar {
+    width: 100px;
+    height: 100px;
+    top: -50px;
+  }
+  .profile-avatar img {
+    width: 100px;
+    height: 100px;
+  }
+  .profile-details strong {
+    min-width: auto;
+  }
+  .modal-content {
+    max-width: 95%;
+  }
+}
+
+ /* tombol toggle */
+    .sidebar-toggle {
+        position: absolute;
+        top: 80px; /* biar di bawah header */
+        left: 20px;
+        background: #4e6b50;
+        color: white;
+        border: none;
+        padding: 10px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        z-index: 1100;
+        transition: opacity 0.3s ease;
+    }
+
+    /* tombol hilang saat sidebar terbuka */
+    body.sidebar-open .sidebar-toggle {
+        opacity: 0;
+        pointer-events: none;
+    }

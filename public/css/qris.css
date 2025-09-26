@@ -1,0 +1,106 @@
+/* Background */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #b8e0c4, #ffffff);
+    color: #2c3e50;
+}
+
+/* Container */
+.qris-container {
+    max-width: 520px;
+    margin: 60px auto;
+    padding: 25px;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    text-align: center;
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+/* Judul */
+.qris-container h3 {
+    margin-bottom: 25px;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #34495e;
+}
+
+/* QR Box */
+.qris-box {
+    margin: 0 auto 20px;
+    width: 300px;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fafafa;
+    border: 2px dashed #2980b9;
+    border-radius: 16px;
+    box-shadow: inset 0 3px 8px rgba(0,0,0,0.08);
+    animation: zoomIn 0.6s ease;
+}
+
+/* Countdown */
+.countdown {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 14px;
+    color: #e67e22;
+    animation: pulse 1.5s infinite;
+}
+
+/* Status */
+.status-box {
+    display: inline-block;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    transition: background 0.3s, color 0.3s;
+}
+.status-pending { background: #fff3cd; color: #856404; }
+.status-paid { background: #d4edda; color: #155724; }
+.status-failed, .status-expired { background: #f8d7da; color: #721c24; }
+
+/* Tombol */
+.btn-group {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 10px;
+}
+.btn {
+    display: inline-block;
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.25s ease-in-out;
+}
+.btn-primary {
+    background: #7f9b83;
+    color: #fff;
+}
+.btn-primary:hover {
+    background: #384c3b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(41,128,185,0.4);
+}
+.btn-secondary {
+    background: #6c757d;
+    color: #fff;
+}
+.btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+}
+
+/* Animasi */
+@keyframes fadeIn { from {opacity: 0; transform: translateY(20px);} to {opacity: 1; transform: translateY(0);} }
+@keyframes zoomIn { from {transform: scale(0.8); opacity: 0;} to {transform: scale(1); opacity: 1;} }
+@keyframes pulse { 0% {opacity: 1;} 50% {opacity: 0.6;} 100% {opacity: 1;} }

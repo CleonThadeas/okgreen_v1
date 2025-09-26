@@ -1,38 +1,74 @@
-<x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - GreenLeaf</title>
 
-        <!-- Name -->
-        <div>
+    <link rel="stylesheet" href="{{ asset('css/auth.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="header-shape"></div>
+
+    <div class="auth-container">
+        <h1>Register!</h1>
+        <p>Buat akun untuk mulai</p>
+
+        <!-- Pesan error dari BE -->
+        @if ($errors->any())
+            <div class="error-msg">
+                <ul style="margin:0; padding-left:18px;">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <!-- Form BE (sesuai route register Laravel) -->
+        <form method="POST" action="{{ route('register') }}">
+            @csrf
+
             <label for="name">Username</label>
-            <input id="name" class="block mt-1 w-full" type="text" name="name" required autofocus autocomplete="username">
-        </div>
+            <input type="text" id="name" name="name" value="{{ old('name') }}" 
+                class="@error('name') is-invalid @enderror" required autofocus autocomplete="username">
+            @error('name')
+                <span class="invalid-feedback">{{ $message }}</span>
+            @enderror
 
-        <!-- Email -->
-        <div class="mt-4">
             <label for="email">Email</label>
-            <input id="email" class="block mt-1 w-full" type="email" name="email" required autocomplete="email">
-        </div>
+            <input type="email" id="email" name="email" value="{{ old('email') }}" 
+                class="@error('email') is-invalid @enderror" required autocomplete="email">
+            @error('email')
+                <span class="invalid-feedback">{{ $message }}</span>
+            @enderror
 
-        <!-- Password -->
-        <div class="mt-4">
-            <label for="password">Password</label>
-            <input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password">
-        </div>
+            <label for="password">Sandi</label>
+            <input type="password" id="password" name="password" 
+                class="@error('password') is-invalid @enderror" required autocomplete="new-password">
+            @error('password')
+                <span class="invalid-feedback">{{ $message }}</span>
+            @enderror
 
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <label for="password_confirmation">Confirm Password</label>
-            <input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" required autocomplete="new-password">
-        </div>
+            <label for="password_confirmation">Konfirmasi Sandi</label>
+            <input type="password" id="password_confirmation" name="password_confirmation" 
+                required autocomplete="new-password">
 
-        <div class="flex items-center justify-end mt-4">
-            <button type="submit">
-                Register
-            </button>
+            <button type="submit" class="btn-submit">DAFTAR</button>
+        </form>
+
+        <p class="register-text">Sudah punya akun?
+            <a href="{{ route('login') }}">Masuk di sini</a>
+        </p>
+
+        <div class="logo">
+            <img src="{{ asset('img/logo1.png') }}" alt="Logo GreenLeaf" />
         </div>
-        <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-            {{ __('Sudah Memiliki Akun?') }}
-        </a>
-    </form>
-</x-guest-layout>
+    </div>
+</script>
+
+
+</body>
+</html>

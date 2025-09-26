@@ -33,3 +33,4 @@ class WasteType extends Model
 
 
 }
+

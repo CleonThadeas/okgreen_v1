@@ -1,8 +1,12 @@
-@extends('layouts.admin')
+@extends('layouts.form')
 @section('title','Tambah Produk - admin')
 
 @section('content')
-<h2>Tambah Produk Sampah</h2>
+<div class="form-container">
+    <div class="product-header">
+        <h2>Tambah Produk Sampah</h2>
+    </div>
+
 
 @if($errors->any()) <div style="color:red"><ul>@foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul></div>@endif
 
@@ -30,18 +34,20 @@
 
     <div>
         <label>Harga per Kg</label>
-        <input type="number" step="0.01" name="price_per_unit" required>
+        <input type="number" name="price_per_unit" required>
     </div>
 
     <div>
         <label>Stok Awal (Kg)</label>
-        <input type="number" step="0.01" name="available_weight" value="0">
+        <input type="number" name="available_weight" value="0">
     </div>
-    
+
     <div> 
-    <label>Foto Produk</label>
-    <input type="file" name="photo" accept="image/*"><br><br>
+        <label>Foto Produk</label>
+        <input type="file" name="photo" accept="image/*"><br><br>
     </div>
-    <button type="submit">Simpan Produk</button>
+
+    <button type="submit" class="btn-confirm">Simpan Perubahan</button>
+    <button type="cancel" class="btn-cancel">Batalkan</button>
 </form>
 @endsection

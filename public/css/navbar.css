@@ -1,0 +1,76 @@
+.header-navbar {
+    background-color: #5E7C65;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 40px;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.logo img {
+    height: 50px;
+}
+
+.logo span {
+    color: #fff;
+    font-size: 14px;
+}
+
+nav {
+    display: flex;
+    gap: 30px;
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+    position: relative; /* untuk garis bawah */
+    transition: color 0.3s ease;
+}
+
+nav a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px; /* jarak garis dari teks */
+    left: 0;
+    width: 0%;
+    height: 2px;
+    background-color: #000000; /* warna garis */
+    transition: width 0.3s ease;
+}
+
+nav a:hover {
+    color: #000000; /* warna teks saat hover */
+}
+
+nav a:hover::after {
+    width: 100%;
+}
+
+/* Menu aktif */
+nav a.active {
+    color: #000000;
+}
+
+nav a.active::after {
+    width: 100%;
+}
+
+.icons {
+    display: flex;
+    gap: 15px;
+}
+
+.icons img {
+    height: 35px;
+    cursor: pointer;
+}

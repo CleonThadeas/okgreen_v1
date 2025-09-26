@@ -1,29 +1,31 @@
-@extends('layouts.admin')
-@section('title','Kelola Sampah - Admin')
+@extends('layouts.staff')
+@section('title','Kelola Sampah - Staff')
 
 @section('content')
-<h2>Kelola Sampah (Admin)</h2>
+@if(session('success')) 
+    <div style="color:green">{{ session('success') }}</div> 
+@endif
+@if(session('error')) 
+    <div style="color:red">{{ session('error') }}</div> 
+@endif
 
-@if(session('success')) <div style="color:green">{{ session('success') }}</div> @endif
-@if(session('error')) <div style="color:red">{{ session('error') }}</div> @endif
+<div class="container">
+    <div class="header">
+        <h2>Kelola Sampah (Staff)</h2>
+    </div>
 
-<p>
-    <a href="{{ route('admin.wastes.category.create') }}">+ Tambah Kategori</a> |
-    <a href="{{ route('admin.wastes.type.create') }}">+ Tambah Produk</a>
-</p>
-
-<table border="1" cellpadding="8" width="100%">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Kategori</th>
-        <th>Jenis</th>
-        <th>Harga/kg</th>
-        <th>Stok (Kg)</th>
-        <th>Aksi</th>
-      </tr>
-    </thead>
-    <tbody>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Kategori</th>
+                <th>Jenis</th>
+                <th>Harga/kg</th>
+                <th>Stok/kg</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
         @forelse($wastes as $w)
             <tr>
                 <td>{{ $loop->iteration }}</td>
@@ -43,5 +45,6 @@
             <tr><td colspan="6">Belum ada data.</td></tr>
         @endforelse
     </tbody>
-</table>
+    </table>
+</div>
 @endsection
