@@ -22,6 +22,23 @@
             margin: 5px;
             transition: background-color 0.3s, border 0.3s;
         }
+        .back-btn {
+            font-size: 20px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+        .address-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .address-item:hover {
+            background: #f1f1f1;
+        }
     </style>
 </head>
 <body>
@@ -31,7 +48,7 @@
 <div class="container">
     <div class="content">
         <h1 style="text-align:center;">Checkout</h1>
-        <div class="back-btn" onclick="history.back()">&#8592;</div>
+        <div class="back-btn" onclick="history.back()">&#8592; Kembali</div>
 
         {{-- === Info Pengiriman === --}}
         <div class="delivery-info">
@@ -191,7 +208,6 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("deliveryAddress").innerHTML = address;
             document.getElementById("deliveryPhone").textContent = phone.replace("📞 ","");
 
-            // kalau pilih alamat profil, address_id dikosongkan
             document.getElementById("address_id").value = (id === "profile") ? "" : id;
             document.getElementById("address_type").value = "delivery";
 
@@ -199,7 +215,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // Tambah alamat
+    // Tambah alamat baru
     const addForm = document.getElementById("addAddressForm");
     if (addForm) {
         addForm.addEventListener("submit", async (e) => {
@@ -216,7 +232,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // === Pengiriman & total ===
+    // === Perhitungan total ===
     let basePrice    = {{ $subtotal }};
     let discount     = {{ $discount ?? 0 }};
     let shipPickup   = {{ $shippingPickup }};
@@ -230,6 +246,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("totalAmount").textContent = "Rp " + total.toLocaleString("id-ID");
     }
 
+    // Event pilih metode pengiriman
     document.querySelectorAll(".shipping-btn").forEach(btn => {
         btn.addEventListener("click", () => {
             document.querySelectorAll(".shipping-btn").forEach(b => b.classList.remove("active"));

@@ -17,103 +17,81 @@
     <!-- Sidebar -->
     @include('partials.sidebar')
 
-    <!-- Main Content -->
-    <div class="container">
-        <main class="content">
-            <!-- Tombol untuk buka/tutup sidebar -->
-            <button class="menu-toggle" onclick="toggleSidebar()">
-                <i class="fas fa-bars"></i>
-            </button>
+    <!-- Profile Container -->
+    <div class="profile-container">
+        <!-- Cover -->
+        <div class="profile-cover">
+            <img src="{{ asset('img/1.png') }}" alt="Cover">
+        </div>
 
-            <h1>Informasi Pribadi</h1>
-            
-            {{-- Notifikasi sukses --}}
-            @if(session('success'))
-                <div class="alert-success">
-                    {{ session('success') }}
+        <!-- Profile Card -->
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <img id="profileImage" src="{{ asset('img/ppUser.png') }}" alt="User">
+                    <button type="button" class="edit-pic" onclick="document.getElementById('fileInput').click()">
+                        <i class="fas fa-camera"></i>
+                    </button>
+                    <input type="file" id="fileInput" accept="image/*" style="display:none">
                 </div>
-            @endif
-
-            {{-- Tampilkan data user --}}
-            <div class="profile-pic">
-                <img id="profileImage" src="{{ asset('img/ppUser.png') }}" alt="User">
-                <button type="button" class="edit-pic" onclick="document.getElementById('fileInput').click()">
-                    <i class="fas fa-paint-brush"></i>
-                </button>
-                <input type="file" id="fileInput" accept="image/*" style="display:none">
-                <p class="name">{{ $user->name }}</p>
+                <div class="profile-info">
+                    <h2>{{ $user->name }}</h2>
+                    <p class="email">{{ $user->email }}</p>
+                </div>
+                <button onclick="openModal()" class="btn-edit"><i class="fas fa-pen"></i> Edit Profil</button>
             </div>
 
-            <div style="border:1px solid #ddd; padding:20px; border-radius:8px; background:#f9f9f9; margin-top:15px;">
-                <p><strong>Nama Lengkap:</strong> {{ $user->name }}</p>
-                <p><strong>Email:</strong> {{ $user->email }} <small style="color:gray;">(tidak dapat diubah)</small></p>
-                <p><strong>Nomor Telepon:</strong> {{ $user->phone_number ?? '-' }}</p>
-                <p><strong>Alamat:</strong> {{ $user->address ?? '-' }}</p>
-                <p><strong>Tanggal Lahir:</strong> 
+            <div class="profile-details">
+                <p><i class="fas fa-phone"></i> <strong>Nomor Telepon:</strong> {{ $user->phone_number ?? '-' }}</p>
+                <p><i class="fas fa-map-marker-alt"></i> <strong>Alamat:</strong> {{ $user->address ?? '-' }}</p>
+                <p><i class="fas fa-calendar-alt"></i> <strong>Tanggal Lahir:</strong> 
                     {{ $user->date_of_birth ? \Carbon\Carbon::parse($user->date_of_birth)->format('d M Y') : '-' }}
                 </p>
-                <p><strong>Jenis Kelamin:</strong> 
+                <p><i class="fas fa-venus-mars"></i> <strong>Jenis Kelamin:</strong> 
                     @if($user->gender == 'laki-laki') Laki-laki
                     @elseif($user->gender == 'perempuan') Perempuan
                     @else Tidak ingin memberitahu
                     @endif
                 </p>
             </div>
-
-            {{-- Tombol Edit --}}
-            <button onclick="openModal()" style="margin-top:15px; background:#4CAF50; color:white; border:none; padding:8px 15px;">
-                Edit Profil
-            </button>
-
-        </main>
+        </div>
     </div>
 
     {{-- Modal Edit --}}
-    <div id="editModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6);">
-        <div style="background:white; padding:20px; border-radius:8px; width:500px; margin:50px auto; position:relative;">
-            <h3>Edit Informasi Pribadi</h3>
+    <div id="editModal" class="modal">
+        <div class="modal-content" id="modalBox">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3><i class="fas fa-user-edit"></i> Edit Informasi Pribadi</h3>
             <form action="{{ route('profile.update') }}" method="POST">
                 @csrf
                 @method('PATCH')
 
-                <p>
-                    <label>Nama Lengkap:</label><br>
-                    <input type="text" name="name" value="{{ old('name', $user->name) }}">
-                </p>
+                <label>Nama Lengkap:</label>
+                <input type="text" name="name" value="{{ old('name', $user->name) }}">
 
-                <p>
-                    <label>Tanggal Lahir:</label><br>
-                    <input type="date" name="date_of_birth" value="{{ old('date_of_birth', $user->date_of_birth) }}">
-                </p>
+                <label>Tanggal Lahir:</label>
+                <input type="date" name="date_of_birth" value="{{ old('date_of_birth', $user->date_of_birth) }}">
 
-                <p>
-                    <label>Nomor Telepon:</label><br>
-                    <input type="text" name="phone_number" value="{{ old('phone_number', $user->phone_number) }}">
-                </p>
+                <label>Nomor Telepon:</label>
+                <input type="text" name="phone_number" value="{{ old('phone_number', $user->phone_number) }}">
 
-                <p>
-                    <label>Alamat:</label><br>
-                    <textarea name="address">{{ old('address', $user->address) }}</textarea>
-                </p>
+                <label>Alamat:</label>
+                <textarea name="address">{{ old('address', $user->address) }}</textarea>
 
-                <p>
-                    <label>Jenis Kelamin:</label><br>
-                    <select name="gender">
-                        <option value="">-- Pilih --</option>
-                        <option value="laki-laki" {{ $user->gender == 'laki-laki' ? 'selected' : '' }}>Laki-laki</option>
-                        <option value="perempuan" {{ $user->gender == 'perempuan' ? 'selected' : '' }}>Perempuan</option>
-                        <option value="other" {{ $user->gender == 'other' ? 'selected' : '' }}>Tidak ingin memberitahu</option>
-                    </select>
-                </p>
+                <label>Jenis Kelamin:</label>
+                <select name="gender">
+                    <option value="">-- Pilih --</option>
+                    <option value="laki-laki" {{ $user->gender == 'laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                    <option value="perempuan" {{ $user->gender == 'perempuan' ? 'selected' : '' }}>Perempuan</option>
+                    <option value="other" {{ $user->gender == 'other' ? 'selected' : '' }}>Tidak ingin memberitahu</option>
+                </select>
 
-                <p>
-                    <label>Password Baru (opsional):</label><br>
-                    <input type="password" name="password">
-                </p>
+                <label>Password Baru (opsional):</label>
+                <input type="password" name="password">
 
-                <div style="margin-top:10px; display:flex; justify-content:space-between;">
-                    <button type="button" onclick="closeModal()" style="background:#ccc; border:none; padding:8px 15px;">Batal</button>
-                    <button type="submit" style="background:#4CAF50; color:white; border:none; padding:8px 15px;">Simpan</button>
+                <div class="form-actions">
+                    <button type="button" class="btn cancel" onclick="closeModal()">Batal</button>
+                    <button type="submit" class="btn save">Simpan</button>
                 </div>
             </form>
         </div>
@@ -132,18 +110,22 @@
             }
         });
 
-        // Toggle sidebar
-        function toggleSidebar() {
-            document.querySelector('.sidebar').classList.toggle('active');
-            document.querySelector('.overlay').classList.toggle('show');
-        }
-
         // Modal edit
+        const modal = document.getElementById("editModal");
+        const modalBox = document.getElementById("modalBox");
+
         function openModal(){
-            document.getElementById('editModal').style.display='block';
+            modal.style.display = 'flex';
+            setTimeout(() => modalBox.classList.add("show"), 10);
         }
         function closeModal(){
-            document.getElementById('editModal').style.display='none';
+            modalBox.classList.remove("show");
+            setTimeout(() => modal.style.display = 'none', 200);
+        }
+
+        // Klik luar modal
+        window.onclick = function(event) {
+            if (event.target === modal) closeModal();
         }
     </script>
 </body>

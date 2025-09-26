@@ -403,3 +403,117 @@ main, .jual-container {
     text-decoration: none;
 }
 
+/* ===========================
+   MODAL DETAIL PRODUK
+=========================== */
+.modal {
+    display: none; /* default hidden */
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    max-width: 700px;
+    width: 100%;
+    position: relative;
+    animation: fadeInUp 0.3s ease;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
+.modal-content h1, 
+.modal-content h2, 
+.modal-content h3 {
+    margin-bottom: 15px;
+    color: #2c3e50;
+}
+
+.modal-content p {
+    margin-bottom: 10px;
+    font-size: 15px;
+    color: #444;
+}
+
+/* Tombol close */
+.modal-content .close {
+    position: absolute;
+    top: 12px;
+    right: 18px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #555;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.modal-content .close:hover {
+    color: #e74c3c;
+}
+
+/* Gambar produk di modal */
+.detail-produk-container {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.detail-produk-container .produk-gambar {
+    flex: 1 1 250px;
+    text-align: center;
+}
+
+.detail-produk-container .produk-gambar img {
+    max-width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.detail-produk-container .produk-info {
+    flex: 2 1 350px;
+}
+
+.detail-produk-container .produk-info h1 {
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.detail-produk-container .produk-info p {
+    margin: 6px 0;
+    font-size: 15px;
+}
+
+.detail-produk-container .produk-deskripsi {
+    margin-top: 10px;
+    font-style: italic;
+    color: #555;
+}
+
+/* Bawah modal */
+.modal-bottom {
+    margin-top: 15px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #27ae60;
+}
+
+/* Animasi modal */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

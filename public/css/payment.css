@@ -56,6 +56,37 @@ body, html {
 /* ============================= */
 /* ====== BUTTON =============== */
 /* ============================= */
+/* ============================= */
+/* === BUTTON BUAT PESANAN ===== */
+/* ============================= */
+.btn.btn-success {
+  display: block;
+  width: 100%;
+  background: linear-gradient(135deg, #4a6b52, #3b5642);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  margin-top: 20px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.btn.btn-success:hover {
+  background: linear-gradient(135deg, #3b5642, #2e4635);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+}
+
+.btn.btn-success:active {
+  transform: scale(0.97);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
 .btn {
   padding: 10px 18px;
   border: none;
@@ -112,26 +143,27 @@ body, html {
 .product-card {
   flex: 1 1 180px;
   max-width: 220px;
-  background: #fafafa;
-  border: 1px solid #ddd;
+  background: #fff;
   border-radius: 12px;
-  padding: 10px;
+  padding: 8px;
   text-align: center;
   transition: all 0.25s ease;
+  cursor: pointer; /* jadi bisa diklik */
 }
 
 .product-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 15px rgba(0,0,0,0.12);
+  transform: scale(1.05);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
 }
 
 .product-card img {
   width: 100%;
-  max-height: 120px;
-  object-fit: cover;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  margin-bottom: 10px;
+  height: 180px;
+  object-fit: contain;     /* biar gambar utuh */
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  padding: 6px;
 }
 
 /* ============================= */
@@ -277,3 +309,4 @@ body, html {
     flex: 1 1 100%;
   }
 }
+
