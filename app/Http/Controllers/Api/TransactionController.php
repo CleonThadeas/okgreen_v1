@@ -5,134 +5,21 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\BuyTransaction;
-use App\Models\BuyCartItem;
-use App\Models\UserPoint;
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 class TransactionController extends Controller
 {
-    // =====================
-    // USER SIDE
-    // =====================
+    // =========================
+    // USER SIDE (Flutter)
+    // =========================
 
-    // Buat transaksi baru
-    public function create(Request $request)
-    {
-        $request->validate([
-            'total_amount' => 'required|numeric|min:1'
-        ]);
-
-        $transaction = BuyTransaction::create([
-            'user_id' => $request->user()->id,
-            'total_amount' => $request->total_amount,
-            'status' => 'pending',
-            'transaction_date' => now(),
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'data' => $transaction
-        ]);
-    }
-
-    // Tambah item ke transaksi
-    public function addItem(Request $request, $transactionId)
-    {
-        $request->validate([
-            'waste_type_id' => 'required|integer',
-            'quantity' => 'required|integer|min:1',
-            'price_per_unit' => 'required|numeric|min:0'
-        ]);
-
-        $transaction = BuyTransaction::findOrFail($transactionId);
-
-        if (! $transaction->isActive()) {
-            $transaction->update(['status' => 'cancelled']);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Transaksi sudah kadaluarsa atau dibatalkan'
-            ], 400);
-        }
-
-        $subtotal = $request->quantity * $request->price_per_unit;
-
-        $item = BuyCartItem::create([
-            'buy_transaction_id' => $transaction->id,
-            'waste_type_id' => $request->waste_type_id,
-            'quantity' => $request->quantity,
-            'price_per_unit' => $request->price_per_unit,
-            'subtotal' => $subtotal
-        ]);
-
-        $transaction->increment('total_amount', $subtotal);
-
-        return response()->json([
-            'success' => true,
-            'data' => $item
-        ]);
-    }
-
-    // Bayar transaksi + kasih point reward
-    public function pay($transactionId)
-    {
-        $transaction = BuyTransaction::with('user')->findOrFail($transactionId);
-
-        if (! $transaction->isActive()) {
-            $transaction->update(['status' => 'cancelled']);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Transaksi sudah kadaluarsa dan dibatalkan'
-            ], 400);
-        }
-
-        $transaction->update(['status' => 'paid']);
-
-        // === Tambahan: kasih reward point ===
-        $user = $transaction->user;
-        $pointsEarned = floor($transaction->total_amount / 1000); 
-        // contoh: 1 point tiap Rp1000 transaksi
-
-        $userPoint = UserPoint::firstOrCreate(
-            ['user_id' => $user->id],
-            ['points' => 0]
-        );
-
-        $userPoint->increment('points', $pointsEarned);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Transaksi berhasil dibayar, point reward ditambahkan',
-            'data' => [
-                'transaction' => $transaction,
-                'points_earned' => $pointsEarned,
-                'total_points' => $userPoint->points,
-            ]
-        ]);
-    }
-
-    // Cek status transaksi
-    public function status($transactionId)
-    {
-        $transaction = BuyTransaction::with('items')->findOrFail($transactionId);
-
-        if ($transaction->status === 'pending' && ! $transaction->isActive()) {
-            $transaction->update(['status' => 'cancelled']);
-        }
-
-        return response()->json([
-            'success' => true,
-            'data' => $transaction
-        ]);
-    }
-
-    // List transaksi user
+    // Riwayat transaksi user
     public function myTransactions(Request $request)
     {
-        $transactions = BuyTransaction::with('items')
+        $transactions = BuyTransaction::with(['items.type.category','user'])
             ->where('user_id', $request->user()->id)
-            ->latest()
+            ->orderBy('created_at','desc')
             ->get();
 
         return response()->json([
@@ -141,31 +28,37 @@ class TransactionController extends Controller
         ]);
     }
 
-    // =====================
-    // STAFF SIDE
-    // =====================
-
-    // List semua transaksi
-    public function index()
+    // Detail satu transaksi
+    public function show(Request $request, $id)
     {
-        $transactions = BuyTransaction::with('items', 'user')
-            ->latest()
-            ->get();
+        $trx = BuyTransaction::with(['items.type.category','user'])
+            ->where('user_id', $request->user()->id)
+            ->findOrFail($id);
 
         return response()->json([
             'success' => true,
-            'data' => $transactions
+            'data' => $trx
         ]);
     }
 
-    // Detail 1 transaksi
-    public function show($id)
+    // Cek status transaksi (polling)
+    public function status(Request $request, $id)
     {
-        $transaction = BuyTransaction::with('items', 'user')->findOrFail($id);
+        $tx = BuyTransaction::where('id',$id)
+              ->where('user_id', $request->user()->id)
+              ->firstOrFail();
+
+        // auto-cancel jika expired dan masih pending
+        if ($tx->status === 'pending' && $tx->expired_at && now()->greaterThan($tx->expired_at)) {
+            $tx->status = 'cancelled';
+            $tx->save();
+        }
 
         return response()->json([
-            'success' => true,
-            'data' => $transaction
+            'success'    => true,
+            'id'         => $tx->id,
+            'status'     => $tx->status,
+            'expired_at' => optional($tx->expired_at)->toIso8601String(),
         ]);
     }
 }
