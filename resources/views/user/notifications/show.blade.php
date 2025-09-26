@@ -25,10 +25,21 @@
             </div>
 
             <!-- Konten -->
-            <div class="flex-1">
-                <h3 class="text-xl font-semibold text-gray-800">{{ $notification->title }}</h3>
-                <p class="text-gray-600 mt-2">{{ $notification->message }}</p>
-                <p class="text-xs text-gray-400 mt-3">Diterima pada {{ $notification->created_at->format('d M Y H:i') }}</p>
+            <div class="flex-1 min-w-0">
+                <h3 class="text-xl font-semibold text-gray-800">
+                    {{ $notification->title }}
+                </h3>
+                
+                <!-- Detail Pesan -->
+                <div 
+                    class="mt-2 text-gray-600 leading-relaxed break-words whitespace-pre-wrap"
+                    style="overflow: visible; text-overflow: clip; white-space: pre-wrap; word-break: break-word;">
+                    {{ $notification->message }}
+                </div>
+
+                <p class="text-xs text-gray-400 mt-3">
+                    Diterima pada {{ $notification->created_at->format('d M Y H:i') }}
+                </p>
             </div>
 
             <!-- Status -->

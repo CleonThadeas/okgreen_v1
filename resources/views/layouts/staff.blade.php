@@ -14,6 +14,8 @@
       .container { padding:20px; max-width:1100px; margin:0 auto; }
       .muted { color: rgba(255,255,255,0.9); font-weight:600; }
     </style>
+    @vite(['resources/css/app.css','resources/js/app.js'])
+    @stack('styles') {{-- ini penting kalau kamu pakai @push('styles') --}}
 </head>
 <body>
     <nav class="topnav">
@@ -26,8 +28,6 @@
         @if(Route::has('staff.sell_requests.index'))
           <a href="{{ route('staff.sell_requests.index') }}">Permintaan Jual</a>
         @endif
-
-        <a href="{{ route('staff.notifications.index') }}">Notifikasi</a>
 
         <a href="{{ route('staff.contacts.index') }}">Laporan</a>
 
