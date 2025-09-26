@@ -111,6 +111,7 @@ Route::get('/contact', [ContactController::class,'create'])->name('contact');
 
 // ================== STAFF ==================
 Route::prefix('staff')->name('staff.')->middleware('auth:staff')->group(function(){
+
     // Kelola produk
     Route::get('/wastes', [StaffWasteCtrl::class, 'index'])->name('wastes.index');
     Route::get('/wastes/category/create', [StaffWasteCtrl::class, 'createCategory'])->name('wastes.category.create');
@@ -130,24 +131,22 @@ Route::prefix('staff')->name('staff.')->middleware('auth:staff')->group(function
     // Sell requests
     Route::get('/sell-requests', [SellRequestController::class, 'index'])->name('sell_requests.index');
     Route::get('/sell-requests/{id}', [SellRequestController::class, 'show'])->name('sell_requests.show');
-    Route::post('/sell-requests/{id}/update', [SellRequestController::class, 'updateStatus'])
-    ->name('sell_requests.update');
-
+    Route::post('/sell-requests/{id}/update', [SellRequestController::class, 'updateStatus'])->name('sell_requests.update');
 
     // Sell waste types (jenis sampah)
     Route::get('/sell-types', [SellTypeController::class,'index'])->name('sell-types.index');
     Route::get('/sell-types/create', [SellTypeController::class,'create'])->name('sell-types.create');
     Route::post('/sell-types', [SellTypeController::class,'store'])->name('sell-types.store');
 
-    //Notifikasi&Contact
-    Route::get('/contacts', [StaffContactController::class,'index'])->name('contacts.index');
-    Route::get('/contacts/{id}', [StaffContactController::class,'show'])->name('contacts.show');
-    Route::post('/contacts/{id}/reply', [StaffContactController::class,'reply'])->name('contacts.reply');
+// ================== STAFF CONTACTS ==================
+// CONTACTS
+Route::prefix('contacts')->name('contacts.')->group(function () {
+    Route::get('/', [StaffContactController::class, 'index'])->name('index'); // staff.contacts.index
+    Route::get('/{message_id}', [StaffContactController::class, 'show'])->name('show'); // staff.contacts.show
+    Route::post('/{message_id}/reply', [StaffContactController::class, 'reply'])->name('reply'); // staff.contacts.reply
+    Route::put('/{message_id}/reply/{replyId}', [StaffContactController::class, 'updateReply'])->name('reply.update'); // staff.contacts.reply.update
+});
 
-    Route::get('/notifications', [StaffNotificationController::class, 'index'])->name('notifications.index');
-    Route::get('/notifications/{id}', [StaffNotificationController::class, 'show'])->name('notifications.show');
-    Route::post('/notifications/{id}/read', [StaffNotificationController::class, 'markAsRead'])->name('notifications.read');
-    Route::post('/notifications/read-all', [StaffNotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
 });
 
 // ================== ADMIN ==================

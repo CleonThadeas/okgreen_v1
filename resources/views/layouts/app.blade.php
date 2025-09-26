@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,7 +29,7 @@
         </div>
     </nav>
 
-    <div class="container" style="padding:20px;">
+    <div class="w-full">
         @yield('content')
     </div>
 </body>
