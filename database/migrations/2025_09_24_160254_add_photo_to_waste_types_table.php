@@ -5,11 +5,15 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    public function up(): void {
+    public function up(): void
+{
+    if (!Schema::hasColumn('waste_types', 'photo')) {
         Schema::table('waste_types', function (Blueprint $table) {
             $table->string('photo')->nullable()->after('price_per_unit');
         });
     }
+}
+
 
     public function down(): void {
         Schema::table('waste_types', function (Blueprint $table) {

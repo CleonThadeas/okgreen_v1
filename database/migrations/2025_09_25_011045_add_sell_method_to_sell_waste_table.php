@@ -6,13 +6,15 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+   public function up(): void
 {
-    Schema::table('sell_waste', function (Blueprint $table) {
-        $table->enum('sell_method', ['drop_point','pickup'])
-              ->default('drop_point')
-              ->after('status');
-    });
+    if (!Schema::hasColumn('sell_waste', 'sell_method')) {
+        Schema::table('sell_waste', function (Blueprint $table) {
+            $table->enum('sell_method', ['drop_point', 'pickup'])
+                  ->default('drop_point')
+                  ->after('status');
+        });
+    }
 }
 
 public function down()

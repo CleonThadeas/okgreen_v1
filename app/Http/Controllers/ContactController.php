@@ -40,6 +40,7 @@ class ContactController extends Controller
         $staffs = Staff::all();
         foreach ($staffs as $st) {
             Notification::create([
+                'user_id'       => Auth::id(),
                 'receiver_id'   => $st->id,
                 'receiver_role' => 'staff',
                 'title'         => 'Pesan baru dari user',

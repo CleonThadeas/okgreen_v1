@@ -5,12 +5,15 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    public function up()
-    {
+    public function up(): void
+{
+    if (!Schema::hasColumn('buy_transactions', 'expired_at')) {
         Schema::table('buy_transactions', function (Blueprint $table) {
             $table->timestamp('expired_at')->nullable()->after('shipping_cost');
         });
     }
+}
+
 
     public function down()
     {

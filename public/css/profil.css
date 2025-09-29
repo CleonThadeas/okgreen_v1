@@ -1,4 +1,6 @@
-/* RESET */
+/* ===============================
+   RESET / GLOBAL
+=============================== */
 body, html {
   margin: 0;
   padding: 0;
@@ -11,14 +13,203 @@ body, html {
 body.modal-open {
   overflow: hidden; /* kunci scroll semua arah saat modal terbuka */
 }
+body.sidebar-open {
+  overflow-x: hidden;
+}
 
-/* Profile Container */
+/* ===============================
+   SIDEBAR
+=============================== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -260px; /* tersembunyi awalnya */
+  width: 260px;
+  height: 100vh;
+  background: #c7d8cb;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.2);
+  transition: left 0.3s ease;
+  z-index: 1000;
+}
+.sidebar.active {
+  left: 0;
+}
+.sidebar-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+}
+.sidebar-header img.sidebar-logo {
+  width: 40px;
+  height: 40px;
+}
+.sidebar-header h2 {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+  color: #2c3e50;
+}
+.sidebar-close {
+  background: #9fb8a4;
+  border: none;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #000;
+}
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+  flex-grow: 1;
+}
+.sidebar-menu li {
+  margin-bottom: 12px;
+}
+.sidebar-menu a,
+.sidebar-menu button {
+  text-decoration: none;
+  color: #2c3e50;
+  font-size: 15px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  padding: 6px 8px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+.sidebar-menu a:hover,
+.sidebar-menu button:hover {
+  background: #b0c4b1;
+}
+.sidebar-divider {
+  border: none;
+  border-top: 2px solid #666;
+  margin: 20px 0;
+}
+.sidebar-footer {
+  font-size: 13px;
+  color: #000;
+}
+.sidebar-footer a {
+  color: #000;
+  text-decoration: underline;
+}
+.sidebar-footer .copyright {
+  font-size: 12px;
+  margin-top: 8px;
+}
+.overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.4);
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.3s;
+  z-index: 900;
+}
+.overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+.menu-toggle {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  margin: 10px;
+  color: #2c3e50;
+}
+.dropdown {
+  border-radius: 8px;
+  padding: 5px;
+}
+.dropdown-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  list-style: none;
+  padding: 0;
+  margin-top: 8px;
+}
+.dropdown.open .dropdown-content {
+  max-height: 300px;
+}
+.dropdown-content li {
+  margin: 6px 0;
+  padding-left: 10px;
+}
+.dropdown-content a {
+  color: #000;
+  font-size: 14px;
+  text-decoration: none;
+}
+.dropdown-content a:hover {
+  text-decoration: underline;
+}
+.menu-item {
+  background: #95ab95;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.dropdown-btn {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 12px;
+  text-align: left;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.dropdown-btn .arrow {
+  transition: transform 0.3s;
+}
+.dropdown-btn.active .arrow {
+  transform: rotate(180deg);
+}
+.dropdown-container {
+  display: none;
+  flex-direction: column;
+}
+.dropdown-container a {
+  padding: 12px;
+  display: block;
+  text-decoration: none;
+  color: black;
+  transition: background 0.2s;
+}
+.dropdown-container a:hover {
+  background: #7d927d;
+}
+
+/* ===============================
+   PROFILE CONTAINER
+=============================== */
 .profile-container {
   min-height: calc(100vh - 60px);
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  margin-bottom: 0; /* hapus spacing bawah */
+  transition: margin-left 0.3s ease;
+  margin-left: 0; /* default */
+  padding: 20px;
+}
+body.sidebar-open .profile-container {
+  margin-left: 260px; /* geser konten saat sidebar terbuka */
 }
 
 /* Cover */
@@ -60,7 +251,7 @@ body.modal-open {
   z-index: 10;
   position: relative;
   background: #fff;
-  padding: 80px 40px 30px 20px; /* kanan lebih lega */
+  padding: 80px 40px 30px 20px;
   border-radius: 15px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   width: calc(100% - 40px);
@@ -68,6 +259,7 @@ body.modal-open {
   margin-right: auto;
   text-align: center;
   margin-bottom: 0;
+  transition: all 0.3s ease;
 }
 
 /* Avatar */
@@ -161,9 +353,9 @@ body.modal-open {
   background: #365a3f;
 }
 
-/* ============================= */
-/* ========= MODAL EDIT ========= */
-/* ============================= */
+/* ===============================
+   MODAL EDIT
+=============================== */
 .modal {
   display: none;
   position: fixed;
@@ -178,13 +370,12 @@ body.modal-open {
   padding: 20px;
   box-sizing: border-box;
 }
-
 .modal-content {
   background: #fff;
   border-radius: 14px;
   padding: 25px;
   width: 100%;
-  max-width: 900px; /* lebih lebar */
+  max-width: 900px;
   position: relative;
   text-align: left;
   box-shadow: 0 8px 20px rgba(0,0,0,0.25);
@@ -194,13 +385,10 @@ body.modal-open {
   max-height: 90vh;
   overflow-y: auto;
 }
-
 .modal-content.show {
   transform: scale(1);
   opacity: 1;
 }
-
-/* Tombol close */
 .modal-content .close {
   position: absolute;
   top: 12px;
@@ -214,8 +402,6 @@ body.modal-open {
 .modal-content .close:hover {
   color: red;
 }
-
-/* Judul modal */
 .modal-content h3 {
   margin: 0 0 15px;
   font-size: 20px;
@@ -225,8 +411,6 @@ body.modal-open {
   align-items: center;
   gap: 8px;
 }
-
-/* Form styling */
 .modal-content label {
   display: block;
   margin: 10px 0 5px;
@@ -234,7 +418,6 @@ body.modal-open {
   font-weight: 600;
   color: #444;
 }
-
 .modal-content input,
 .modal-content textarea,
 .modal-content select {
@@ -247,22 +430,18 @@ body.modal-open {
   box-sizing: border-box;
   transition: border-color 0.2s;
 }
-
 .modal-content input:focus,
 .modal-content textarea:focus,
 .modal-content select:focus {
   border-color: #4a6b52;
   outline: none;
 }
-
-/* Action buttons */
 .form-actions {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
   margin-top: 15px;
 }
-
 .form-actions .btn {
   padding: 10px 18px;
   border-radius: 8px;
@@ -272,7 +451,6 @@ body.modal-open {
   cursor: pointer;
   transition: all 0.25s ease;
 }
-
 .form-actions .btn.cancel {
   background: #ccc;
   color: #333;
@@ -280,7 +458,6 @@ body.modal-open {
 .form-actions .btn.cancel:hover {
   background: #b3b3b3;
 }
-
 .form-actions .btn.save {
   background: #4a6b52;
   color: #fff;
@@ -291,11 +468,34 @@ body.modal-open {
   box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
-/* Responsive */
+/* ===============================
+   SIDEBAR TOGGLE BUTTON
+=============================== */
+.sidebar-toggle {
+  position: absolute;
+  top: 80px;
+  left: 20px;
+  background: #4e6b50;
+  color: white;
+  border: none;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 1100;
+  transition: opacity 0.3s ease;
+}
+body.sidebar-open .sidebar-toggle {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ===============================
+   RESPONSIVE
+=============================== */
 @media (max-width: 768px) {
   .profile-card {
     width: calc(100% - 20px);
-    padding: 70px 20px 20px; /* kanan tetap agak lega */
+    padding: 70px 20px 20px;
   }
   .profile-avatar {
     width: 100px;
@@ -312,25 +512,7 @@ body.modal-open {
   .modal-content {
     max-width: 95%;
   }
+  body.sidebar-open .profile-container {
+    margin-left: 0; /* overlay saja */
+  }
 }
-
- /* tombol toggle */
-    .sidebar-toggle {
-        position: absolute;
-        top: 80px; /* biar di bawah header */
-        left: 20px;
-        background: #4e6b50;
-        color: white;
-        border: none;
-        padding: 10px 12px;
-        border-radius: 8px;
-        cursor: pointer;
-        z-index: 1100;
-        transition: opacity 0.3s ease;
-    }
-
-    /* tombol hilang saat sidebar terbuka */
-    body.sidebar-open .sidebar-toggle {
-        opacity: 0;
-        pointer-events: none;
-    }

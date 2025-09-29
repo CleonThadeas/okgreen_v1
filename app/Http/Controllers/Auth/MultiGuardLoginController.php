@@ -24,33 +24,37 @@ class MultiGuardLoginController extends Controller
         $password = $request->password;
         $remember = $request->filled('remember');
 
-        // 1) coba login sebagai admin
-        if (Auth::guard('admin')->attempt(['email' => $email, 'password' => $password], $remember)) {
+        // Logout semua guard dulu supaya aman
+        Auth::guard('web')->logout();
+        Auth::guard('admin')->logout();
+        Auth::guard('staff')->logout();
+
+        // Coba login admin
+        if (Auth::guard('admin')->attempt(['email'=>$email,'password'=>$password], $remember)) {
             $request->session()->regenerate();
             return redirect()->intended(route('admin.dashboard'));
         }
 
-        // 2) coba login sebagai staff
-        if (Auth::guard('staff')->attempt(['email' => $email, 'password' => $password], $remember)) {
+        // Coba login staff
+        if (Auth::guard('staff')->attempt(['email'=>$email,'password'=>$password], $remember)) {
             $request->session()->regenerate();
             return redirect()->intended(route('staff.dashboard'));
         }
 
-        // 3) coba login sebagai user (web)
-        if (Auth::guard('web')->attempt(['email' => $email, 'password' => $password], $remember)) {
+        // Coba login user
+        if (Auth::guard('web')->attempt(['email'=>$email,'password'=>$password], $remember)) {
             $request->session()->regenerate();
             return redirect()->intended(route('dashboard'));
         }
 
-        // Jika semua gagal, lempar error (biasa)
+        // Jika gagal
         throw ValidationException::withMessages([
-            'email' => ['Credensial tidak cocok dengan data kami.'],
+            'email' => ['Credensial tidak cocok dengan data kami.']
         ]);
     }
 
     public function destroy(Request $request)
     {
-        // logout dari semua guard supaya aman
         Auth::guard('web')->logout();
         Auth::guard('admin')->logout();
         Auth::guard('staff')->logout();

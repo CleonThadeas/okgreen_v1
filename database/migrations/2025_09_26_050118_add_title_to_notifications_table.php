@@ -8,10 +8,13 @@ return new class extends Migration
 {
     public function up(): void
 {
-    Schema::table('notifications', function (Blueprint $table) {
-        $table->string('title')->nullable()->after('receiver_role');
-    });
+    if (!Schema::hasColumn('notifications', 'title')) {
+        Schema::table('notifications', function (Blueprint $table) {
+            $table->string('title')->nullable()->after('receiver_role');
+        });
+    }
 }
+
 
 public function down(): void
 {
