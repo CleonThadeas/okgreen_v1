@@ -24,7 +24,7 @@
     @else
         <div class="space-y-4">
             @foreach($notifications as $notif)
-            <a href="{{ route('notifications.show', $notif->id) }}" 
+            <a href="{{ route('notifications.show', ['id' => $notif->id]) }}"
                class="block rounded-lg border p-5 shadow-sm hover:shadow-md transition
                       {{ $notif->is_read ? 'bg-white border-gray-200' : 'bg-green-50 border-green-300' }}">
                 <div class="flex items-start gap-4">
